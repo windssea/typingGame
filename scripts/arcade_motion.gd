@@ -3,10 +3,15 @@ extends RefCounted
 
 # Only the current arena's clips are loaded. The simulation owns hits and timing.
 const LIBRARY := {
-	"moles":{"idle":"mole-idle-v08","hit":"mole-hit-v08"},
-	"aliens":{"idle":"ufo-idle-v08","hit":"ufo-hit-v08"},
-	"racing":{"idle":"rally-drive-v08","boost":"rally-boost-v08"},
-	"castle":{"idle":"goblin-walk-v08","hit":"goblin-hit-v08"}
+	"moles":{"idle":"mole-idle-v10","hit":"mole-hit-v10"},
+	"aliens":{"idle":"ufo-idle-v10","hit":"ufo-hit-v10"},
+	"racing":{"idle":"rally-drive-v10","boost":"rally-boost-v10"},
+	"castle":{"idle":"goblin-walk-v10","hit":"goblin-hit-v10"},
+	"castle_wolf":{"idle":"wolf-walk-v10","hit":"wolf-hit-v10"},
+	"castle_boss":{"idle":"boss-walk-v10b","hit":"boss-hit-v10b"},
+	"castle_guard":{"idle":"guard-walk-v10","hit":"guard-hit-v10"},
+	"castle_shaman":{"idle":"shaman-walk-v10","hit":"shaman-hit-v10"},
+	"castle_bomber":{"idle":"bomber-walk-v10","hit":"bomber-hit-v10"}
 }
 var clips: Dictionary = {}
 

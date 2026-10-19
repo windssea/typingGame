@@ -18,6 +18,8 @@ var input_point := Vector2.ZERO
 var recent_key := ""
 var key_beats: Array[Dictionary] = []
 var displayed_wpm := 0.0
+var world_offset := Vector2.ZERO
+var cannon_x := 680.0
 
 func on_key_feedback(character: String, accepted: bool, point: Vector2) -> void:
 	recent_key = character
@@ -34,6 +36,10 @@ func step_feedback(delta: float) -> void:
 	key_pulse = maxf(0,key_pulse-delta)
 	error_pulse = maxf(0,error_pulse-delta)
 	displayed_wpm = lerpf(displayed_wpm,run.wpm(),1-exp(-delta*7))
+	if run.mode=="rain":
+		var target := run.recommended_target()
+		var goal: float = float(target.position.x)-24 if not target.is_empty() else 656.0
+		cannon_x = goal if reduced_motion else lerpf(cannon_x,goal,1-exp(-delta*10))
 	for beat in key_beats.duplicate():
 		beat.life -= delta
 		if beat.life<=0:
@@ -54,8 +60,10 @@ func _ready() -> void:
 		juice.reduced_motion = reduced_motion
 		run.key_feedback.connect(on_key_feedback)
 		run.spell.connect(func(a, b, lightning):
-			effects.append({"from":a,"to":b,"lightning":lightning,"life":0.55})
-			juice.burst(b,PlayTheme.SKY if lightning else PlayTheme.YELLOW,2 if lightning else 1,"spark"))
+			var point: Vector2 = Vector2(1020,300) if run.mode=="dojo" else Vector2(680,510) if run.mode=="sprint" else b
+			var origin: Vector2 = Vector2(cannon_x+24,544) if run.mode=="rain" else a
+			effects.append({"from":origin,"to":point,"lightning":lightning,"life":0.55})
+			juice.burst(point,PlayTheme.SKY if lightning else PlayTheme.YELLOW,2 if lightning else 1,"spark"))
 
 func _process(delta: float) -> void:
 	if run == null or not run.paused:
@@ -118,13 +126,14 @@ func _draw() -> void:
 		draw_line(Vector2(50, 587), Vector2(1310, 587), GOLD, 2)
 		write("防 线", Vector2(680, 620), 16, GOLD, true)
 		# A small interceptor visibly tracks the recommended threat.
-		var threat := run.recommended_target()
-		var aim_x: float = threat.position.x if not threat.is_empty() else 680.0
-		var ship := Vector2(aim_x,572)
+		var ship := Vector2(cannon_x,572)
 		draw_ellipse_shadow(ship+Vector2(0,14),Vector2(31,6))
-		draw_colored_polygon(PackedVector2Array([ship+Vector2(-25,10),ship+Vector2(0,-21),ship+Vector2(25,10),ship]),PlayTheme.PRIMARY)
+		if art.sprites.has("cannon"):
+			art.draw_sprite(self,"cannon",ship,Vector2(92,92))
+		else:
+			draw_colored_polygon(PackedVector2Array([ship+Vector2(-25,10),ship+Vector2(0,-21),ship+Vector2(25,10),ship]),PlayTheme.PRIMARY)
 		if key_pulse>0:
-			draw_line(ship,Vector2(aim_x,input_point.y),Color(0.38,0.8,1,key_pulse*2),4,true)
+			draw_line(ship+Vector2(24,-30),input_point,Color(0.38,0.8,1,key_pulse*2),4,true)
 	for target in run.targets:
 		var pos: Vector2 = target.position
 		var suggested := run.recommended_target()
@@ -185,7 +194,7 @@ func tree(p: Vector2, s: float) -> void:
 		draw_colored_polygon(PackedVector2Array([top + Vector2(-15, 10) * s, top + Vector2(15, 10) * s, top - Vector2(0, 17) * s]), Color("6bbb88") if i % 2 == 0 else Color("8ace98"))
 
 func castle(p: Vector2, s: float) -> void:
-	draw_set_transform(p, 0, Vector2(s, s))
+	draw_set_transform(p+world_offset, 0, Vector2(s, s))
 	draw_ellipse_shadow(Vector2(0, 54), Vector2(120, 38))
 	draw_colored_polygon(PackedVector2Array([Vector2(-118, 53),Vector2(0, 95),Vector2(118, 53),Vector2(0, 12)]), Color("a7cbd6"))
 	draw_rect(Rect2(-77, -28, 154, 96), Color("fff3d4"))
@@ -209,7 +218,7 @@ func castle(p: Vector2, s: float) -> void:
 	for x in [-48,48]:
 		draw_circle(Vector2(x,16),7,Color("ffb86e"))
 		draw_circle(Vector2(x,16),13,Color(1,0.7,0.3,0.1))
-	draw_set_transform(Vector2.ZERO)
+	draw_set_transform(world_offset)
 
 func arch_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -252,7 +261,7 @@ func word_plate(target: Dictionary, at: Vector2, selected: bool) -> void:
 	if selected:
 		panel(Rect2(at - Vector2(width / 2+4, 34), Vector2(width+8,56)),Color(0.35,0.65,0.88,0.16),17)
 	var edge := PlayTheme.CORAL if selected and error_pulse>0 else PlayTheme.PRIMARY if selected else Color("bfd3e5")
-	panel(Rect2(at - Vector2(width / 2, 30), Vector2(width, 48)), Color("effaff") if selected else Color.WHITE, 13,edge)
+	draw_style_box(PlayTheme.game_panel(Color("effaff") if selected else Color.WHITE,edge,13,4),Rect2(at-Vector2(width/2,30),Vector2(width,48)))
 	var start := at+Vector2(-text_width/2,7)
 	write(word,start,font_size,Color("293c59"))
 	if target.typed > 0:
@@ -281,7 +290,6 @@ func draw_dojo() -> void:
 	var press := 0.0 if reduced_motion else key_pulse/0.22
 	art.draw_sprite(self,"key",Vector2(354,236+press*10),Vector2(140+press*9,140-press*9))
 	panel(Rect2(454,115,452,226),Color(1,1,1,0.94),32,PlayTheme.YELLOW)
-	write("把双手轻放在基准键位，让每次击键都有方向。",Vector2(680,65),22,Color("586d84"),true)
 	if run.targets.is_empty():
 		return
 	var target: Dictionary = run.targets[0]
@@ -331,7 +339,6 @@ func draw_dojo() -> void:
 func draw_bubbles() -> void:
 	panel(Rect2(277,22,806,65),Color(1,1,1,0.94),16)
 	panel(Rect2(420,533,520,65),Color(1,1,1,0.94),16)
-	write("选一个泡泡，输入它的内容。慢慢来，不限时。",Vector2(680,64),24,MINT,true)
 	for i in range(20):
 		var p := Vector2(70+fmod(i*173,1230),150+fmod(i*97,440))
 		draw_circle(p,3+(i%5),Color(0.5,0.8,0.8,0.08))
@@ -395,4 +402,3 @@ func draw_sprint() -> void:
 	for i in range(5):
 		write(str(i*5),Vector2(340+i*170,541),13,PlayTheme.MUTED,true)
 	write("已完成 %d 个目标   /   %.1f WPM" % [run.kills,run.wpm()],Vector2(680,563),23,GOLD,true)
-	write("先保持准确，再加快节奏。",Vector2(680,607),18,Color("586d84"),true)

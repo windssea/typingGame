@@ -134,7 +134,7 @@
     {
       "id": "long_words",
       "name": "07 · 连续施法",
-      "description": "训练 4–8 字母单词与长词稳定性。",
+      "description": "训练 5–12 字母单词与长词稳定性。",
       "hint": "输入首字母锁定敌人；退格可撤回，Tab 可解除锁定。",
       "keys": "abcdefghijklmnopqrstuvwxyz",
       "words": [

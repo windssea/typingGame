@@ -1,0 +1,43 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "model": null,
+  "requested": {
+    "aspect_ratio": "1:1",
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "first_frame_pinned": true,
+    "last_frame_pinned": true,
+    "fps": null,
+    "audio": null
+  },
+  "actual": {
+    "width": 720,
+    "height": 720,
+    "video_codec": "h264",
+    "frame_rate": "24/1",
+    "nb_frames": 193,
+    "video_duration_seconds": 8.041667,
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "audio_duration_seconds": 8.0,
+    "size_bytes": 2024371,
+    "sha256": "9B4D01CF603905C8CD9F9993A13CA2D318DC0F5D4918AEBFCB6E773807813945"
+  },
+  "limitations": [
+    "image_to_video only accepts duration 6 or 10 and has no pinned-frame argument. reference_to_video accepts duration 8 and a pinned first frame, so that single call was used.",
+    "Schema has no fps or audio switch. Measured video is 24 fps. The raw file still contains AAC stereo; it was copied unchanged.",
+    "The tool returned no Imagine request id and no model name. The same tool call blocked until completed, so there was no separate job to poll.",
+    "Container duration is 8.041667 s (193 frames), not exactly 8.000 s. No frames were interpolated or duplicated after delivery.",
+    "Source is 768x768. The same seed was pinned as first and last frame. Output is 720x720."
+  ],
+  "archive": "source-silent.mp4",
+  "integration": {
+    "walk_native_frames": 48,
+    "hit_native_frames": 18,
+    "interpolation": false,
+    "version": "v10",
+    "qa": "contact-frame inspection and native in-game capture; no human commercial art sign-off"
+  }
+}

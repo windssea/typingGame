@@ -1,0 +1,10 @@
+{
+  "id": "academy-lobby-v10",
+  "type": "game-menu-environment",
+  "tool": "built-in image_gen",
+  "date": "2026-10-19",
+  "source": "Original generated illustration; no reference images or third-party character IP",
+  "brief": "Bright American stylized cartoon academy diorama, rounded materials, garden training pavilion at left, friendly futuristic observatory at right, soft upper-left daylight, quiet central sky and courtyard; no baked text or UI",
+  "integration": "MenuStage draws the background; live Godot controls provide all text, focus, input and state",
+  "transparent": false
+}

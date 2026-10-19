@@ -1,7 +1,7 @@
 class_name LiveHud
 extends Control
 
-const FONT = preload("res://assets/ui-font.ttf")
+const FONT = preload("res://assets/ui-heading.ttf")
 var snapshot := ""
 var values: Array = []
 var note := ""
@@ -25,18 +25,21 @@ func refresh(run: GameRun) -> void:
 	elif run is ArcadeRun:
 		note = "%d / %d 个目标" % [run.kills,run.goal]
 		if run.context=="training" and run.goal==18:
-			note = "训练 %d / 3 段 · 完成 %d / 18 · 每六次命中获得阶段奖励" % [mini(3,1+run.kills/6),run.kills]
+			note = "%d / 18" % run.kills
 		fraction = run.distance if run.mode=="racing" else float(run.kills)/run.goal
 		if run.mode=="aliens":
 			status = "护盾"
 			last = str(run.shield)
 	elif run.mode in ["rain","sprint"]:
 		var seconds := 90.0 if run.mode=="rain" else 60.0
-		note = "还剩 %d 秒 · 稳住你的节奏" % maxi(0,ceili(seconds-run.elapsed))
+		note = "剩余 %d 秒" % maxi(0,ceili(seconds-run.elapsed))
 		if run.mode=="sprint" and run.context=="challenge":
 			var rank := SessionOptions.rank_index(run.challenge_rank)
 			note = "还剩 %d 秒 · 目标 %d 字符 / %d%% 准确率" % [maxi(0,ceili(seconds-run.elapsed)),[18,36,60][rank],[85,90,95][rank]]
 		fraction = clampf(run.elapsed/seconds,0,1)
+	if run.mode in ["dojo","bubbles","sprint","racing"]:
+		status = "速度 WPM"
+		last = "%.0f" % run.wpm()
 	values = [["得分",str(run.score)],["准确率","%d%%" % roundi(run.accuracy()*100)],["连击",str(run.combo)],[status,last]]
 	progress = clampf(fraction,0,1)
 	var key := str(values)+note+str(snappedf(progress,0.005))
@@ -64,15 +67,19 @@ func _exit_tree() -> void:
 			tween.kill()
 
 func _draw() -> void:
-	var style := PlayTheme.surface(Color.WHITE,Color("deebf5"),18)
-	draw_style_box(style,Rect2(Vector2.ZERO,Vector2(780,102)))
-	if combo_glow>0:
-		draw_style_box(PlayTheme.surface(Color(0.72,0.94,0.83,combo_glow),Color.TRANSPARENT,12),Rect2(391,8,178,56))
+	draw_style_box(PlayTheme.game_panel(Color("f7fffc"),Color("bfdcd7"),14,3),Rect2(0,63,780,39))
 	for i in range(values.size()):
-		var x := 22+i*190
-		draw_string(FONT,Vector2(x,24),values[i][0],HORIZONTAL_ALIGNMENT_LEFT,-1,13,PlayTheme.MUTED)
-		draw_string(FONT,Vector2(x,54),values[i][1],HORIZONTAL_ALIGNMENT_LEFT,-1,26,PlayTheme.TEAL if i==2 else PlayTheme.TEXT)
-	draw_string(FONT,Vector2(22,80),note,HORIZONTAL_ALIGNMENT_LEFT,-1,13,PlayTheme.MUTED)
-	draw_line(Vector2(22,91),Vector2(758,91),Color("e4eef5"),5,true)
+		var x := i*198
+		var tint: Color = [PlayTheme.ORANGE,PlayTheme.TEAL,PlayTheme.PRIMARY,Color("a54e50")][i]
+		var fill: Color = [Color("fff8de"),Color("eefff6"),Color("eef7ff"),Color("fff1eb")][i]
+		if i==2:
+			fill = fill.lerp(Color("bdebd1"),combo_glow)
+		draw_style_box(PlayTheme.game_panel(fill,fill.darkened(.15),14,4),Rect2(x,0,186,58))
+		var glyph: String = ["score","accuracy","combo","speed" if values[i][0]=="速度 WPM" else "health"][i]
+		GameGlyph.draw(self,glyph,Vector2(x+23,30),12,tint)
+		draw_string(FONT,Vector2(x+45,20),values[i][0],HORIZONTAL_ALIGNMENT_LEFT,-1,14,PlayTheme.MUTED)
+		draw_string(FONT,Vector2(x+45,48),values[i][1],HORIZONTAL_ALIGNMENT_LEFT,-1,28,tint)
+	draw_string(FONT,Vector2(16,81),note,HORIZONTAL_ALIGNMENT_LEFT,-1,14,PlayTheme.MUTED)
+	draw_line(Vector2(16,92),Vector2(764,92),Color("d8e9e6"),5,true)
 	if shown_progress>0:
-		draw_line(Vector2(22,91),Vector2(22+736*shown_progress,91),PlayTheme.TEAL,5,true)
+		draw_line(Vector2(16,92),Vector2(16+748*shown_progress,92),PlayTheme.TEAL,5,true)

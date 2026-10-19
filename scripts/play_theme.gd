@@ -20,6 +20,33 @@ const SKY := Color("78bcf3")
 const LILAC := Color("b4a0ee")
 const PASTELS := [Color("e8f3ff"),Color("e5f7ef"),Color("fff1ce"),Color("fce9ef"),Color("efeaff")]
 
+static func game_panel(color := Color.WHITE, edge := BORDER, radius := 20, depth := 4) -> StyleBoxFlat:
+	var box := surface(color,edge,radius)
+	box.border_width_left = 2
+	box.border_width_right = 2
+	box.border_width_top = 2
+	box.border_width_bottom = depth
+	box.shadow_color = Color(.18,.35,.42,.09)
+	box.shadow_size = 6
+	box.shadow_offset = Vector2(0,3)
+	return box
+
+static func game_button(primary := false, state := "normal") -> StyleBoxFlat:
+	var fill := Color("ffe7a8") if primary else Color("f7fffc")
+	var edge := Color("dfbc67") if primary else Color("a4c9c3")
+	var depth := 5
+	if state=="hover":
+		fill = Color("fff0bb") if primary else Color("e8fff4")
+		edge = Color("c9993e") if primary else Color("63ac9b")
+	elif state=="pressed":
+		fill = Color("f8d888") if primary else Color("d6f1e5")
+		depth = 2
+	elif state=="disabled":
+		fill = Color("e8eeee")
+		edge = Color("c6d2d5")
+		depth = 2
+	return game_panel(fill,edge,16,depth)
+
 static func surface(color: Color, border := BORDER, radius := 20, raised := false) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
 	box.bg_color = color
@@ -52,6 +79,12 @@ static func ui(font: Font) -> Theme:
 	result.set_color("font_placeholder_color","TextEdit",MUTED)
 	result.set_color("caret_color","TextEdit",PRIMARY)
 	result.set_color("selection_color","TextEdit",Color("d3e4ff"))
+	result.set_stylebox("slider","HSlider",game_panel(Color("dcece6"),Color("b3cbc3"),7,2))
+	result.set_stylebox("grabber_area","HSlider",surface(Color("7bcbb0"),Color.TRANSPARENT,6))
+	result.set_stylebox("grabber_area_highlight","HSlider",surface(Color("65bfa2"),Color.TRANSPARENT,6))
+	result.set_stylebox("focus","HSlider",surface(Color.TRANSPARENT,PRIMARY,12))
+	for state in ["grabber","grabber_highlight","grabber_disabled"]:
+		result.set_icon(state,"HSlider",load("res://assets/slider-knob.svg"))
 	for control in ["OptionButton","TextEdit"]:
 		var input_box := surface(SURFACE)
 		input_box.content_margin_left = 12

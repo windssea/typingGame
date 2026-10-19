@@ -47,24 +47,18 @@ func text(value: String, p: Vector2, font_size := 16, color := PlayTheme.MUTED) 
 	draw_string(FONT,p,value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,color)
 
 func box(rect: Rect2, color: Color, border := PlayTheme.BORDER, radius := 12) -> void:
-	var style := StyleBoxFlat.new()
-	style.bg_color = color
-	style.border_color = border
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(radius)
-	draw_style_box(style, rect)
+	draw_style_box(PlayTheme.game_panel(color,border,radius,3),rect)
 
 func _draw() -> void:
-	box(Rect2(0,0,300,650),Color.WHITE,PlayTheme.BORDER,24)
+	box(Rect2(0,0,300,580),Color("fafff8"),Color("bed5ca"),24)
 	box(Rect2(12,12,276,155),Color("fff4d9"),Color.TRANSPARENT,16)
 	text("我的指法小教练",Vector2(20,35),22,PlayTheme.ORANGE)
-	text("先定位 F / J，再移动手指",Vector2(20,64),15)
 	var data := mapping(current)
 	var key_label := "空格" if current == " " else current
 	text(key_label if current != "" else "准备",Vector2(22,122),40,PlayTheme.TEXT)
 	text(NAMES[data.finger] if current != "" else "双手回到基准行",Vector2(117,117),18,PlayTheme.TEXT)
-	var instruction: String = "+ " + data.shift_hand + "按 Shift" if data.shift else "轻按后回到 " + HOMES[data.finger]
-	text("先定位 F / J，再移动手指" if current == "" else instruction,Vector2(20,156),15)
+	var instruction: String = "+ " + data.shift_hand + " Shift" if data.shift else "回到 " + HOMES[data.finger]
+	text("" if current == "" else instruction,Vector2(20,156),17)
 	# Full US QWERTY, including both Shift keys and punctuation.
 	draw_set_transform(Vector2(12,181),0,Vector2(0.42,0.42))
 	var rows := ["`1234567890-=", "qwertyuiop[]\\", "asdfghjkl;'", "zxcvbnm,./"]
@@ -86,7 +80,7 @@ func _draw() -> void:
 	box(Rect2(148,202,305,42),COLORS[8] if current == " " else Color("edf2fa"))
 	text("SPACE",Vector2(265,231),22,PlayTheme.TEXT)
 	draw_set_transform(Vector2.ZERO)
-	text("俯视手型 · 指尖对应同色键区",Vector2(20,316),15)
+	text("手指分工",Vector2(20,316),18)
 	for side in range(2):
 		var base := Vector2(24+side*145,460)
 		box(Rect2(base,Vector2(106,72)),Color("fff0df"),Color("e8c9a8"),24)
@@ -100,6 +94,3 @@ func _draw() -> void:
 		var thumb := base+Vector2(91 if side == 0 else -9,35)
 		box(Rect2(thumb,Vector2(24,52)),COLORS[8] if current == " " else Color("e5eafa"),COLORS[8],12)
 		text("左手" if side == 0 else "右手",base+Vector2(29,61),16)
-	text("F / J 凸点定位 · 拇指轻放空格",Vector2(18,574),15)
-	text("手指自然弯曲，手腕放松。",Vector2(18,606),15)
-	text("指法示意，不检测真实手势。",Vector2(18,634),14)

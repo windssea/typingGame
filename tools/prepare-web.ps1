@@ -9,6 +9,12 @@ body { background:#f4f9fd; color:#2d405b; }
 #status-notice { background:#fff4dd; color:#5b4327; border-color:#e9c88d; }
 </style>
 <script>
+// The engine retains its old internal application name for save compatibility.
+// Keep the public tab title on the current brand when the runtime starts.
+const publicTitle = '指尖挑战 · 打字训练与冒险';
+new MutationObserver(() => {
+ if(document.title!==publicTitle) document.title=publicTitle;
+}).observe(document.querySelector('title'),{childList:true,subtree:true,characterData:true});
 addEventListener('keydown',function(event){
  if(document.activeElement?.id==='canvas' && ['F1','F2','F3','Tab',' '].includes(event.key)) event.preventDefault();
 });

@@ -1,0 +1,37 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "model": null,
+  "actual": {
+    "width": 720,
+    "height": 720,
+    "aspect_ratio": "1:1",
+    "video_codec": "h264",
+    "frame_rate": "24/1",
+    "frame_count": 193,
+    "video_duration_seconds": 8.041667,
+    "format_duration_seconds": 8.041667,
+    "audio": {
+      "codec": "aac",
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_seconds": 8.0
+    },
+    "bytes": 2240802,
+    "sha256": "DCD122A780BC1D379ADB695810E71D0D4E092400EA13C99790581DB4F28E6E55"
+  },
+  "limitations": [
+    "image_to_video accepts only duration 6 or 10 and has no pinned-frame, fps, or audio-disable arguments. reference_to_video was used once because its schema supports a pinned first_frame and duration 1-15. Requested duration 8, resolution_name 720p, aspect_ratio 1:1. Source is 768x768. The same seed was pinned as first_frame and last_frame.",
+    "No fps argument exists. ffprobe reports a native 24/1 stream, 193 frames, 8.041667 s. The file was copied unchanged. Frames were not interpolated or duplicated.",
+    "No audio-disable argument exists. Voices were omitted. The raw file still contains stereo AAC and an attached JPEG cover. Both were kept so the saved file is the unmodified tool output.",
+    "The built-in call blocked until completion and returned no request ID, model name, or poll handle. No second submission was made."
+  ],
+  "archive": "source-silent.mp4",
+  "integration": {
+    "walk_native_frames": 48,
+    "hit_native_frames": 18,
+    "interpolation": false,
+    "version": "v10",
+    "qa": "contact-frame inspection and native in-game capture; no human commercial art sign-off"
+  }
+}

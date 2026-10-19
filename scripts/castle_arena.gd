@@ -10,6 +10,7 @@ var enemy_motion := ArcadeMotion.new()
 var enemy_reactions: Dictionary = {}
 var last_enemy_flash: Dictionary = {}
 var label_offsets: Dictionary = {}
+var creature_clips: Dictionary = {}
 const ROYAL_MAP = preload("res://assets/worlds/royal-battlefield.png")
 const GUARD_IDLE = preload("res://assets/animations/royal-guard-idle-v002/idle.tres")
 
@@ -21,8 +22,17 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	clip_contents = true
 	battle.effect.connect(receive_effect)
-	battle.phase_changed.connect(func(): banner_time = 3.0)
+	battle.phase_changed.connect(func(): banner_time = 3.0; prepare_creatures())
 	battle.key_feedback.connect(on_key_feedback)
+	prepare_creatures()
+
+func prepare_creatures() -> void:
+	for kind in ["wolf","boss","guard","shaman","bomber"]:
+		var unlocked: bool = battle.wave>={"wolf":2,"boss":3,"guard":3,"shaman":4,"bomber":5}[kind]
+		if unlocked and not creature_clips.has(kind):
+			var clips := ArcadeMotion.new()
+			clips.setup("castle_"+kind)
+			creature_clips[kind] = clips
 
 func receive_effect(kind: String, origin: Vector2, destination: Vector2, amount: int) -> void:
 	var duration := 0.8
@@ -50,7 +60,7 @@ func _process(delta: float) -> void:
 				label_offsets.erase(id)
 		var active_ids: Array = []
 		for target in battle.targets:
-			if target.kind!="goblin":
+			if target.kind not in ["goblin","wolf","boss","guard","shaman","bomber"]:
 				continue
 			active_ids.append(target.id)
 			if target.flash>float(last_enemy_flash.get(target.id,0))+0.001:
@@ -85,7 +95,10 @@ func _draw() -> void:
 	if battle == null:
 		return
 	if shake > 0 and not reduced_motion:
-		draw_set_transform(Vector2(sin(clock*90)*shake*10,cos(clock*73)*shake*7))
+		world_offset = Vector2(sin(clock*90)*shake*10,cos(clock*73)*shake*7)
+	else:
+		world_offset = Vector2.ZERO
+	draw_set_transform(world_offset)
 	draw_battlefield()
 	for i in range(CastleRun.PADS.size()):
 		draw_pad(i)
@@ -100,6 +113,8 @@ func _draw() -> void:
 	for effect in effects:
 		draw_effect(effect)
 	juice.draw(self)
+	world_offset = Vector2.ZERO
+	draw_set_transform(Vector2.ZERO)
 	var occupied: Array[Rect2] = []
 	for target in ordered:
 		draw_target_label(target,occupied)
@@ -270,16 +285,25 @@ func draw_enemy(target: Dictionary) -> void:
 	if art.sprites.has(kind):
 		var stride := 0.0 if reduced_motion else sin(target.phase*1.6)
 		var recoil: Vector2 = Vector2.ZERO if reduced_motion else (p-CastleRun.KEEP).normalized()*target.flash*55
-		draw_set_transform(p+recoil+Vector2(0,18),stride*0.045,Vector2(1+stride*0.025,1-absf(stride)*0.05))
+		var facing := -1.0 if p.x>CastleRun.KEEP.x else 1.0
+		# Mirror around the actor's root, never with a negative destination rectangle.
+		draw_set_transform(p+recoil+Vector2(0,18)+world_offset,stride*0.045*facing,Vector2(facing*(1+stride*0.025),1-absf(stride)*0.05))
 		if kind=="goblin" and not enemy_motion.clips.is_empty():
 			var state := "hit" if enemy_reactions.has(target.id) else "idle"
 			var seconds: float = float(enemy_reactions.get(target.id,0)) if state=="hit" else clock+target.id*0.19
 			var frame := enemy_motion.texture(state,seconds,reduced_motion)
-			var facing := -1.0 if p.x>CastleRun.KEEP.x else 1.0
-			draw_texture_rect(frame,Rect2(Vector2(-55*facing,-90+bob),Vector2(110*facing,110)),false,Color("fff0c2") if target.flash>0 else Color.WHITE)
+			draw_texture_rect(frame,Rect2(Vector2(-55,-90+bob),Vector2(110,110)),false,Color("fff0c2") if target.flash>0 else Color.WHITE)
+		elif creature_clips.has(kind):
+			var clips: ArcadeMotion = creature_clips[kind]
+			var state := "hit" if enemy_reactions.has(target.id) else "idle"
+			var seconds: float = float(enemy_reactions.get(target.id,0)) if state=="hit" else clock+target.id*.23
+			var frame := clips.texture(state,seconds,reduced_motion)
+			var bounds := 280.0 if kind=="boss" else 130.0
+			var top := -195.0 if kind=="boss" else -92.0
+			draw_texture_rect(frame,Rect2(Vector2(-bounds*.5,top+bob),Vector2(bounds,bounds)),false,Color("fff0c2") if target.flash>0 else Color.WHITE)
 		else:
 			art.draw_sprite(self,kind,Vector2(0,-35+bob),Vector2(68,78)*s,Color("fff0c2") if target.flash>0 else Color.WHITE)
-		draw_set_transform(Vector2.ZERO)
+		draw_set_transform(world_offset)
 		if kind=="boss":
 			if target.rage:
 				draw_arc(p,61,clock,clock+TAU*0.9,50,Color("d67c59"),2,true)

@@ -48,7 +48,7 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 		nitro_age = 0.0
 	if kind==run.mode and run.context=="training" and run.kills>0 and run.kills%6==0 and run.kills<run.goal:
 		checkpoint_age = 1.6
-		checkpoint_label = "阶段完成！技能已充满 · 下一段继续冒险"
+		checkpoint_label = "阶段完成 · 技能充满"
 		juice.burst(Vector2(520,100),PlayTheme.YELLOW,1,"confetti")
 	if kind=="aliens" and power%3==0:
 		shield_pulse = 0.65
@@ -81,6 +81,7 @@ func _process(delta: float) -> void:
 		visual_player_hp = lerpf(visual_player_hp,run.hp,1-exp(-delta*4))
 		# Freeze only the character pose for an impact beat; input, timers and FX continue.
 		impact_freeze = maxf(0,impact_freeze-delta)
+		var visual_delta := delta if impact_freeze<=0 or reduced_motion else 0.0
 		if impact_freeze<=0 or reduced_motion:
 			pose_clock += delta
 		shield_pulse = maxf(0,shield_pulse-delta)
@@ -92,14 +93,14 @@ func _process(delta: float) -> void:
 		if nitro_age>=0:
 			nitro_age += delta
 		for echo in reaction_echoes.duplicate():
-			echo.age += delta
+			echo.age += visual_delta
 			if echo.age>=maxf(0.6,motion.duration("hit")):
 				reaction_echoes.erase(echo)
 		juice.step(delta)
 		if blue_attack_age>=0:
-			blue_attack_age += delta
+			blue_attack_age += visual_delta
 		if coral_attack_age>=0:
-			coral_attack_age += delta
+			coral_attack_age += visual_delta
 		trail_clock -= delta
 		if trail_clock<=0:
 			trail_clock = 0.05
@@ -111,7 +112,7 @@ func _process(delta: float) -> void:
 				if run.boost>0 and run.combo>=3:
 					juice.trail(p,Vector2(-220,0),Color("67e5ff"),11)
 		trauma = maxf(0,trauma-delta*2.5)
-		strike = maxf(0,strike-delta)
+		strike = maxf(0,strike-visual_delta)
 		for burst in bursts.duplicate():
 			burst.life -= delta
 			if burst.life <= 0:
@@ -125,8 +126,8 @@ func _draw() -> void:
 	panel(Rect2(Vector2.ZERO,size),backgrounds[run.mode],24,Color("cbdff0"))
 	draw_texture_rect(art.background,Rect2(Vector2.ZERO,size),false)
 	draw_atmosphere()
-	var offset := Vector2.ZERO if reduced_motion else Vector2(sin(clock*45),cos(clock*38))*trauma*trauma*7
-	draw_set_transform(offset)
+	world_offset = Vector2.ZERO if reduced_motion else Vector2(sin(clock*45),cos(clock*38))*trauma*trauma*7
+	draw_set_transform(world_offset)
 	if not art.sprites.is_empty():
 		draw_generated_game()
 	else:
@@ -144,6 +145,7 @@ func _draw() -> void:
 		panel(Rect2(242,77,560,33),Color(1,0.96,0.82,0.96),12)
 		write(checkpoint_label,Vector2(522,100),17,PlayTheme.ORANGE,true)
 	juice.draw(self)
+	world_offset = Vector2.ZERO
 	draw_set_transform(Vector2.ZERO)
 	# Words stay still and above feedback; readability takes priority over particles.
 	for target in run.targets:
@@ -167,10 +169,7 @@ func _draw() -> void:
 			var badge: Vector2 = target.position+Vector2(0,52 if run.mode=="aliens" else 63)
 			var color: Color = MINT if feature=="supply" else CORAL if feature=="scout" else PlayTheme.ORANGE
 			panel(Rect2(badge-Vector2(54,18),Vector2(108,25)),Color(1,1,1,0.94),10)
-			write({"supply":"补给 +8 盾","scout":"快速侦察舰","bonus":"奖励 +40 分"}[feature],badge,13,color,true)
-	panel(Rect2(24,588,992,43),Color(1,1,1,0.96),14)
-	var notes := {"balloons":"输入击破气球 · 越靠近顶部，越需要优先处理", "aliens":"输入发射激光 · 每三连击补充护盾 · 拦截俯冲外星舰", "moles":"输入举牌文字敲击地鼠 · 训练中漏掉不会扣体力", "racing":"完整输入推进赛程 · 三连击氮气加速 · 挑战需先于对手冲线", "fighter":"在蓄力条耗尽前输入 · 重拳打断攻击 · 四次命中击倒一位对手"}
-	write(notes[run.mode],Vector2(44,615),16,Color("455d75"))
+			write({"supply":"补给 +8 盾","scout":"快速侦察舰","bonus":"奖励 +40 分"}[feature],badge,14,color,true)
 
 func draw_anticipation() -> void:
 	var target := run.recommended_target()
@@ -214,9 +213,9 @@ func draw_mole(texture: Texture2D, point: Vector2, emergence: float, tint := Col
 	var height := clampf(point.y+27-full.position.y,0,182)
 	if height>0:
 		draw_texture_rect_region(texture,Rect2(full.position,Vector2(182,height)),Rect2(0,0,texture.get_width(),texture.get_height()*height/182),tint)
-	draw_set_transform(point+Vector2(0,27),0,Vector2(1,.22))
+	draw_set_transform(point+Vector2(0,27)+world_offset,0,Vector2(1,.22))
 	draw_arc(Vector2.ZERO,56,0,PI,40,Color("b69362"),9,true)
-	draw_set_transform(Vector2.ZERO)
+	draw_set_transform(world_offset)
 
 func draw_atmosphere() -> void:
 	if reduced_motion:
@@ -235,7 +234,7 @@ func draw_skill_field() -> void:
 		var alpha := 0.6 if reduced_motion else 0.5+sin(clock*3)*0.1
 		draw_arc(Vector2(350,430),80,-PI/2,PI/2,40,Color(0.4,0.85,1,alpha),5,true)
 		panel(Rect2(250,275,196,33),Color(0.92,0.98,1,0.94),12)
-		write("格挡已准备 · 抵挡一次反击",Vector2(348,297),13,BLUE,true)
+		write("格挡已准备 · 抵挡一次反击",Vector2(348,297),14,BLUE,true)
 	elif run.skill_time>0 and run.mode in ["moles","balloons"]:
 		for target in run.targets:
 			var p: Vector2 = target.position
@@ -252,22 +251,15 @@ func draw_skill_field() -> void:
 		write("干扰成功 -8%",point+Vector2(0,70),15,BLUE,true)
 
 func sprite_pose(id: String, center: Vector2, bounds: Vector2, angle: float, stretch: Vector2) -> void:
-	draw_set_transform(center,angle,stretch)
+	draw_set_transform(center+world_offset,angle,stretch)
 	art.draw_sprite(self,id,Vector2.ZERO,bounds)
-	draw_set_transform(Vector2.ZERO)
+	draw_set_transform(world_offset)
 
 func banner(title: String, subtitle: String) -> void:
 	panel(Rect2(20,18,570,48),Color(1,1,1,0.94),16)
 	draw_circle(Vector2(40,42),5,MINT)
 	write(title,Vector2(54,49),21,INK)
 	write(subtitle,Vector2(227,48),14,PlayTheme.MUTED)
-	panel(Rect2(770,18,248,48),Color(1,1,1,0.94),16)
-	var streak := run.combo%3
-	for i in range(3):
-		draw_circle(Vector2(795+i*19,42),5,MINT if i<streak or (run.combo>0 and streak==0) else Color("dbe7ee"))
-	write("连击 %d" % run.combo,Vector2(854,49),17,MINT)
-	if run.combo>=3 and not reduced_motion:
-		draw_arc(Vector2(1000,42),8,-PI/2,-PI/2+TAU*minf(1,strike*2),20,PlayTheme.ORANGE,2,true)
 
 func motion_sprite(state: String, seconds: float, center: Vector2, bounds: Vector2, tint := Color.WHITE) -> bool:
 	var texture := motion.texture(state,seconds,reduced_motion)
@@ -277,15 +269,17 @@ func motion_sprite(state: String, seconds: float, center: Vector2, bounds: Vecto
 	return true
 
 func draw_generated_game() -> void:
-	var titles := {"balloons":"气球蹦蹦节","aliens":"星际闪电战","moles":"地鼠敲敲乐","racing":"疾速拉力赛","fighter":"连击小拳王"}
-	banner(titles[run.mode],run.status_text())
+	if run.mode=="aliens":
+		banner("外星来袭", "第 %d 阵" % mini(run.wave,4))
+	elif run.mode=="fighter":
+		banner("对手", "第 %d 位" % run.round_number)
 	if run.mode == "moles":
 		for i in range(6):
 			var hole := Vector2(240+(i%3)*280,326+(i/3)*170)
-			draw_set_transform(hole,0,Vector2(1,0.32))
+			draw_set_transform(hole+world_offset,0,Vector2(1,0.32))
 			draw_circle(Vector2.ZERO,61,Color("ad8756"))
 			draw_circle(Vector2.ZERO,52,Color("574839"))
-			draw_set_transform(Vector2.ZERO)
+			draw_set_transform(world_offset)
 	for target in run.targets:
 		var p: Vector2 = target.position
 		var bob := 0.0 if reduced_motion else sin(clock*2+target.id)*5
@@ -360,8 +354,8 @@ func draw_generated_game() -> void:
 		var right := Vector2(690,440)+Vector2(punch*(-55 if last_impact in ["miss","block"] else 16),0)
 		draw_ellipse_shadow(Vector2(350,560),Vector2(67,16))
 		draw_ellipse_shadow(Vector2(690,560),Vector2(67,16))
-		draw_texture_rect(BoxingMotion.texture(0,clock,blue_attack_age,reduced_motion),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
-		draw_texture_rect(BoxingMotion.texture(1,clock,coral_attack_age,reduced_motion),Rect2(right-Vector2(160,175),Vector2(320,320)),false)
+		draw_texture_rect(BoxingMotion.texture(0,pose_clock,blue_attack_age,reduced_motion),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
+		draw_texture_rect(BoxingMotion.texture(1,pose_clock,coral_attack_age,reduced_motion),Rect2(right-Vector2(160,175),Vector2(320,320)),false)
 		for side in range(2):
 			var x := 50+side*560
 			var health: int = run.hp if side==0 else run.enemy_hp
@@ -508,7 +502,7 @@ func boxer(p: Vector2, tint: Color, facing: int, attack: float) -> void:
 	draw_circle(p+Vector2(lean+facing*11,-75),3,INK)
 
 func fighter() -> void:
-	banner("指尖格斗馆", "第 %d 位对手 · 输入打断蓄力，稳住节奏形成连击。" % run.round_number)
+	banner("指尖格斗馆", "第 %d 位对手" % run.round_number)
 	for i in range(14):
 		var p := Vector2(65+i*72,250+(i%2)*15)
 		draw_circle(p,15,Color("e7b7bd"))

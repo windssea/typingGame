@@ -95,7 +95,9 @@ func exercise() -> void:
 	await capture("challenges-v03")
 	var challenge_scroll: ScrollContainer = app.layer.find_child("GameCollection",true,false)
 	check(challenge_scroll.get_child(0).get_child_count()==8,"eight distinct games in challenge hub")
-	app.free()
+	app.queue_free()
+	await process_frame
+	await create_timer(.1).timeout
 	for suffix in ["", ".bak", ".tmp"]:
 		if FileAccess.file_exists(profile_path+suffix):
 			DirAccess.remove_absolute(profile_path+suffix)

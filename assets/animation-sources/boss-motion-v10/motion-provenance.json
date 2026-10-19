@@ -1,0 +1,41 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "model": null,
+  "requested": {
+    "aspect_ratio": "1:1",
+    "resolution_name": "720p",
+    "duration_seconds": 8,
+    "first_frame_pinned": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\boss-motion-v10\\seed-v001.png",
+    "last_frame_pinned": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\boss-motion-v10\\seed-v001.png"
+  },
+  "actual": {
+    "width": 720,
+    "height": 720,
+    "video_codec": "h264",
+    "fps": 24,
+    "frame_rate": "24/1",
+    "frame_count": 193,
+    "video_duration_seconds": 8.041667,
+    "audio_codec": "aac",
+    "audio_channels": 2,
+    "audio_sample_rate": 48000,
+    "audio_duration_seconds": 8.0
+  },
+  "limitations": [
+    "image_to_video accepts only duration 6 or 10, so one reference_to_video call was used. Its schema supports a pinned first_frame and duration 1-15.",
+    "Source is 768x768. aspect_ratio 1:1 and resolution_name 720p were sent. The file is 720x720.",
+    "No fps argument exists. Measured frame rate is 24/1. The file was copied byte-for-byte and was not re-encoded, interpolated, or frame-duplicated.",
+    "No audio-disable argument exists. The raw file includes an AAC stereo track.",
+    "The tool is synchronous. It returned no generation request id and no video model name. The same call was waited on until success (54242 ms). It was not submitted again.",
+    "Container video duration is 8.041667 s (193 frames at 24 fps), not a trimmed 8.000 s."
+  ],
+  "archive": "source-silent.mp4",
+  "integration": {
+    "walk_native_frames": 48,
+    "hit_native_frames": 18,
+    "interpolation": false,
+    "version": "v10b",
+    "qa": "contact-frame inspection and native in-game capture; no human commercial art sign-off"
+  }
+}

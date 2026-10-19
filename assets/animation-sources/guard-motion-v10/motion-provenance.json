@@ -1,0 +1,45 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "model": null,
+  "requested": {
+    "aspect_ratio": "1:1",
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "first_frame_pinned": true,
+    "last_frame_pinned": true,
+    "fps": null,
+    "audio": null
+  },
+  "actual": {
+    "width": 720,
+    "height": 720,
+    "video_codec": "h264",
+    "r_frame_rate": "24/1",
+    "avg_frame_rate": "24/1",
+    "nb_frames": 193,
+    "video_duration_seconds": 8.041667,
+    "format_duration_seconds": 8.041667,
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "audio_duration_seconds": 8.0,
+    "bytes": 2043663,
+    "sha256": "C254BCDE0505C4DF499A8D59023349671266D703F04158A306474BC185B2DC36"
+  },
+  "limitations": [
+    "image_to_video accepts duration 6 or 10 only and has no pinned-frame argument. reference_to_video was used once because its schema supports first_frame and duration 1-15.",
+    "No fps argument exists. Measured rate is 24/1. The file was byte-copied; frames were not interpolated or duplicated.",
+    "No audio-disable argument exists. No voice was sent. The raw file still contains an AAC stereo track and was saved unchanged.",
+    "The tool blocked until completion and returned only path, filename, and session_folder. No Imagine request id and no model name were returned, so there was no separate request to poll.",
+    "Container duration is 8.041667s (193 frames), not exactly 8.000s. An attached mjpeg stream is also present at 720x720."
+  ],
+  "archive": "source-silent.mp4",
+  "integration": {
+    "walk_native_frames": 48,
+    "hit_native_frames": 18,
+    "interpolation": false,
+    "version": "v10",
+    "qa": "contact-frame inspection and native in-game capture; no human commercial art sign-off"
+  }
+}

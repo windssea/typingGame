@@ -10,6 +10,8 @@ func setup(mode: String) -> void:
 	background = load("res://assets/generated/"+filename+".png")
 	var family := "castle" if mode == "castle" else ("arcade" if mode in ArcadeRun.MODES else "learning")
 	var atlas_path := "res://assets/generated/"+family+"-sprites.png"
+	if family=="learning":
+		atlas_path = "res://assets/generated/learning-sprites-v10.png"
 	if not ResourceLoader.exists(atlas_path) or not FileAccess.file_exists("res://assets/generated/regions.json"):
 		return
 	var atlas: Texture2D = load(atlas_path)

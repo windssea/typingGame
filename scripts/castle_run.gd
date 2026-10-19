@@ -154,6 +154,8 @@ func spawn_enemy(kind: String) -> Dictionary:
 		if targets.all(func(t): return position.distance_to(t.position) > 105):
 			break
 	var health: int = definition.health
+	if kind=="boss":
+		position.y = clampf(position.y,205,550)
 	if kind == "boss" and wave == 6:
 		health = 550
 	if context=="challenge":

@@ -1,0 +1,10 @@
+{
+  "id": "learning-sprites-v10",
+  "tool": "built-in image_gen",
+  "date": "2026-10-19",
+  "source": "Original six-prop transparent sprite sheet, no reference image or third-party IP",
+  "brief": "Premium bright American toy-stylized cartoon props, 3 columns by 2 rows: bubble, blue meteor, blank keycap, mint stopwatch, star trophy, friendly toy cannon. Rounded volumes, broad upper-left highlights, no baked text or UI.",
+  "size": [1536,1024],
+  "alpha_review": "RGBA with transparent background; source retained unchanged, declared 512x512 cells",
+  "integration": "GeneratedArt learning family; four foundation games and their task tiles"
+}

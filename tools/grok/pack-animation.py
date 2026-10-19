@@ -13,11 +13,14 @@ parser.add_argument('--start', type=float, default=0)
 parser.add_argument('--seconds', type=float, default=2)
 parser.add_argument('--cell', type=int, default=128)
 parser.add_argument('--columns', type=int, default=8)
+parser.add_argument('--inset', type=int, default=0, help='Transparent safety padding inside each cell')
 parser.add_argument('--crop', help='Static x:y:width:height source region, in pixels')
 parser.add_argument('--name', default='idle')
 parser.add_argument('--once', action='store_true')
 parser.add_argument('--key', default='00ff00',help='Six-digit chroma key; use ff00ff for green characters')
 args = parser.parse_args()
+if args.inset<0 or args.inset*2>=args.cell:
+    raise SystemExit('Invalid cell safety inset')
 source = Path(args.video).resolve()
 output = Path(args.out).resolve()
 if output.exists() and any(output.iterdir()):
@@ -37,7 +40,7 @@ atlas = output/'idle-atlas.png'
 filter_parts = [
     'format=rgba',
     f'colorkey=0x{args.key}:0.18:0.08',
-    f'scale={args.cell}:{args.cell}:force_original_aspect_ratio=decrease:flags=lanczos',
+    f'scale={args.cell-args.inset*2}:{args.cell-args.inset*2}:force_original_aspect_ratio=decrease:flags=lanczos',
     f'pad={args.cell}:{args.cell}:(ow-iw)/2:(oh-ih)/2:color=black@0',
     f'tile={args.columns}x{rows}:nb_frames={count}:color=black@0',
 ]
@@ -61,6 +64,7 @@ parts.extend(['[resource]','animations = [{',f'"frames": [{frames}],','"loop": '
 (output/'idle.tres').write_text('\n'.join(parts),encoding='utf-8')
 report = {'source':str(source),'native':{'width':stream['width'],'height':stream['height'],'fps':str(fps),'duration':duration,'frames':stream.get('nb_read_frames'),'audio_tracks':sum(s['codec_type']=='audio' for s in probe['streams'])},'atlas':{'file':relative,'cell':args.cell,'columns':args.columns,'rows':rows,'frames':count,'fps':str(fps),'interval':[args.start,args.start+count/float(fps)],'decoded_rgba_bytes':args.columns*rows*args.cell*args.cell*4},'processing':['native frame interval extraction','green chroma key','green despill','shared whole-canvas scale and padding','atlas packing'],'interpolation':False,'loop_review':'pending-native-scale-review','status':'candidate'}
 report.update({'static_crop':args.crop,'animation':args.name,'loop':not args.once,'chroma_key':args.key})
+report['cell_safety_inset_px']=args.inset
 report['processing']=['native frame interval extraction',f'chroma key #{args.key}']+(['green despill'] if args.key.lower()=='00ff00' else [])+['shared whole-canvas scale and padding','atlas packing']
 (output/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
 print(json.dumps(report,ensure_ascii=False))

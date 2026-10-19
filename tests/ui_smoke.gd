@@ -126,7 +126,9 @@ func exercise() -> void:
 	restored.path = profile_path
 	restored.load_profile()
 	check(restored.data.completed.has("home_index"), "UI session save survives reload")
-	app.free()
+	app.queue_free()
+	await process_frame
+	await create_timer(.1).timeout
 	for suffix in ["", ".bak", ".tmp"]:
 		if FileAccess.file_exists(profile_path+suffix):
 			DirAccess.remove_absolute(profile_path+suffix)

@@ -1,0 +1,41 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\ufo-motion-v08\\v001\\grok-raw.mp4",
+  "native": {
+    "width": 720,
+    "height": 720,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/ufo-idle-v10/idle-atlas.png",
+    "cell": 192,
+    "columns": 8,
+    "rows": 6,
+    "frames": 48,
+    "fps": "24",
+    "interval": [
+      0.0,
+      2.0
+    ],
+    "decoded_rgba_bytes": 7077888
+  },
+  "processing": [
+    "native frame interval extraction",
+    "static shared crop 96:96:528:528",
+    "magenta chroma key #ff00ff; no green despill",
+    "shared canvas scale and padding",
+    "atlas packing",
+    "boundary-only magenta contamination attenuation, no interior color remap"
+  ],
+  "interpolation": false,
+  "loop_review": "Source contact sheets and actual Godot arena reviewed; short idle seam may remain. No interpolation.",
+  "status": "accepted-runtime-v08",
+  "static_crop": "96:96:528:528",
+  "animation": "idle",
+  "loop": true,
+  "chroma_key": "ff00ff",
+  "source_atlas": "assets/animations/ufo-idle-v08/idle-atlas.png",
+  "boundary_pixels_affected": 27424
+}

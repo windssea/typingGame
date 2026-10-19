@@ -1,0 +1,11 @@
+{
+  "source": "assets/generated/castle-sprites.png",
+  "region": [
+    1171,
+    9,
+    357,
+    335
+  ],
+  "operation": "technical alpha region extraction and fixed magenta reference canvas",
+  "source_tool": "built-in Image Gen original atlas"
+}

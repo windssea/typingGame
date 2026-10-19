@@ -35,6 +35,7 @@ var recent_words: Array[String] = []
 var last_word := ""
 var last_meaning := ""
 var last_completion_point := Vector2.INF
+var last_input_ok := true
 const CENTER := Vector2(680, 345)
 
 func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 0) -> void:
@@ -193,6 +194,7 @@ func type_character(character: String) -> bool:
 	var stat: Dictionary = key_stats.get(expected, {"hit":0,"miss":0})
 	attempts += 1
 	if target.is_empty() or expected != character:
+		last_input_ok = false
 		stat.miss += 1
 		key_stats[expected] = stat
 		combo = 0
@@ -200,6 +202,7 @@ func type_character(character: String) -> bool:
 		key_feedback.emit(character,false,target.get("position",CENTER))
 		return false
 	stat.hit += 1
+	last_input_ok = true
 	key_stats[expected] = stat
 	correct += 1
 	target.typed += 1
@@ -238,6 +241,7 @@ func defeat(target: Dictionary, lightning: bool) -> void:
 func backspace() -> void:
 	if paused or done:
 		return
+	last_input_ok = true
 	var target := target_by_id(locked)
 	if not target.is_empty() and target.typed > 0:
 		target.typed -= 1
@@ -247,6 +251,7 @@ func backspace() -> void:
 			locked = -1
 
 func cancel_target() -> void:
+	last_input_ok = true
 	var target := target_by_id(locked)
 	if not target.is_empty():
 		correct = maxi(0, correct - int(target.typed))

@@ -19,7 +19,7 @@ func _process(delta: float) -> void:
 		queue_redraw()
 
 func _draw() -> void:
-	var sprite: String = {"balloons":"balloon_coral","aliens":"ufo","moles":"mole","racing":"car_mint","fighter":"boxer_blue","castle":"tower_fire"}.get(mode,"")
+	var sprite: String = {"dojo":"key","bubbles":"bubble","rain":"comet","sprint":"stopwatch","balloons":"balloon_coral","aliens":"ufo","moles":"mole","racing":"car_mint","fighter":"boxer_blue","castle":"tower_fire"}.get(mode,"")
 	if art.sprites.has(sprite):
 		var bob := 0.0 if reduced_motion else sin(clock*2.5)*3
 		var frame := preview_motion.texture("idle",clock,reduced_motion)

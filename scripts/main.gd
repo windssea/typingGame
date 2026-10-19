@@ -1,6 +1,7 @@
 extends Control
 
 const FONT = preload("res://assets/ui-font.ttf")
+const HEADING = preload("res://assets/ui-heading.ttf")
 const BG := PlayTheme.BACKGROUND
 const PANEL := PlayTheme.SURFACE
 const LINE := PlayTheme.BORDER
@@ -33,6 +34,7 @@ var challenge_index := 0
 var ui_tweens: Dictionary = {}
 var live_hud: LiveHud
 var vocabulary_topic := "mixed"
+var soundscape: GameSoundscape
 func _ready() -> void:
 	# Public rebrand keeps the existing engine/save namespace for all old profiles.
 	DisplayServer.window_set_title("指尖挑战 · 每一次输入，都有回应")
@@ -43,6 +45,9 @@ func _ready() -> void:
 	pace = float(store.data.settings.get("training_speed",1.0))
 	challenge_index = SessionOptions.rank_index(store.data.settings.get("challenge_rank","normal"))
 	vocabulary_topic = store.data.settings.get("vocabulary_topic","mixed")
+	soundscape = GameSoundscape.new()
+	soundscape.settings = store.data.settings
+	add_child(soundscape)
 	theme = PlayTheme.ui(FONT)
 	show_home()
 	if OS.has_feature("web") and JavaScriptBridge.eval("new URLSearchParams(location.search).has('qa')",true):
@@ -68,6 +73,11 @@ func _ready() -> void:
 		run.paused = true
 
 func clear_ui() -> void:
+	if is_instance_valid(soundscape):
+		soundscape.settings = store.data.settings
+		soundscape.apply_settings()
+		if page!="game":
+			soundscape.run = null
 	modal_focus.clear()
 	castle_panel = null
 	castle_audio = null
@@ -87,13 +97,15 @@ func clear_ui() -> void:
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	layer.add_child(backdrop)
-	var decor := PlayfulArt.new()
-	decor.variant = "background"
-	layer.add_child(decor)
+	if page!="game":
+		var stage := MenuStage.new()
+		stage.home = page=="home"
+		stage.reduced_motion = store.data.settings.reduced_motion
+		layer.add_child(stage)
 	overlay = null
 
 func style(color: Color, border := LINE, radius := 22) -> StyleBoxFlat:
-	return PlayTheme.surface(color,border,radius,true)
+	return PlayTheme.game_panel(color,border,radius,4)
 
 func panel(at: Vector2, dimensions: Vector2, color := PANEL, parent: Control = layer) -> Panel:
 	var item := Panel.new()
@@ -108,32 +120,42 @@ func label(value: String, at: Vector2, font_size := 18, color := TEXT, parent: C
 	item.text = value
 	item.position = at
 	item.add_theme_font_size_override("font_size", font_size)
+	if font_size>=24:
+		item.add_theme_font_override("font",HEADING)
 	item.add_theme_color_override("font_color", color)
 	parent.add_child(item)
 	return item
 
 func button(value: String, at: Vector2, dimensions: Vector2, callback: Callable, primary := false, parent: Control = layer) -> Button:
 	var item := Button.new()
+	dimensions.y = maxf(44,dimensions.y)
 	item.text = value
 	item.position = at
 	item.size = dimensions
+	item.add_theme_font_override("font",HEADING)
 	item.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	item.add_theme_stylebox_override("normal", style(PlayTheme.ACTION if primary else Color.WHITE, PlayTheme.ACTION_EDGE if primary else LINE, 15))
-	item.add_theme_stylebox_override("hover", style(Color("ffdf9f") if primary else Color("edf5ff"), Color("d8b16b") if primary else Color("a9c4e2"), 15))
-	item.add_theme_stylebox_override("pressed", PlayTheme.surface(Color("ffda95") if primary else Color("e5f0fc"),PlayTheme.ACTION_EDGE if primary else Color("a9c4e2"),15))
+	item.add_theme_stylebox_override("normal",PlayTheme.game_button(primary))
+	item.add_theme_stylebox_override("hover",PlayTheme.game_button(primary,"hover"))
+	item.add_theme_stylebox_override("pressed",PlayTheme.game_button(primary,"pressed"))
 	var focus := PlayTheme.surface(Color.TRANSPARENT,PlayTheme.PRIMARY,15)
-	focus.set_border_width_all(2)
+	focus.set_border_width_all(3)
 	item.add_theme_stylebox_override("focus", focus)
-	item.add_theme_stylebox_override("disabled", PlayTheme.surface(Color("edf1f6"),Color("dce4ee"),15))
+	item.add_theme_stylebox_override("disabled",PlayTheme.game_button(false,"disabled"))
 	item.add_theme_color_override("font_disabled_color",Color("718197"))
 	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		item.add_theme_color_override(state, PlayTheme.ACTION_INK if primary else TEXT)
-	item.pressed.connect(callback)
+	item.pressed.connect(func():
+		if is_instance_valid(soundscape):
+			soundscape.cue("confirm",-18)
+		callback.call())
 	parent.add_child(item)
 	item.pivot_offset = dimensions/2
 	item.mouse_entered.connect(func(): animate_button(item,1.025))
 	item.mouse_exited.connect(func(): animate_button(item,1.0))
 	item.focus_entered.connect(func(): animate_button(item,1.025))
+	item.focus_entered.connect(func():
+		if is_instance_valid(soundscape):
+			soundscape.cue("focus",-23))
 	item.focus_exited.connect(func(): animate_button(item,1.0))
 	item.button_down.connect(func(): animate_button(item,0.97))
 	item.button_up.connect(func(): animate_button(item,1.0))
@@ -177,56 +199,47 @@ func select_rank(index: int) -> void:
 	layer.find_child("ChallengeRank%d" % index,true,false).grab_focus()
 
 func navigation(active: String) -> void:
-	panel(Vector2(0,0),Vector2(252,900),Color.WHITE)
-	label("指尖挑战",Vector2(31,37),33)
-	label("让输入成为你的力量",Vector2(31,91),16,MUTED)
-	button("01   打字训练",Vector2(22,179),Vector2(208,65),show_lessons,active!="challenges").name = "TrainingNav"
-	label("从 F / J 开始，一步一步学",Vector2(31,256),14,MUTED)
-	button("02   打字挑战",Vector2(22,311),Vector2(208,65),show_challenges,active=="challenges").name = "ChallengeNav"
-	label("用学会的本领，完成冒险",Vector2(31,388),14,MUTED)
-	var pal := PlayfulArt.new()
-	pal.variant = "sidebar"
-	pal.position = Vector2(36,482)
-	pal.scale = Vector2.ONE*0.8
-	layer.add_child(pal)
-	label("每次练习，都算进步",Vector2(30,624),19,GOLD)
-	label("Lv. %02d  /  %d XP" % [1+int(store.data.xp/100),store.data.xp],Vector2(30,665),17)
-	label("已掌握 %d / 10 节" % store.data.completed.size(),Vector2(30,699),16,MUTED)
-	button("存档与设置",Vector2(28,755),Vector2(194,42),show_profile).name = "ProfileUtility"
-	label("Tab 选择 · Enter 确认",Vector2(31,821),14,MUTED)
-	label("指尖挑战 · 活力版 0.9",Vector2(31,853),14,MUTED)
+	var logo := label("指尖挑战",Vector2(30,35),34)
+	logo.add_theme_color_override("font_outline_color",Color.WHITE)
+	logo.add_theme_constant_override("outline_size",4)
+	button("打字训练",Vector2(22,179),Vector2(208,65),show_lessons,active!="challenges").name = "TrainingNav"
+	button("打字挑战",Vector2(22,311),Vector2(208,65),show_challenges,active=="challenges").name = "ChallengeNav"
+	add_badge("moles",Vector2(25,445),Vector2(200,160))
+	panel(Vector2(24,624),Vector2(204,104),Color("fffae8"))
+	label("Lv. %02d   ·   %d XP" % [1+int(store.data.xp/100),store.data.xp],Vector2(40,645),19)
+	label("已掌握 %d / 10 节" % store.data.completed.size(),Vector2(40,685),16,MINT)
+	button("存档与设置",Vector2(28,747),Vector2(194,46),show_profile).name = "ProfileUtility"
+	sound_button = button("F2 声音开" if store.data.settings.get("sound",true) else "F2 声音关",Vector2(28,805),Vector2(194,44),toggle_sound)
 
 func show_home() -> void:
 	page = "home"
 	run = null
 	clear_ui()
-	navigation("lessons")
-	label("指尖挑战 / 每一次输入，都有回应",Vector2(300,45),16,MINT)
-	label("小手就位，冒险开打！",Vector2(300,85),44)
-	label("从 F / J 到 709 个核心词。看蓝色目标，输入就能挥锤、发射或前进。",Vector2(302,151),19,MUTED)
+	button("打字训练",Vector2(30,35),Vector2(174,52),show_lessons).name = "TrainingNav"
+	button("打字挑战",Vector2(30,102),Vector2(174,52),show_challenges).name = "ChallengeNav"
+	button("存档与设置",Vector2(1230,35),Vector2(180,52),show_profile).name = "ProfileUtility"
+	var logo := label("指尖挑战",Vector2(570,33),64,TEXT)
+	logo.add_theme_constant_override("outline_size",6)
+	logo.add_theme_color_override("font_outline_color",Color.WHITE)
+	label("小手就位，冒险开打！",Vector2(580,112),24,MINT)
+	panel(Vector2(1190,105),Vector2(220,57),Color("fff7df"))
+	label("Lv. %02d  ·  %d XP" % [1+int(store.data.xp/100),store.data.xp],Vector2(1208,121),19)
+	sound_button = button("F2 声音开" if store.data.settings.get("sound",true) else "F2 声音关",Vector2(1230,175),Vector2(180,44),toggle_sound)
 	for i in range(2):
-		var x := 300+i*552
-		var card := panel(Vector2(x,216),Vector2(530,526),Color.WHITE)
+		var x := 200+i*545
+		var card := panel(Vector2(x,262),Vector2(495,450),Color("fffdf2") if i==0 else Color("f3fbff"))
 		card.clip_contents = true
-		var picture := TextureRect.new()
-		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		picture.texture = load("res://assets/generated/"+("moles-background" if i==0 else "aliens-background")+".png")
-		picture.position = Vector2(10,10)
-		picture.size = Vector2(510,243)
-		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		card.add_child(picture)
-		add_badge("moles" if i==0 else "aliens",Vector2(140,54),Vector2(250,170),card)
-		label("01 / 学会键盘" if i==0 else "02 / 使用你的本领",Vector2(25,279),16,MINT if i==0 else GOLD,card)
-		label("打字训练" if i==0 else "打字挑战",Vector2(25,312),35,TEXT,card)
-		label("先练少量按键，在小任务里建立指法。\n每六次命中一个阶段，攒能量释放技能。" if i==0 else "保卫飞船、赢下赛车、守住城堡。\n选择难度，看清目标，决定何时使用技能。",Vector2(25,369),18,MUTED,card)
-		var launch := button("继续训练  →" if i==0 else "选择挑战  →",Vector2(25,452),Vector2(480,54),begin_recommended_training if i==0 else show_challenges,i==0,card)
+		add_badge("moles" if i==0 else "aliens",Vector2(95,4),Vector2(300,215),card)
+		label("打字训练" if i==0 else "打字挑战",Vector2(32,222),35,TEXT,card)
+		label("从 F / J 开始，逐步练习单词。" if i==0 else "选好难度，用连击改变战局。",Vector2(32,279),20,MUTED,card)
+		var launch := button("继续训练  →" if i==0 else "选择挑战  →",Vector2(24,355),Vector2(447,58),begin_recommended_training if i==0 else show_challenges,i==0,card)
 		launch.name = "StartTraining" if i==0 else "StartChallenge"
 		if i==0:
 			launch.grab_focus()
-	panel(Vector2(300,777),Vector2(1082,82),Color("edf7ff"))
-	label("当前课程  /  "+lessons[lesson_index].name,Vector2(324,792),22)
-	label(lessons[lesson_index].hint+" · 训练与挑战成绩分别保存",Vector2(324,828),16,MUTED)
+	panel(Vector2(304,752),Vector2(832,98),Color("fffdf0"))
+	label("继续成长  /  "+lessons[lesson_index].name,Vector2(330,771),23)
+	label("已掌握 %d / 10 节" % store.data.completed.size(),Vector2(330,814),18,MINT)
+	label("Tab 选择  ·  Enter 出发  ·  Esc 返回",Vector2(520,867),16,TEXT)
 
 func recommended_mode() -> String:
 	return ["moles","balloons","aliens","moles","racing","balloons","fighter","racing","aliens","sprint"][lesson_index]
@@ -240,13 +253,14 @@ func continue_training() -> void:
 	store.save_profile()
 	begin_recommended_training()
 
-func add_badge(mode: String, at: Vector2, dimensions: Vector2, parent: Control = layer) -> void:
+func add_badge(mode: String, at: Vector2, dimensions: Vector2, parent: Control = layer) -> ModeBadge:
 	var badge := ModeBadge.new()
 	badge.mode = mode
 	badge.reduced_motion = store.data.settings.reduced_motion
 	badge.position = at
 	badge.size = dimensions
 	parent.add_child(badge)
+	return badge
 
 func mission_goal(mode: String, purpose: String) -> String:
 	if mode=="castle":
@@ -269,63 +283,64 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String) 
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.follow_focus = true
 	var grid := GridContainer.new()
-	grid.columns = 2
+	grid.columns = 3
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.add_theme_constant_override("h_separation",18)
-	grid.add_theme_constant_override("v_separation",18)
+	grid.add_theme_constant_override("h_separation",14)
+	grid.add_theme_constant_override("v_separation",16)
 	layer.add_child(scroll)
 	scroll.add_child(grid)
 	for definition in modes:
 		var mode: Dictionary = definition
 		var card := Panel.new()
-		card.custom_minimum_size = Vector2(531,245)
+		card.custom_minimum_size = Vector2(350,252)
 		card.clip_contents = true
 		card.add_theme_stylebox_override("panel",style(PANEL))
 		grid.add_child(card)
 		var picture := TextureRect.new()
 		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		picture.texture = load("res://assets/generated/"+("balloons-background-v2" if mode.id=="balloons" else str(mode.id)+"-background")+".png")
-		picture.position = Vector2(349,10)
-		picture.size = Vector2(172,168)
+		picture.position = Vector2(10,10)
+		picture.size = Vector2(330,90)
 		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(picture)
-		add_badge(mode.id,Vector2(361,26),Vector2(145,130),card)
+		var mascot := add_badge(mode.id,Vector2(99,12),Vector2(150,85),card)
+		mascot.reduced_motion = true
 		var accent: Color = PlayTheme.PASTELS[GameContent.modes().find(definition)%PlayTheme.PASTELS.size()]
-		var ribbon := panel(Vector2(0,0),Vector2(6,245),accent,card)
+		var ribbon := panel(Vector2(0,0),Vector2(5,252),accent,card)
 		ribbon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		label(mode.tag,Vector2(22,18),14,MINT,card)
-		label(mode.name,Vector2(22,45),27,TEXT,card)
+		label(mode.name,Vector2(18,107),24,TEXT,card)
 		var active_lesson := Vocabulary.lesson(lessons[lesson_index],vocabulary_topic)
 		var examples: String = "  /  ".join(active_lesson.words.slice(0,3))
 		if examples.length()>25:
 			examples = str(active_lesson.words[0])
-		label("输入："+examples,Vector2(22,91),17,GOLD,card)
-		label("输入完成 → "+ActionCue.VERBS.get(mode.id,"完成目标"),Vector2(22,121),16,TEXT,card)
-		var rule := label(mission_goal(mode.id,purpose),Vector2(22,151),13,MUTED,card)
-		rule.size = Vector2(307,35)
-		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var enter := button("进入挑战  →" if purpose=="challenge" else "开始这项训练  →",Vector2(20,188),Vector2(490,42),func(): start_game(mode.id,purpose),false,card)
+		label("输入："+examples,Vector2(18,145),17,GOLD,card)
+		var rule := label(mission_goal(mode.id,purpose),Vector2(18,172),15,MUTED,card)
+		rule.size = Vector2(314,22)
+		rule.clip_text = true
+		rule.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		var enter := button("进入挑战  →" if purpose=="challenge" else "开始训练  →",Vector2(18,198),Vector2(314,44),func(): start_game(mode.id,purpose),false,card)
 		enter.name = "Mission_"+str(mode.id)
+		enter.focus_entered.connect(func():
+			card.add_theme_stylebox_override("panel",PlayTheme.game_panel(Color("fffdf0"),PlayTheme.PRIMARY,22,5))
+			mascot.reduced_motion = store.data.settings.reduced_motion)
+		enter.focus_exited.connect(func():
+			card.add_theme_stylebox_override("panel",style(PANEL))
+			mascot.reduced_motion = true)
 
 func show_training_games() -> void:
 	page = "training_games"
 	run = null
 	clear_ui()
 	navigation("lessons")
-	label("把这几个键，练成你的本领。",Vector2(300,46),34)
-	label(lessons[lesson_index].name+"  /  "+lessons[lesson_index].hint,Vector2(300,106),17,MINT)
-	var selected := Vocabulary.lesson(lessons[lesson_index],vocabulary_topic)
-	var bank_hint := "本课 %d 个文本 · 词义随目标显示 · 右下角切换主题" % selected.words.size() if Vocabulary.supports(selected) else "看蓝色词牌 → 输入 → 行动。动作任务命中三次后按 F3 释放技能。"
-	label(bank_hint,Vector2(300,143),17,MUTED)
-	speed_controls(Vector2(300,198))
-	label("速度调整敌人移动和目标时限；无压力练习与一分钟计时保持原规则。",Vector2(300,240),15,MUTED)
+	label("选择训练任务",Vector2(300,46),34)
+	label(lessons[lesson_index].name,Vector2(300,106),22,MINT)
+	speed_controls(Vector2(300,176))
 	var order := ["moles","balloons","aliens","racing","fighter","dojo","bubbles","rain","sprint","castle"]
 	var modes := GameContent.modes()
 	modes.sort_custom(func(a,b): return order.find(a.id)<order.find(b.id))
-	game_grid(modes,Vector2(300,282),Vector2(1100,502),"training")
+	game_grid(modes,Vector2(300,238),Vector2(1100,548),"training")
 	button("返回课程",Vector2(300,807),Vector2(180,46),show_lessons)
-	label("当前："+SessionOptions.SPEED_NAMES[SessionOptions.SPEEDS.find(pace)],Vector2(510,816),18,MINT)
 	vocabulary_button(Vector2(930,807))
 
 func show_challenges() -> void:
@@ -333,13 +348,12 @@ func show_challenges() -> void:
 	run = null
 	clear_ui()
 	navigation("challenges")
-	label("看清目标，再决定你的下一步。",Vector2(300,48),36)
-	label("蓝色词牌标记推荐目标，底部写明完整输入。动作任务可用 F3 技能，胜负条件见下方。",Vector2(302,111),18,MUTED)
-	panel(Vector2(300,170),Vector2(1090,84))
-	label("挑战文本："+lessons[lesson_index].name,Vector2(324,194),21,MINT)
+	label("挑战准备",Vector2(300,48),36)
+	panel(Vector2(300,130),Vector2(1090,84))
+	label("挑战文本",Vector2(324,153),21,MINT)
 	var selector := OptionButton.new()
-	selector.position = Vector2(1020,188)
-	selector.size = Vector2(345,45)
+	selector.position = Vector2(520,148)
+	selector.size = Vector2(845,45)
 	for lesson in lessons:
 		selector.add_item(lesson.name)
 	selector.selected = lesson_index
@@ -352,10 +366,8 @@ func show_challenges() -> void:
 	var modes := GameContent.modes().filter(func(m): return m.id not in ["dojo","bubbles"])
 	for i in range(3):
 		var index := i
-		button(SessionOptions.RANK_NAMES[i]+"  "+str(SessionOptions.RANK_SPEEDS[i])+"×",Vector2(300+i*184,273),Vector2(172,46),func(): select_rank(index),i==challenge_index).name = "ChallengeRank%d" % i
-	label(SessionOptions.RANK_HINTS[challenge_index],Vector2(880,284),16,MINT)
-	game_grid(modes,Vector2(300,338),Vector2(1100,472),"challenge")
-	label("不同难度分别记录成绩。训练进度由训练更新。",Vector2(300,845),17,MUTED)
+		button(SessionOptions.RANK_NAMES[i]+"  "+str(SessionOptions.RANK_SPEEDS[i])+"×",Vector2(300+i*184,235),Vector2(172,46),func(): select_rank(index),i==challenge_index).name = "ChallengeRank%d" % i
+	game_grid(modes,Vector2(300,298),Vector2(1100,520),"challenge")
 	vocabulary_button(Vector2(1010,829))
 
 func vocabulary_button(at: Vector2) -> void:
@@ -407,7 +419,6 @@ func show_lessons() -> void:
 	clear_ui()
 	navigation("lessons")
 	label("先选今天要学的按键",Vector2(300,48),36)
-	label("通关、准确率 ≥90% 且有效输入 ≥18 字符记录掌握。所有课程开放。",Vector2(302,107),17,MUTED)
 	button("先学手指摆放",Vector2(1180,54),Vector2(210,46),show_fingering)
 	for i in range(lessons.size()):
 		var col := i % 2
@@ -416,11 +427,18 @@ func show_lessons() -> void:
 		var y := 168+row*119
 		var lesson: Dictionary = lessons[i]
 		panel(Vector2(x,y),Vector2(530,103),Color("e5f0ff") if i == lesson_index else PANEL)
-		label(lesson.name + ("  ✓" if store.data.completed.has(lesson.id) else ""),Vector2(x+18,y+13),21,GOLD if i==lesson_index else TEXT)
-		label(lesson.description,Vector2(x+18,y+53),14,MUTED)
+		var stamp := CourseStamp.new()
+		stamp.position = Vector2(x+17,y+22)
+		stamp.number = i+1
+		stamp.mastered = store.data.completed.has(lesson.id)
+		stamp.active = i==lesson_index
+		layer.add_child(stamp)
+		label(str(lesson.name).substr(5),Vector2(x+86,y+13),21,GOLD if i==lesson_index else TEXT)
+		var detail := label(["F / J","D F / J K","A S D F / J K L ;","Q W E R T / Y U I O P","Z X C V B / N M","2–4 字母词","5–12 字母词","数字与字母组合","Shift · 大小写","空格 · 标点 · 短句"][i],Vector2(x+86,y+53),17,MUTED)
+		detail.size = Vector2(335,40)
+		detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button("已选" if i==lesson_index else "选择",Vector2(x+423,y+13),Vector2(88,40),func(): select_lesson(i),i==lesson_index)
 	button("进入本课训练任务  →",Vector2(300,791),Vector2(270,54),show_training_games,true)
-	label("在任务里学习：输入 → 行动 → 充能 → 使用技能。",Vector2(610,807),17,MUTED)
 
 func select_lesson(index: int) -> void:
 	lesson_index = index
@@ -465,8 +483,10 @@ func show_game_guide() -> void:
 	coach.position = Vector2(326,128)
 	coach.run = run
 	root.add_child(coach)
-	label("先摆好手，再继续。",Vector2(660,171),28,GOLD,root)
-	label("左手 A S D F · 右手 J K L ;\n拇指轻放空格。\n\nF / J 凸点帮助找到起始位置。\n手指自然弯曲，手腕放松。\n\n高亮手指对应下一个目标键；\n输入后回到各自的基准键位。\n\n战斗与计时已暂停。",Vector2(660,239),20,TEXT,root)
+	label("指法与规则",Vector2(660,151),28,GOLD,root)
+	var rules := label("目标："+mission_goal(run.mode,run.context)+"\n\n输入蓝色词牌上的完整文字。\nTab 换目标，退格撤回一字。\n"+("命中三次后，F3 释放技能。\n" if run is ArcadeRun else "")+"\n左手 A S D F · 右手 J K L ;\n拇指轻放空格，F / J 凸点定位。\n高亮手指负责下一个目标键。\n击键后回到基准行，手腕放松。\n\n指法为教学示意，不检测手势。\n帮助打开时，战斗与计时暂停。",Vector2(660,211),19,TEXT,root)
+	rules.size = Vector2(430,400)
+	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	button("摆好了，继续  Esc",Vector2(660,670),Vector2(440,55),close_game_guide,true,root).grab_focus()
 
 func close_game_guide() -> void:
@@ -486,7 +506,7 @@ func show_profile() -> void:
 	label(store.status,Vector2(302,110),18,MINT)
 	panel(Vector2(300,174),Vector2(1090,138))
 	label("总经验",Vector2(328,194),17,MUTED)
-	label(str(store.data.xp),Vector2(328,233),32,GOLD)
+	label(str(int(store.data.xp)),Vector2(328,233),32,GOLD)
 	label("已掌握课程",Vector2(650,194),17,MUTED)
 	label("%d / 10" % store.data.completed.size(),Vector2(650,233),32,GOLD)
 	label("已有成绩组合",Vector2(1000,194),17,MUTED)
@@ -504,8 +524,10 @@ func show_profile() -> void:
 		panel(Vector2(300+i*137,402),Vector2(121,100))
 		label("空格" if stats[i].key==" " else stats[i].key,Vector2(320+i*137,411),28,GOLD)
 		label("错误 %d 次" % stats[i].miss,Vector2(312+i*137,462),14,MUTED)
-	label("存档与偏好",Vector2(300,554),25)
-	label("存档保存在当前设备 / 浏览器。清理站点数据会删除网页存档，请定期导出。\n本版保存学习进度与结算成绩；不保存战斗中途状态。",Vector2(300,603),18,MUTED)
+	label("声音与偏好",Vector2(300,537),25)
+	volume_control("音乐音量","music_volume",Vector2(300,586))
+	volume_control("音效音量","sfx_volume",Vector2(850,586))
+	label("进度保存在当前浏览器；请定期导出备份。战斗中途状态不保存。",Vector2(300,643),16,MUTED)
 	button("导出存档备份",Vector2(300,688),Vector2(210,52),export_save,true)
 	button("导入存档备份",Vector2(530,688),Vector2(210,52),show_import)
 	button("减少动态效果："+("开" if store.data.settings.reduced_motion else "关"),Vector2(760,688),Vector2(270,52),func(): store.data.settings.reduced_motion = not store.data.settings.reduced_motion; store.save_profile(); show_profile())
@@ -514,6 +536,24 @@ func show_profile() -> void:
 	label("备份文件名：keybound-backup.json。导入时打开文件，复制内容后粘贴即可。",Vector2(300,772),16,MUTED)
 	if OS.has_feature("web") and not OS.is_userfs_persistent():
 		label("当前浏览器未允许持久化，请使用导出备份保存进度。",Vector2(300,817),18,GOLD)
+
+func volume_control(title: String, setting: String, at: Vector2) -> void:
+	label(title,at,18,TEXT)
+	var slider := HSlider.new()
+	slider.name = "MusicVolume" if setting=="music_volume" else "SfxVolume"
+	slider.position = at+Vector2(110,-2)
+	slider.size = Vector2(315,38)
+	slider.min_value = 0
+	slider.max_value = 100
+	slider.step = 5
+	slider.value = float(store.data.settings.get(setting,.45 if setting=="music_volume" else .7))*100
+	layer.add_child(slider)
+	var amount := label("%d%%" % int(slider.value),at+Vector2(440,0),18,MINT)
+	slider.value_changed.connect(func(value):
+		store.data.settings[setting] = value/100.0
+		soundscape.apply_settings()
+		amount.text = "%d%%" % int(value)
+		store.save_profile())
 
 func export_save() -> void:
 	var value := JSON.stringify(store.data,"\t")
@@ -532,9 +572,10 @@ func export_save() -> void:
 
 func modal() -> Control:
 	previous_focus = get_viewport().gui_get_focus_owner()
-	for control in layer.find_children("*", "BaseButton", true, false):
-		modal_focus[control] = control.focus_mode
-		control.focus_mode = Control.FOCUS_NONE
+	for control in layer.find_children("*", "Control", true, false):
+		if control.focus_mode!=Control.FOCUS_NONE:
+			modal_focus[control] = control.focus_mode
+			control.focus_mode = Control.FOCUS_NONE
 	var root := Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	layer.add_child(root)
@@ -586,6 +627,7 @@ func start_game(mode: String, purpose := "training") -> void:
 	run.context = purpose
 	run.challenge_rank = SessionOptions.RANK_IDS[challenge_index] if purpose=="challenge" else "normal"
 	run.setup(mode,Vocabulary.lesson(lessons[lesson_index],vocabulary_topic),pace if purpose=="training" else SessionOptions.RANK_SPEEDS[challenge_index])
+	soundscape.bind_run(run)
 	run.ended.connect(finish_game)
 	var title := ""
 	for definition in GameContent.modes():
@@ -616,9 +658,10 @@ func start_game(mode: String, purpose := "training") -> void:
 		typing_guide.run = run
 		layer.add_child(typing_guide)
 		if not run is ArcadeRun:
-			panel(Vector2(40,652),Vector2(1040,128))
-			label("找准手指，再追求速度。",Vector2(66,670),24,GOLD)
-			label("右侧教练推荐最紧急目标的下一个按键；锁定后跟随当前目标。\n左右手食指先找到 F / J 凸点，每次击键后回到基准行。",Vector2(66,714),18,MUTED)
+			var ledger := TrainingLedger.new()
+			ledger.position = Vector2(40,650)
+			ledger.run = run
+			layer.add_child(ledger)
 	if mode == "castle":
 		castle_panel = CastlePanel.new()
 		castle_panel.position = Vector2(1110,130)
@@ -632,9 +675,9 @@ func start_game(mode: String, purpose := "training") -> void:
 		castle_audio.enabled = store.data.settings.get("sound",true)
 		layer.add_child(castle_audio)
 		sound_button = button("F2 声音开" if castle_audio.enabled else "F2 声音关",Vector2(1318,82),Vector2(82,34),toggle_sound)
-		sound_button.add_theme_font_size_override("font_size",13)
+		sound_button.add_theme_font_size_override("font_size",14)
 		sound_button.focus_mode = Control.FOCUS_NONE
-	var guide_button := button("F1 指法",Vector2(1230,82),Vector2(80,34),show_game_guide)
+	var guide_button := button("F1 帮助" if mode=="castle" else "F1 指法与规则",Vector2(1230,82) if mode=="castle" else Vector2(1100,735),Vector2(80,44) if mode=="castle" else Vector2(300,44),show_game_guide)
 	guide_button.add_theme_font_size_override("font_size",14)
 	guide_button.focus_mode = Control.FOCUS_NONE
 	hint = label("",Vector2(42,798),20,MINT)
@@ -647,6 +690,10 @@ func start_game(mode: String, purpose := "training") -> void:
 
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed or event.echo:
+		return
+	if event.keycode==KEY_F2 and page!="game" and not is_instance_valid(overlay):
+		toggle_sound()
+		get_viewport().set_input_as_handled()
 		return
 	if page == "game" and run != null and run.done and event.keycode == KEY_ESCAPE:
 		show_home()
@@ -709,13 +756,14 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func toggle_sound() -> void:
-	if not is_instance_valid(castle_audio):
-		return
-	castle_audio.enabled = not castle_audio.enabled
-	store.data.settings.sound = castle_audio.enabled
+	var enabled: bool = not store.data.settings.get("sound",true)
+	if is_instance_valid(castle_audio):
+		castle_audio.enabled = enabled
+	store.data.settings.sound = enabled
+	soundscape.apply_settings()
 	store.save_profile()
 	if is_instance_valid(sound_button):
-		sound_button.text = "F2 声音开" if castle_audio.enabled else "F2 声音关"
+		sound_button.text = "F2 声音开" if enabled else "F2 声音关"
 
 func keyboard_controls() -> Array[Control]:
 	var root: Control = overlay if is_instance_valid(overlay) else layer
@@ -818,8 +866,12 @@ func toggle_pause() -> void:
 func finish_game() -> void:
 	store.record_run(run,lesson_index)
 	var root := modal()
+	var seal := ResultSeal.new()
+	seal.position = Vector2(955,200)
+	seal.stars = (1 if run.accuracy()<.9 else 2 if run.accuracy()<.98 else 3) if run.won else 0
+	seal.reduced_motion = store.data.settings.reduced_motion
+	root.add_child(seal)
 	label("完成啦！给自己一个赞！" if run.won else "再试一次，你会更熟练！",Vector2(410,213),30,GOLD,root)
-	label("每一次练习，都在让双手更熟悉键盘。",Vector2(410,270),19,MUTED,root)
 	label("%d" % run.score,Vector2(410,328),44,TEXT,root)
 	label("得分",Vector2(412,391),16,MUTED,root)
 	label("%d%%" % roundi(run.accuracy()*100),Vector2(620,328),44,MINT,root)
@@ -834,4 +886,5 @@ func finish_game() -> void:
 	var mastered: bool = session_context=="training" and run.won and run.accuracy()>=0.9 and run.correct>=18 and lesson_index<lessons.size()-1
 	button("继续下一课  →" if mastered else "再练一次",Vector2(410,563),Vector2(290,54),continue_training if mastered else func(): start_game(mode,session_context),true,root).grab_focus()
 	button("选择其他训练" if session_context=="training" else "选择其他挑战",Vector2(720,563),Vector2(310,54),show_training_games if session_context=="training" else show_challenges,false,root)
-	label("训练通关、准确率 ≥90% 且有效输入 ≥18 字符，记录掌握。" if session_context=="training" else "本次记录为挑战成绩，不改变课程掌握状态。",Vector2(410,657),15,MUTED,root)
+	if session_context=="training" and run.won:
+		label("已掌握本课" if run.accuracy()>=.9 and run.correct>=18 else "掌握目标：准确率 90%，有效输入 18 字符",Vector2(410,657),18,MINT,root)

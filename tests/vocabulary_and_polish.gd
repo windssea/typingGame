@@ -18,7 +18,7 @@ func capture(filename: String) -> void:
 	if "--ui-capture" in OS.get_cmdline_user_args():
 		await process_frame
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://build/v09-"+filename+".png")
+		root.get_texture().get_image().save_png("res://build/v10-"+filename+".png")
 
 func complete_word() -> void:
 	var target: Dictionary = app.run.recommended_target()

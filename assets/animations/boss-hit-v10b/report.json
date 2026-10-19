@@ -1,0 +1,42 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\boss-motion-v10\\v001\\grok-raw.mp4",
+  "native": {
+    "width": 720,
+    "height": 720,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/boss-hit-v10b/idle-atlas.png",
+    "cell": 192,
+    "columns": 8,
+    "rows": 3,
+    "frames": 18,
+    "fps": "24",
+    "interval": [
+      5.25,
+      6.0
+    ],
+    "decoded_rgba_bytes": 3538944
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #ff00ff",
+    "shared whole-canvas scale and padding",
+    "atlas packing",
+    "boundary-only magenta cleanup",
+    "remove isolated tiny keying residue, preserve main silhouette"
+  ],
+  "interpolation": false,
+  "loop_review": "pending-native-scale-review",
+  "status": "reviewed-native-frames",
+  "static_crop": null,
+  "animation": "hit",
+  "loop": false,
+  "chroma_key": "ff00ff",
+  "cell_safety_inset_px": 12,
+  "isolated_residue_pixels_removed": 262,
+  "minimum_frame_margin_px": 12
+}

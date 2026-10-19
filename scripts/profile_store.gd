@@ -28,6 +28,10 @@ func valid(value: Variant) -> bool:
 		return false
 	if not value.settings.get("sound", true) is bool:
 		return false
+	for key in ["music_volume","sfx_volume"]:
+		var gain = value.settings.get(key,.5)
+		if (not gain is int and not gain is float) or gain<0 or gain>1:
+			return false
 	var speed = value.settings.get("training_speed",1.0)
 	if (not speed is float and not speed is int) or not speed in SessionOptions.SPEEDS:
 		return false

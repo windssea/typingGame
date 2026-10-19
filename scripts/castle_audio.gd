@@ -18,22 +18,22 @@ func _exit_tree() -> void:
 func _ready() -> void:
 	for kind in ["fire","storm","ice","build","warning","damage"]:
 		streams[kind] = load("res://assets/audio/"+kind+".wav")
+	for kind in ["pop","mallet","laser","engine","punch","block","skill","combo"]:
+		streams[kind] = load("res://assets/audio/v10/"+kind+".wav")
 	for i in range(6):
 		var player := AudioStreamPlayer.new()
 		player.volume_db = -20
+		player.bus = "SFX" if AudioServer.get_bus_index("SFX")>=0 else "Master"
 		add_child(player)
 		players.append(player)
 	if battle is CastleRun:
 		battle.effect.connect(on_effect)
 	elif battle is ArcadeRun:
 		battle.impact.connect(func(kind,point,power):
-			var sound: String = {"balloons":"ice","aliens":"storm","moles":"build","racing":"fire","fighter":"damage","miss":"warning"}.get(kind,"fire")
+			var sound: String = {"balloons":"pop","aliens":"laser","moles":"mallet","racing":"engine","fighter":"punch","miss":"damage","block":"block","skill":"skill"}.get(kind,"fire")
 			on_effect(sound,point,point,power))
 	else:
-		battle.spell.connect(func(a,b,_lightning): on_effect("ice",a,b,1))
-	battle.key_feedback.connect(func(_character,accepted,point):
-		if not accepted:
-			on_effect("warning",point,point,0))
+		battle.spell.connect(func(a,b,_lightning): on_effect("pop" if battle.mode=="bubbles" else "laser" if battle.mode=="rain" else "build",a,b,1))
 
 func on_effect(kind: String,_origin: Vector2,_destination: Vector2,_amount: int) -> void:
 	if not enabled or battle.paused:
@@ -49,4 +49,7 @@ func on_effect(kind: String,_origin: Vector2,_destination: Vector2,_amount: int)
 	var player := players[cursor%players.size()]
 	cursor += 1
 	player.stream = streams[kind]
-	player.play()
+	player.volume_db = {"punch":-13.0,"mallet":-15.0,"pop":-16.0,"laser":-17.0,"engine":-19.0,"skill":-13.0,"block":-14.0,"damage":-15.0,"warning":-18.0}.get(kind,-18.0)
+	player.pitch_scale = 1.0+sin(cursor*2.399)*.035
+	if DisplayServer.get_name()!="headless":
+		player.play()

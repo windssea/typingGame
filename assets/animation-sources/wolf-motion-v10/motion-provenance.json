@@ -1,0 +1,45 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "model": null,
+  "requested": {
+    "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\wolf-motion-v10\\seed-v001.png",
+    "last_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\wolf-motion-v10\\seed-v001.png",
+    "aspect_ratio": "1:1",
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "fps": null,
+    "audio_disabled": false
+  },
+  "actual": {
+    "width": 720,
+    "height": 720,
+    "video_codec": "h264",
+    "r_frame_rate": "24/1",
+    "avg_frame_rate": "24/1",
+    "video_frames": 193,
+    "video_duration_seconds": 8.041667,
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "audio_duration_seconds": 8.0,
+    "file_bytes": 2054691
+  },
+  "limitations": [
+    "image_to_video only accepts duration 6 or 10 and has no pinned-frame, fps, or audio parameter. One reference_to_video call was used because its schema accepts a pinned first_frame and duration 8.",
+    "The same seed was also pinned as last_frame so the clip returns to the reference pose.",
+    "The call returned a file path after 48736 ms. It exposed no Imagine request ID and no poll handle. tool_call_id is the local harness id for that single call.",
+    "No fps argument exists. Measured rate is 24 fps (193 frames). Frames were copied raw; none were interpolated or duplicated.",
+    "No audio-disable argument exists. The raw file includes an AAC stereo track plus an attached MJPEG poster.",
+    "resolution_name 720p with aspect_ratio 1:1 on a 768x768 source produced 720x720. Container duration is 8.041667 s.",
+    "Container tags name Lavc62.34.102 libx264 and Lavf62.18.100, which are muxer tags, not a generation model."
+  ],
+  "archive": "source-silent.mp4",
+  "integration": {
+    "walk_native_frames": 48,
+    "hit_native_frames": 18,
+    "interpolation": false,
+    "version": "v10",
+    "qa": "contact-frame inspection and native in-game capture; no human commercial art sign-off"
+  }
+}
