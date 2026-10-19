@@ -39,15 +39,21 @@ func _draw() -> void:
 	draw_style_box(PlayTheme.surface(Color("eaf7ff"),Color("8cbddd"),13),Rect2(15,15,62,58))
 	text(key_label,Vector2(27,54),28)
 	text("现在输入 · "+("跟随已锁定目标" if run.locked>=0 else "先处理蓝色标记目标"),Vector2(94,26),14,PlayTheme.MUTED)
-	text(word,Vector2(94,64),29)
+	var word_size := 29 if FONT.get_string_size(word,HORIZONTAL_ALIGNMENT_LEFT,-1,29).x<398 else 21
+	text(word,Vector2(94,64),word_size)
 	if target.typed>0:
-		text(word.substr(0,target.typed),Vector2(94,64),29,PlayTheme.TEAL)
+		text(word.substr(0,target.typed),Vector2(94,64),word_size,PlayTheme.TEAL)
 	var action: String = "领取补给 · 恢复 8 点护盾" if target.get("feature","")=="supply" else VERBS.get(run.mode,"完成目标")
 	text("输入完成 → "+action,Vector2(520,32),19,PlayTheme.TEAL)
 	var note := "可直接输入其他目标的首字母来切换选择"
 	if run.context=="training":
 		var phase := mini(3,1+run.kills/6)
 		note = "训练 %d / 3 · %s" % [phase,["先找准按键","试着连续命中","独立完成任务"][phase-1]]
+	var meaning := Vocabulary.meaning(run.lesson,word)
+	if not meaning.is_empty():
+		note = meaning+"  ·  "+("刚刚："+run.last_word+" / "+run.last_meaning if not run.last_word.is_empty() else "完成输入，把词义一起记住")
+		if FONT.get_string_size(note,HORIZONTAL_ALIGNMENT_LEFT,-1,15).x>435:
+			note = meaning+"  ·  上个单词："+run.last_word
 	text(note,Vector2(520,62),15,PlayTheme.MUTED)
 	if run is ArcadeRun:
 		draw_line(Vector2(972,16),Vector2(972,73),Color("dfebf2"),1)

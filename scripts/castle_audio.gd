@@ -29,6 +29,11 @@ func _ready() -> void:
 		battle.impact.connect(func(kind,point,power):
 			var sound: String = {"balloons":"ice","aliens":"storm","moles":"build","racing":"fire","fighter":"damage","miss":"warning"}.get(kind,"fire")
 			on_effect(sound,point,point,power))
+	else:
+		battle.spell.connect(func(a,b,_lightning): on_effect("ice",a,b,1))
+	battle.key_feedback.connect(func(_character,accepted,point):
+		if not accepted:
+			on_effect("warning",point,point,0))
 
 func on_effect(kind: String,_origin: Vector2,_destination: Vector2,_amount: int) -> void:
 	if not enabled or battle.paused:

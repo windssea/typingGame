@@ -82,9 +82,10 @@ func exercise() -> void:
 				arena._process(0.8)
 				check(arena.bursts.is_empty() and arena.trauma==0 and arena.strike==0,"impact feedback returns to rest without blocking input")
 		while not app.run.done:
-			for character in str(app.run.targets[0].word):
+			var target: Dictionary = app.run.recommended_target()
+			for character in str(target.word).substr(target.typed):
 				app.run.type_character(character)
-		check(app.store.data.records.has("training:"+mode+":long_words"),"new mode results persist in training namespace")
+		check(app.store.data.records.has("training:"+mode+":long_words:a2:mixed"),"A2 topic results persist separately without replacing old training records")
 	app.start_game("castle","challenge")
 	app.show_game_guide()
 	await capture("castle-fingers")

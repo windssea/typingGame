@@ -16,6 +16,7 @@ var skill_charge := 0
 var skill_time := 0.0
 var skill_uses := 0
 var guard_ready := false
+var previous_hole := -1
 
 func skill_name() -> String:
 	return {"balloons":"微风减速","aliens":"护盾脉冲","moles":"专注时刻","racing":"干扰对手","fighter":"准备格挡"}.get(mode,"")
@@ -81,7 +82,10 @@ func spawn_target() -> void:
 		"balloons": target.position = Vector2(200 + lane * 320, 490)
 		"aliens": target.position = Vector2(200 + lane * 320, 180)
 		"moles":
-			target.lane = rng.randi_range(0, 5)
+			var holes := [0,1,2,3,4,5]
+			holes.erase(previous_hole)
+			target.lane = holes[rng.randi_range(0,holes.size()-1)]
+			previous_hole = target.lane
 			target.position = Vector2(240 + (target.lane % 3) * 280, 300 + (target.lane / 3) * 170)
 		"racing": target.position = Vector2(520, 164)
 		"fighter": target.position = Vector2(700, 240)

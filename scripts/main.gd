@@ -32,13 +32,17 @@ var sound_button: Button
 var challenge_index := 0
 var ui_tweens: Dictionary = {}
 var live_hud: LiveHud
+var vocabulary_topic := "mixed"
 func _ready() -> void:
+	# Public rebrand keeps the existing engine/save namespace for all old profiles.
+	DisplayServer.window_set_title("指尖挑战 · 每一次输入，都有回应")
 	if OS.has_feature("web") and JavaScriptBridge.eval("new URLSearchParams(location.search).has('qa') && new URLSearchParams(location.search).has('qa_profile')",true):
 		store.path = "user://browser-validation.json"
 	store.load_profile()
 	lesson_index = int(store.data.last_lesson)
 	pace = float(store.data.settings.get("training_speed",1.0))
 	challenge_index = SessionOptions.rank_index(store.data.settings.get("challenge_rank","normal"))
+	vocabulary_topic = store.data.settings.get("vocabulary_topic","mixed")
 	theme = PlayTheme.ui(FONT)
 	show_home()
 	if OS.has_feature("web") and JavaScriptBridge.eval("new URLSearchParams(location.search).has('qa')",true):
@@ -174,7 +178,7 @@ func select_rank(index: int) -> void:
 
 func navigation(active: String) -> void:
 	panel(Vector2(0,0),Vector2(252,900),Color.WHITE)
-	label("K / 键境",Vector2(31,37),33)
+	label("指尖挑战",Vector2(31,37),33)
 	label("让输入成为你的力量",Vector2(31,91),16,MUTED)
 	button("01   打字训练",Vector2(22,179),Vector2(208,65),show_lessons,active!="challenges").name = "TrainingNav"
 	label("从 F / J 开始，一步一步学",Vector2(31,256),14,MUTED)
@@ -190,16 +194,16 @@ func navigation(active: String) -> void:
 	label("已掌握 %d / 10 节" % store.data.completed.size(),Vector2(30,699),16,MUTED)
 	button("存档与设置",Vector2(28,755),Vector2(194,42),show_profile).name = "ProfileUtility"
 	label("Tab 选择 · Enter 确认",Vector2(31,821),14,MUTED)
-	label("键境 · 冒险版 0.8",Vector2(31,853),14,MUTED)
+	label("指尖挑战 · 活力版 0.9",Vector2(31,853),14,MUTED)
 
 func show_home() -> void:
 	page = "home"
 	run = null
 	clear_ui()
 	navigation("lessons")
-	label("KEYBOUND / 每一次输入，都有回应",Vector2(300,45),16,MINT)
-	label("练会一个键，闯过一场冒险。",Vector2(300,85),40)
-	label("切换英文输入法。看清蓝色目标，输入就能挥锤、发射或前进。",Vector2(302,151),19,MUTED)
+	label("指尖挑战 / 每一次输入，都有回应",Vector2(300,45),16,MINT)
+	label("小手就位，冒险开打！",Vector2(300,85),44)
+	label("从 F / J 到 709 个核心词。看蓝色目标，输入就能挥锤、发射或前进。",Vector2(302,151),19,MUTED)
 	for i in range(2):
 		var x := 300+i*552
 		var card := panel(Vector2(x,216),Vector2(530,526),Color.WHITE)
@@ -287,11 +291,15 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String) 
 		picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(picture)
 		add_badge(mode.id,Vector2(361,26),Vector2(145,130),card)
-		label("训练任务" if purpose=="training" else "挑战任务",Vector2(22,18),14,MINT,card)
+		var accent: Color = PlayTheme.PASTELS[GameContent.modes().find(definition)%PlayTheme.PASTELS.size()]
+		var ribbon := panel(Vector2(0,0),Vector2(6,245),accent,card)
+		ribbon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		label(mode.tag,Vector2(22,18),14,MINT,card)
 		label(mode.name,Vector2(22,45),27,TEXT,card)
-		var examples: String = "  /  ".join(lessons[lesson_index].words.slice(0,3))
+		var active_lesson := Vocabulary.lesson(lessons[lesson_index],vocabulary_topic)
+		var examples: String = "  /  ".join(active_lesson.words.slice(0,3))
 		if examples.length()>25:
-			examples = str(lessons[lesson_index].words[0])
+			examples = str(active_lesson.words[0])
 		label("输入："+examples,Vector2(22,91),17,GOLD,card)
 		label("输入完成 → "+ActionCue.VERBS.get(mode.id,"完成目标"),Vector2(22,121),16,TEXT,card)
 		var rule := label(mission_goal(mode.id,purpose),Vector2(22,151),13,MUTED,card)
@@ -307,7 +315,9 @@ func show_training_games() -> void:
 	navigation("lessons")
 	label("把这几个键，练成你的本领。",Vector2(300,46),34)
 	label(lessons[lesson_index].name+"  /  "+lessons[lesson_index].hint,Vector2(300,106),17,MINT)
-	label("推荐先试打地鼠：看蓝色词牌 → 输入 → 挥锤。命中三次后按 F3 释放技能。",Vector2(300,143),17,MUTED)
+	var selected := Vocabulary.lesson(lessons[lesson_index],vocabulary_topic)
+	var bank_hint := "本课 %d 个文本 · 词义随目标显示 · 右下角切换主题" % selected.words.size() if Vocabulary.supports(selected) else "看蓝色词牌 → 输入 → 行动。动作任务命中三次后按 F3 释放技能。"
+	label(bank_hint,Vector2(300,143),17,MUTED)
 	speed_controls(Vector2(300,198))
 	label("速度调整敌人移动和目标时限；无压力练习与一分钟计时保持原规则。",Vector2(300,240),15,MUTED)
 	var order := ["moles","balloons","aliens","racing","fighter","dojo","bubbles","rain","sprint","castle"]
@@ -316,6 +326,7 @@ func show_training_games() -> void:
 	game_grid(modes,Vector2(300,282),Vector2(1100,502),"training")
 	button("返回课程",Vector2(300,807),Vector2(180,46),show_lessons)
 	label("当前："+SessionOptions.SPEED_NAMES[SessionOptions.SPEEDS.find(pace)],Vector2(510,816),18,MINT)
+	vocabulary_button(Vector2(930,807))
 
 func show_challenges() -> void:
 	page = "challenges"
@@ -345,6 +356,50 @@ func show_challenges() -> void:
 	label(SessionOptions.RANK_HINTS[challenge_index],Vector2(880,284),16,MINT)
 	game_grid(modes,Vector2(300,338),Vector2(1100,472),"challenge")
 	label("不同难度分别记录成绩。训练进度由训练更新。",Vector2(300,845),17,MUTED)
+	vocabulary_button(Vector2(1010,829))
+
+func vocabulary_button(at: Vector2) -> void:
+	var active := Vocabulary.supports(lessons[lesson_index])
+	var title := "KET 词库 · 709 词 / 24 主题" if active else "KET 词库 · 第 6 课起使用"
+	if active and vocabulary_topic!="mixed":
+		for topic in Vocabulary.topics():
+			if topic.id==vocabulary_topic:
+				title = "KET 主题 · "+str(topic.name)+"  ▾"
+	button(title,at,Vector2(360,43),show_vocabulary,active).name = "VocabularySettings"
+
+func show_vocabulary() -> void:
+	var root := modal()
+	var dialog := Control.new()
+	dialog.position = Vector2(370,175)
+	dialog.size = Vector2(700,550)
+	root.add_child(dialog)
+	label("把单词带进冒险",Vector2(38,24),32,TEXT,dialog)
+	label("709 个核心词 · 48 条短句 · 24 个生活主题",Vector2(38,80),19,MINT,dialog)
+	label("基础指法不变；单词、大小写和句子课程使用这里的主题。",Vector2(38,117),17,MUTED,dialog)
+	var selector := OptionButton.new()
+	selector.name = "VocabularyTopic"
+	selector.position = Vector2(38,168)
+	selector.size = Vector2(624,54)
+	var topics := Vocabulary.topics()
+	for i in range(topics.size()):
+		var count: int = Vocabulary.data().entries.filter(func(e): return e.kind=="word" and (topics[i].id=="mixed" or e.topic==topics[i].id)).size()
+		selector.add_item(str(topics[i].name)+"  /  %d 词" % count)
+		if topics[i].id==vocabulary_topic:
+			selector.selected = i
+	selector.item_selected.connect(func(index):
+		vocabulary_topic = topics[index].id
+		store.data.settings.vocabulary_topic = vocabulary_topic
+		store.save_profile()
+		close_modal()
+		if page=="challenges":
+			show_challenges()
+		else:
+			show_training_games())
+	dialog.add_child(selector)
+	label("短词：2–4 字母 → 长词：5–12 字母 → 大小写 → 完整短句",Vector2(38,255),18,TEXT,dialog)
+	label("输入区显示中文词义，完成后回顾。主题成绩单独记录。\n词汇独立编写，参照 Cambridge A2 Key 2025 词表范围。",Vector2(38,302),17,MUTED,dialog)
+	button("返回继续",Vector2(38,394),Vector2(624,52),close_modal,true,dialog)
+	selector.grab_focus()
 
 func show_lessons() -> void:
 	page = "lessons"
@@ -530,13 +585,13 @@ func start_game(mode: String, purpose := "training") -> void:
 	run = CastleRun.new() if mode == "castle" else (ArcadeRun.new() if mode in ArcadeRun.MODES else GameRun.new())
 	run.context = purpose
 	run.challenge_rank = SessionOptions.RANK_IDS[challenge_index] if purpose=="challenge" else "normal"
-	run.setup(mode,lessons[lesson_index],pace if purpose=="training" else SessionOptions.RANK_SPEEDS[challenge_index])
+	run.setup(mode,Vocabulary.lesson(lessons[lesson_index],vocabulary_topic),pace if purpose=="training" else SessionOptions.RANK_SPEEDS[challenge_index])
 	run.ended.connect(finish_game)
 	var title := ""
 	for definition in GameContent.modes():
 		if definition.id == mode:
 			title = definition.name
-	label("K / " + title,Vector2(40,24),28,GOLD)
+	label("指尖 / " + title,Vector2(40,24),28,GOLD)
 	label(("训练 %.2f× / " % pace if purpose=="training" else "挑战 · "+SessionOptions.RANK_NAMES[challenge_index]+" / ")+lessons[lesson_index].name,Vector2(40,75),17,MUTED)
 	hud = label("",Vector2(500,35),22,TEXT)
 	hud.visible = false
@@ -571,7 +626,7 @@ func start_game(mode: String, purpose := "training") -> void:
 		castle_panel.battle = run
 		layer.add_child(castle_panel)
 		arena.pad_selected.connect(func(_index): castle_panel.rebuild())
-	if mode == "castle" or run is ArcadeRun:
+	if run!=null:
 		castle_audio = CastleAudio.new()
 		castle_audio.battle = run
 		castle_audio.enabled = store.data.settings.get("sound",true)

@@ -3,6 +3,7 @@ extends RefCounted
 
 signal spell(origin: Vector2, target: Vector2, lightning: bool)
 signal ended
+signal key_feedback(character: String, accepted: bool, point: Vector2)
 
 var mode: String
 var lesson: Dictionary
@@ -29,6 +30,11 @@ var feedback := "输入目标的第一个字母即可锁定"
 var difficulty := 1.0
 var context := "training"
 var challenge_rank := "normal"
+var word_bag: Array = []
+var recent_words: Array[String] = []
+var last_word := ""
+var last_meaning := ""
+var last_completion_point := Vector2.INF
 const CENTER := Vector2(680, 345)
 
 func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 0) -> void:
@@ -66,26 +72,45 @@ func recommended_target() -> Dictionary:
 	if targets.is_empty():
 		return {}
 	var ordered := targets.duplicate()
-	ordered.sort_custom(func(a,b): return priority(a)<priority(b))
+	ordered.sort_custom(higher_priority)
 	return ordered[0]
 
-func spawn_target() -> void:
-	var pool: Array = lesson.words.duplicate()
-	# Distinct initials when possible; early lessons intentionally share initials.
-	for i in range(pool.size() - 1, 0, -1):
-		var j := rng.randi_range(0, i)
-		var entry = pool[i]
-		pool[i] = pool[j]
-		pool[j] = entry
-	var word: String = pool[rng.randi_range(0, pool.size() - 1)]
-	for candidate in pool:
-		var used := false
-		for other in targets:
-			if other.word[0] == candidate[0]:
-				used = true
-		if not used:
-			word = candidate
+func higher_priority(a: Dictionary, b: Dictionary) -> bool:
+	var first := priority(a)
+	var second := priority(b)
+	return int(a.id)<int(b.id) if is_equal_approx(first,second) else first<second
+
+func next_word() -> String:
+	if word_bag.is_empty():
+		word_bag = lesson.words.duplicate()
+		for i in range(word_bag.size()-1,0,-1):
+			var j := rng.randi_range(0,i)
+			var value = word_bag[i]
+			word_bag[i] = word_bag[j]
+			word_bag[j] = value
+	var choice := 0
+	var best := -100
+	for i in range(word_bag.size()):
+		var value: String = word_bag[i]
+		var rating := 4 if not recent_words.has(value) else 0
+		if not targets.any(func(t): return t.word[0]==value[0]):
+			rating += 2
+		if not targets.any(func(t): return t.word==value):
+			rating += 1
+		if rating>best:
+			choice = i
+			best = rating
+		if best==7:
 			break
+	var word: String = word_bag[choice]
+	word_bag.remove_at(choice)
+	recent_words.append(word)
+	while recent_words.size()>mini(8,maxi(1,lesson.words.size()-1)):
+		recent_words.pop_front()
+	return word
+
+func spawn_target() -> void:
+	var word := next_word()
 	var position := CENTER
 	if mode == "rain":
 		position = Vector2(150 + (next_id % 5) * 260, 82)
@@ -94,9 +119,11 @@ func spawn_target() -> void:
 	elif mode == "sprint":
 		position = CENTER
 	elif mode == "bubbles":
-		for lane in range(4):
-			var candidate := Vector2(260+lane*280,230+(lane%2)*130)
-			if targets.all(func(t): return t.position.distance_to(candidate)>1):
+		# Six anchors for four bubbles: the next bubble never obscures the pop.
+		for offset in range(6):
+			var lane := (next_id+offset)%6
+			var candidate := Vector2(245+(lane%3)*430,215+(lane/3)*215)
+			if candidate.distance_to(last_completion_point)>1 and targets.all(func(t): return t.position.distance_to(candidate)>1):
 				position = candidate
 				break
 	var kind := next_id % 3
@@ -105,6 +132,9 @@ func spawn_target() -> void:
 		speed *= 1.25
 	elif kind == 2:
 		speed *= 0.8
+	# Preserve an achievable travel time for words and sentences at every pace.
+	if mode=="rain":
+		speed = minf(speed,493.0/((10.0+word.length()*1.2)/difficulty))
 	targets.append({"id":next_id,"word":word,"typed":0,"position":position,"speed":speed,"kind":kind})
 	next_id += 1
 	spawned += 1
@@ -153,7 +183,7 @@ func type_character(character: String) -> bool:
 	var target := target_by_id(locked)
 	if target.is_empty():
 		var candidates := targets.filter(func(t): return t.word.begins_with(character))
-		candidates.sort_custom(func(a, b): return priority(a) < priority(b))
+		candidates.sort_custom(higher_priority)
 		if not candidates.is_empty():
 			target = candidates[0]
 			locked = target.id
@@ -167,13 +197,17 @@ func type_character(character: String) -> bool:
 		key_stats[expected] = stat
 		combo = 0
 		feedback = "按键不匹配，进度保留；继续输入高亮位置"
+		key_feedback.emit(character,false,target.get("position",CENTER))
 		return false
 	stat.hit += 1
 	key_stats[expected] = stat
 	correct += 1
 	target.typed += 1
+	key_feedback.emit(character,true,target.position)
 	feedback = "正确！保持节奏"
 	if target.typed == str(target.word).length():
+		last_word = target.word
+		last_meaning = Vocabulary.meaning(lesson,target.word)
 		combo += 1
 		best_combo = maxi(best_combo, combo)
 		on_word_completed(target)
@@ -193,6 +227,7 @@ func on_word_completed(target: Dictionary) -> void:
 		spawn_target()
 
 func defeat(target: Dictionary, lightning: bool) -> void:
+	last_completion_point = target.position
 	spell.emit(CENTER, target.position, lightning)
 	score += str(target.word).length() * 10 + mini(combo, 20) * 5
 	kills += 1

@@ -15,5 +15,6 @@ addEventListener('keydown',function(event){
 </script>
 '@
 $html = $html.Replace('<html lang="en">','<html lang="zh-CN">').Replace('</head>',$head + "`n</head>")
-$html = $html.Replace('<progress id="status-progress"></progress>','<div id="loading-caption">键盘游乐园正在准备，马上出发…</div><progress id="status-progress"></progress>')
+$html = [regex]::Replace($html,'<title>.*?</title>','<title>指尖挑战 · 打字训练与冒险</title>')
+$html = $html.Replace('<progress id="status-progress"></progress>','<div id="loading-caption">指尖挑战正在准备，让每次输入都有回应…</div><progress id="status-progress"></progress>')
 [IO.File]::WriteAllText($Path,$html,[Text.UTF8Encoding]::new($false))

@@ -16,7 +16,8 @@ func make_run(mode: String, lesson_index := 0, purpose := "training") -> ArcadeR
 	return battle
 
 func complete_word(battle: ArcadeRun) -> void:
-	var target: Dictionary = battle.targets[0]
+	# Follow the same unambiguous target that the on-screen cue recommends.
+	var target: Dictionary = battle.recommended_target()
 	for character in str(target.word).substr(target.typed):
 		battle.type_character(character)
 

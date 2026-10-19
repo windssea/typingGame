@@ -1,0 +1,4647 @@
+{
+  "version": 1,
+  "alignment": "Independently curated A1–A2 / KET practice; not a complete official examination list.",
+  "reference": "https://www.cambridgeenglish.org/Images/506886-a2-key-2020-vocabulary-list.pdf",
+  "topics": [
+    {
+      "id": "animals",
+      "name": "动物与自然"
+    },
+    {
+      "id": "food",
+      "name": "美食补给"
+    },
+    {
+      "id": "school",
+      "name": "校园探险"
+    },
+    {
+      "id": "home",
+      "name": "温馨小屋"
+    },
+    {
+      "id": "family",
+      "name": "朋友与家人"
+    },
+    {
+      "id": "travel",
+      "name": "旅行出发"
+    },
+    {
+      "id": "sport",
+      "name": "运动赛场"
+    },
+    {
+      "id": "clothes",
+      "name": "换装派对"
+    },
+    {
+      "id": "weather",
+      "name": "天气森林"
+    },
+    {
+      "id": "town",
+      "name": "城市寻宝"
+    },
+    {
+      "id": "body",
+      "name": "健康能量"
+    },
+    {
+      "id": "hobbies",
+      "name": "快乐兴趣"
+    },
+    {
+      "id": "actions",
+      "name": "行动任务"
+    },
+    {
+      "id": "feelings",
+      "name": "心情彩虹"
+    },
+    {
+      "id": "time",
+      "name": "时间航线"
+    },
+    {
+      "id": "technology",
+      "name": "科技工坊"
+    },
+    {
+      "id": "shopping",
+      "name": "购物小达人"
+    },
+    {
+      "id": "jobs",
+      "name": "职业梦想家"
+    },
+    {
+      "id": "colours",
+      "name": "色彩与形状"
+    },
+    {
+      "id": "countryside",
+      "name": "乡野发现"
+    },
+    {
+      "id": "communication",
+      "name": "交流信号站"
+    },
+    {
+      "id": "routine",
+      "name": "我的每一天"
+    },
+    {
+      "id": "directions",
+      "name": "寻路小队"
+    },
+    {
+      "id": "describing",
+      "name": "描述大世界"
+    }
+  ],
+  "entries": [
+    {
+      "text": "cat",
+      "meaning": "猫",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "dog",
+      "meaning": "狗",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "bird",
+      "meaning": "鸟",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "fish",
+      "meaning": "鱼",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "duck",
+      "meaning": "鸭子",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "cow",
+      "meaning": "奶牛",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "pig",
+      "meaning": "猪",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "hen",
+      "meaning": "母鸡",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "ant",
+      "meaning": "蚂蚁",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "bee",
+      "meaning": "蜜蜂",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "bat",
+      "meaning": "蝙蝠",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "bear",
+      "meaning": "熊",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "lion",
+      "meaning": "狮子",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "tiger",
+      "meaning": "老虎",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "horse",
+      "meaning": "马",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "sheep",
+      "meaning": "绵羊",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "goat",
+      "meaning": "山羊",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "rabbit",
+      "meaning": "兔子",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "mouse",
+      "meaning": "老鼠",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "monkey",
+      "meaning": "猴子",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "elephant",
+      "meaning": "大象",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "dolphin",
+      "meaning": "海豚",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "whale",
+      "meaning": "鲸鱼",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "snake",
+      "meaning": "蛇",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "spider",
+      "meaning": "蜘蛛",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "butterfly",
+      "meaning": "蝴蝶",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "insect",
+      "meaning": "昆虫",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "pet",
+      "meaning": "宠物",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "wild",
+      "meaning": "野生的",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "zoo",
+      "meaning": "动物园",
+      "topic": "animals",
+      "kind": "word"
+    },
+    {
+      "text": "Look at the bird.",
+      "meaning": "看看那只鸟。",
+      "topic": "animals",
+      "kind": "phrase"
+    },
+    {
+      "text": "My dog can run.",
+      "meaning": "我的狗会跑。",
+      "topic": "animals",
+      "kind": "phrase"
+    },
+    {
+      "text": "egg",
+      "meaning": "鸡蛋",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "rice",
+      "meaning": "米饭",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "soup",
+      "meaning": "汤",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "cake",
+      "meaning": "蛋糕",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "milk",
+      "meaning": "牛奶",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "tea",
+      "meaning": "茶",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "jam",
+      "meaning": "果酱",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "nut",
+      "meaning": "坚果",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "salt",
+      "meaning": "盐",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "meat",
+      "meaning": "肉",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "bread",
+      "meaning": "面包",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "cheese",
+      "meaning": "奶酪",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "butter",
+      "meaning": "黄油",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "yogurt",
+      "meaning": "酸奶",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "chicken",
+      "meaning": "鸡肉",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "beef",
+      "meaning": "牛肉",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "salad",
+      "meaning": "沙拉",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "sandwich",
+      "meaning": "三明治",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "pizza",
+      "meaning": "披萨",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "pasta",
+      "meaning": "意大利面",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "potato",
+      "meaning": "土豆",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "tomato",
+      "meaning": "番茄",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "carrot",
+      "meaning": "胡萝卜",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "onion",
+      "meaning": "洋葱",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "bean",
+      "meaning": "豆子",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "apple",
+      "meaning": "苹果",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "banana",
+      "meaning": "香蕉",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "grape",
+      "meaning": "葡萄",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "lemon",
+      "meaning": "柠檬",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "juice",
+      "meaning": "果汁",
+      "topic": "food",
+      "kind": "word"
+    },
+    {
+      "text": "I like apples.",
+      "meaning": "我喜欢苹果。",
+      "topic": "food",
+      "kind": "phrase"
+    },
+    {
+      "text": "Can I have some juice?",
+      "meaning": "我能喝点果汁吗？",
+      "topic": "food",
+      "kind": "phrase"
+    },
+    {
+      "text": "pen",
+      "meaning": "钢笔",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "book",
+      "meaning": "书",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "desk",
+      "meaning": "课桌",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "bag",
+      "meaning": "包",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "art",
+      "meaning": "美术",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "map",
+      "meaning": "地图",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "test",
+      "meaning": "测验",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "page",
+      "meaning": "页",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "read",
+      "meaning": "阅读",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "write",
+      "meaning": "写",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "learn",
+      "meaning": "学习",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "study",
+      "meaning": "研习",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "lesson",
+      "meaning": "课程",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "class",
+      "meaning": "班级",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "teacher",
+      "meaning": "老师",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "student",
+      "meaning": "学生",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "pencil",
+      "meaning": "铅笔",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "ruler",
+      "meaning": "尺子",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "rubber",
+      "meaning": "橡皮",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "paper",
+      "meaning": "纸",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "notebook",
+      "meaning": "笔记本",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "homework",
+      "meaning": "家庭作业",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "subject",
+      "meaning": "学科",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "science",
+      "meaning": "科学",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "history",
+      "meaning": "历史",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "maths",
+      "meaning": "数学",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "library",
+      "meaning": "图书馆",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "college",
+      "meaning": "学院",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "answer",
+      "meaning": "回答",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "question",
+      "meaning": "问题",
+      "topic": "school",
+      "kind": "word"
+    },
+    {
+      "text": "Open your book.",
+      "meaning": "打开你的书。",
+      "topic": "school",
+      "kind": "phrase"
+    },
+    {
+      "text": "Write your name.",
+      "meaning": "写下你的名字。",
+      "topic": "school",
+      "kind": "phrase"
+    },
+    {
+      "text": "bed",
+      "meaning": "床",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "door",
+      "meaning": "门",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "wall",
+      "meaning": "墙",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "roof",
+      "meaning": "屋顶",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "room",
+      "meaning": "房间",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "bath",
+      "meaning": "浴缸",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "lamp",
+      "meaning": "台灯",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "sofa",
+      "meaning": "沙发",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "cup",
+      "meaning": "杯子",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "bowl",
+      "meaning": "碗",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "plate",
+      "meaning": "盘子",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "spoon",
+      "meaning": "勺子",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "fork",
+      "meaning": "叉子",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "knife",
+      "meaning": "餐刀",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "table",
+      "meaning": "桌子",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "chair",
+      "meaning": "椅子",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "window",
+      "meaning": "窗户",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "floor",
+      "meaning": "地板",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "kitchen",
+      "meaning": "厨房",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "bedroom",
+      "meaning": "卧室",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "bathroom",
+      "meaning": "浴室",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "garden",
+      "meaning": "花园",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "garage",
+      "meaning": "车库",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "blanket",
+      "meaning": "毯子",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "pillow",
+      "meaning": "枕头",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "mirror",
+      "meaning": "镜子",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "shelf",
+      "meaning": "架子",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "fridge",
+      "meaning": "冰箱",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "carpet",
+      "meaning": "地毯",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "stairs",
+      "meaning": "楼梯",
+      "topic": "home",
+      "kind": "word"
+    },
+    {
+      "text": "Close the door.",
+      "meaning": "把门关上。",
+      "topic": "home",
+      "kind": "phrase"
+    },
+    {
+      "text": "My room is clean.",
+      "meaning": "我的房间很整洁。",
+      "topic": "home",
+      "kind": "phrase"
+    },
+    {
+      "text": "mum",
+      "meaning": "妈妈",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "dad",
+      "meaning": "爸爸",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "son",
+      "meaning": "儿子",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "aunt",
+      "meaning": "阿姨",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "uncle",
+      "meaning": "叔叔",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "baby",
+      "meaning": "婴儿",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "girl",
+      "meaning": "女孩",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "boy",
+      "meaning": "男孩",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "man",
+      "meaning": "男人",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "woman",
+      "meaning": "女人",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "mother",
+      "meaning": "母亲",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "father",
+      "meaning": "父亲",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "sister",
+      "meaning": "姐妹",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "brother",
+      "meaning": "兄弟",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "cousin",
+      "meaning": "堂表亲",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "daughter",
+      "meaning": "女儿",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "parent",
+      "meaning": "家长",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "family",
+      "meaning": "家庭",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "friend",
+      "meaning": "朋友",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "child",
+      "meaning": "孩子",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "children",
+      "meaning": "孩子们",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "people",
+      "meaning": "人们",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "person",
+      "meaning": "人",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "adult",
+      "meaning": "成年人",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "guest",
+      "meaning": "客人",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "neighbour",
+      "meaning": "邻居",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "name",
+      "meaning": "名字",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "age",
+      "meaning": "年龄",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "birthday",
+      "meaning": "生日",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "married",
+      "meaning": "已婚的",
+      "topic": "family",
+      "kind": "word"
+    },
+    {
+      "text": "This is my sister.",
+      "meaning": "这是我的姐姐或妹妹。",
+      "topic": "family",
+      "kind": "phrase"
+    },
+    {
+      "text": "My friend is kind.",
+      "meaning": "我的朋友很友善。",
+      "topic": "family",
+      "kind": "phrase"
+    },
+    {
+      "text": "bus",
+      "meaning": "公交车",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "car",
+      "meaning": "汽车",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "taxi",
+      "meaning": "出租车",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "bike",
+      "meaning": "自行车",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "boat",
+      "meaning": "小船",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "ship",
+      "meaning": "轮船",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "trip",
+      "meaning": "短途旅行",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "road",
+      "meaning": "道路",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "stop",
+      "meaning": "车站",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "way",
+      "meaning": "路线",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "train",
+      "meaning": "火车",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "plane",
+      "meaning": "飞机",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "airport",
+      "meaning": "机场",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "station",
+      "meaning": "车站",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "ticket",
+      "meaning": "票",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "passport",
+      "meaning": "护照",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "suitcase",
+      "meaning": "行李箱",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "journey",
+      "meaning": "旅程",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "travel",
+      "meaning": "旅行",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "holiday",
+      "meaning": "假期",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "hotel",
+      "meaning": "酒店",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "tour",
+      "meaning": "游览",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "guide",
+      "meaning": "向导",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "beach",
+      "meaning": "海滩",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "island",
+      "meaning": "岛屿",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "bridge",
+      "meaning": "桥",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "traffic",
+      "meaning": "交通",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "bicycle",
+      "meaning": "自行车",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "motorbike",
+      "meaning": "摩托车",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "underground",
+      "meaning": "地铁",
+      "topic": "travel",
+      "kind": "word"
+    },
+    {
+      "text": "Where is the station?",
+      "meaning": "车站在哪里？",
+      "topic": "travel",
+      "kind": "phrase"
+    },
+    {
+      "text": "We travel by train.",
+      "meaning": "我们乘火车旅行。",
+      "topic": "travel",
+      "kind": "phrase"
+    },
+    {
+      "text": "run",
+      "meaning": "跑步",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "swim",
+      "meaning": "游泳",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "jump",
+      "meaning": "跳跃",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "kick",
+      "meaning": "踢",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "hit",
+      "meaning": "击打",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "win",
+      "meaning": "获胜",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "race",
+      "meaning": "比赛",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "ball",
+      "meaning": "球",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "team",
+      "meaning": "队伍",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "club",
+      "meaning": "俱乐部",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "game",
+      "meaning": "游戏",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "sport",
+      "meaning": "运动",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "football",
+      "meaning": "足球",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "tennis",
+      "meaning": "网球",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "basketball",
+      "meaning": "篮球",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "baseball",
+      "meaning": "棒球",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "volleyball",
+      "meaning": "排球",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "badminton",
+      "meaning": "羽毛球",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "cycling",
+      "meaning": "骑行",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "skating",
+      "meaning": "滑冰",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "skiing",
+      "meaning": "滑雪",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "sailing",
+      "meaning": "帆船运动",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "fishing",
+      "meaning": "钓鱼",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "player",
+      "meaning": "运动员",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "match",
+      "meaning": "竞赛",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "score",
+      "meaning": "得分",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "goal",
+      "meaning": "进球",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "prize",
+      "meaning": "奖品",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "winner",
+      "meaning": "获胜者",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "exercise",
+      "meaning": "锻炼",
+      "topic": "sport",
+      "kind": "word"
+    },
+    {
+      "text": "Our team can win!",
+      "meaning": "我们队能赢！",
+      "topic": "sport",
+      "kind": "phrase"
+    },
+    {
+      "text": "Let's play tennis.",
+      "meaning": "我们打网球吧。",
+      "topic": "sport",
+      "kind": "phrase"
+    },
+    {
+      "text": "hat",
+      "meaning": "帽子",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "cap",
+      "meaning": "鸭舌帽",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "coat",
+      "meaning": "外套",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "shoe",
+      "meaning": "鞋",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "sock",
+      "meaning": "袜子",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "boot",
+      "meaning": "靴子",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "belt",
+      "meaning": "腰带",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "ring",
+      "meaning": "戒指",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "wear",
+      "meaning": "穿着",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "size",
+      "meaning": "尺码",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "shirt",
+      "meaning": "衬衫",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "skirt",
+      "meaning": "裙子",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "dress",
+      "meaning": "连衣裙",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "jacket",
+      "meaning": "夹克",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "jeans",
+      "meaning": "牛仔裤",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "trousers",
+      "meaning": "长裤",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "shorts",
+      "meaning": "短裤",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "sweater",
+      "meaning": "毛衣",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "uniform",
+      "meaning": "制服",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "gloves",
+      "meaning": "手套",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "scarf",
+      "meaning": "围巾",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "suit",
+      "meaning": "西装",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "pocket",
+      "meaning": "口袋",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "button",
+      "meaning": "纽扣",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "watch",
+      "meaning": "手表",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "glasses",
+      "meaning": "眼镜",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "umbrella",
+      "meaning": "雨伞",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "fashion",
+      "meaning": "时尚",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "cotton",
+      "meaning": "棉",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "wool",
+      "meaning": "羊毛",
+      "topic": "clothes",
+      "kind": "word"
+    },
+    {
+      "text": "Put on your coat.",
+      "meaning": "穿上你的外套。",
+      "topic": "clothes",
+      "kind": "phrase"
+    },
+    {
+      "text": "These shoes are new.",
+      "meaning": "这些鞋是新的。",
+      "topic": "clothes",
+      "kind": "phrase"
+    },
+    {
+      "text": "sun",
+      "meaning": "太阳",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "sky",
+      "meaning": "天空",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "air",
+      "meaning": "空气",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "ice",
+      "meaning": "冰",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "fog",
+      "meaning": "雾",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "snow",
+      "meaning": "雪",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "rain",
+      "meaning": "雨",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "wind",
+      "meaning": "风",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "hot",
+      "meaning": "热的",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "cold",
+      "meaning": "冷的",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "warm",
+      "meaning": "暖和的",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "cool",
+      "meaning": "凉爽的",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "dry",
+      "meaning": "干燥的",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "wet",
+      "meaning": "潮湿的",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "cloud",
+      "meaning": "云",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "storm",
+      "meaning": "暴风雨",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "weather",
+      "meaning": "天气",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "sunny",
+      "meaning": "晴朗的",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "windy",
+      "meaning": "有风的",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "cloudy",
+      "meaning": "多云的",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "spring",
+      "meaning": "春季",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "summer",
+      "meaning": "夏季",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "autumn",
+      "meaning": "秋季",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "winter",
+      "meaning": "冬季",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "season",
+      "meaning": "季节",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "river",
+      "meaning": "河流",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "lake",
+      "meaning": "湖泊",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "sea",
+      "meaning": "海",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "forest",
+      "meaning": "森林",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "mountain",
+      "meaning": "山",
+      "topic": "weather",
+      "kind": "word"
+    },
+    {
+      "text": "It is sunny today.",
+      "meaning": "今天阳光明媚。",
+      "topic": "weather",
+      "kind": "phrase"
+    },
+    {
+      "text": "The wind is cold.",
+      "meaning": "风很冷。",
+      "topic": "weather",
+      "kind": "phrase"
+    },
+    {
+      "text": "shop",
+      "meaning": "商店",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "bank",
+      "meaning": "银行",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "park",
+      "meaning": "公园",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "town",
+      "meaning": "城镇",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "city",
+      "meaning": "城市",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "farm",
+      "meaning": "农场",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "hill",
+      "meaning": "小山",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "path",
+      "meaning": "小路",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "land",
+      "meaning": "陆地",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "area",
+      "meaning": "区域",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "street",
+      "meaning": "街道",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "market",
+      "meaning": "市场",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "museum",
+      "meaning": "博物馆",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "cinema",
+      "meaning": "电影院",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "theatre",
+      "meaning": "剧院",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "hospital",
+      "meaning": "医院",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "school",
+      "meaning": "学校",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "cafe",
+      "meaning": "咖啡馆",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "restaurant",
+      "meaning": "餐馆",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "supermarket",
+      "meaning": "超市",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "building",
+      "meaning": "建筑",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "village",
+      "meaning": "村庄",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "centre",
+      "meaning": "中心",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "square",
+      "meaning": "广场",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "corner",
+      "meaning": "街角",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "factory",
+      "meaning": "工厂",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "office",
+      "meaning": "办公室",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "police",
+      "meaning": "警察",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "church",
+      "meaning": "教堂",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "castle",
+      "meaning": "城堡",
+      "topic": "town",
+      "kind": "word"
+    },
+    {
+      "text": "Turn left at the bank.",
+      "meaning": "在银行处左转。",
+      "topic": "town",
+      "kind": "phrase"
+    },
+    {
+      "text": "The park is near here.",
+      "meaning": "公园离这里很近。",
+      "topic": "town",
+      "kind": "phrase"
+    },
+    {
+      "text": "arm",
+      "meaning": "手臂",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "leg",
+      "meaning": "腿",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "eye",
+      "meaning": "眼睛",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "ear",
+      "meaning": "耳朵",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "lip",
+      "meaning": "嘴唇",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "hand",
+      "meaning": "手",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "head",
+      "meaning": "头",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "hair",
+      "meaning": "头发",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "face",
+      "meaning": "脸",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "foot",
+      "meaning": "脚",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "nose",
+      "meaning": "鼻子",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "mouth",
+      "meaning": "嘴",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "tooth",
+      "meaning": "牙齿",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "teeth",
+      "meaning": "牙齿们",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "finger",
+      "meaning": "手指",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "stomach",
+      "meaning": "胃",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "shoulder",
+      "meaning": "肩膀",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "neck",
+      "meaning": "脖子",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "knee",
+      "meaning": "膝盖",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "back",
+      "meaning": "背部",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "heart",
+      "meaning": "心脏",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "health",
+      "meaning": "健康",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "healthy",
+      "meaning": "健康的",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "doctor",
+      "meaning": "医生",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "nurse",
+      "meaning": "护士",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "medicine",
+      "meaning": "药",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "ill",
+      "meaning": "生病的",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "pain",
+      "meaning": "疼痛",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "rest",
+      "meaning": "休息",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "sleep",
+      "meaning": "睡觉",
+      "topic": "body",
+      "kind": "word"
+    },
+    {
+      "text": "Wash your hands.",
+      "meaning": "洗洗手。",
+      "topic": "body",
+      "kind": "phrase"
+    },
+    {
+      "text": "I need some rest.",
+      "meaning": "我需要休息一下。",
+      "topic": "body",
+      "kind": "phrase"
+    },
+    {
+      "text": "sing",
+      "meaning": "唱歌",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "song",
+      "meaning": "歌曲",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "band",
+      "meaning": "乐队",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "film",
+      "meaning": "电影",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "draw",
+      "meaning": "画画",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "paint",
+      "meaning": "绘画",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "dance",
+      "meaning": "跳舞",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "play",
+      "meaning": "玩耍",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "fun",
+      "meaning": "乐趣",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "toy",
+      "meaning": "玩具",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "music",
+      "meaning": "音乐",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "piano",
+      "meaning": "钢琴",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "guitar",
+      "meaning": "吉他",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "drum",
+      "meaning": "鼓",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "violin",
+      "meaning": "小提琴",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "concert",
+      "meaning": "音乐会",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "camera",
+      "meaning": "相机",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "photo",
+      "meaning": "照片",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "picture",
+      "meaning": "图画",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "drawing",
+      "meaning": "绘画作品",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "hobby",
+      "meaning": "爱好",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "comic",
+      "meaning": "漫画",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "magazine",
+      "meaning": "杂志",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "story",
+      "meaning": "故事",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "poem",
+      "meaning": "诗",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "puzzle",
+      "meaning": "谜题",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "chess",
+      "meaning": "国际象棋",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "collect",
+      "meaning": "收集",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "album",
+      "meaning": "相册",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "festival",
+      "meaning": "节庆",
+      "topic": "hobbies",
+      "kind": "word"
+    },
+    {
+      "text": "I can play the piano.",
+      "meaning": "我会弹钢琴。",
+      "topic": "hobbies",
+      "kind": "phrase"
+    },
+    {
+      "text": "This song is great!",
+      "meaning": "这首歌真棒！",
+      "topic": "hobbies",
+      "kind": "phrase"
+    },
+    {
+      "text": "go",
+      "meaning": "去",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "do",
+      "meaning": "做",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "see",
+      "meaning": "看见",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "get",
+      "meaning": "得到",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "put",
+      "meaning": "放置",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "sit",
+      "meaning": "坐",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "cut",
+      "meaning": "剪",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "buy",
+      "meaning": "买",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "pay",
+      "meaning": "付款",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "ask",
+      "meaning": "询问",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "give",
+      "meaning": "给予",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "take",
+      "meaning": "拿取",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "make",
+      "meaning": "制作",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "help",
+      "meaning": "帮助",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "find",
+      "meaning": "找到",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "keep",
+      "meaning": "保持",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "open",
+      "meaning": "打开",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "close",
+      "meaning": "关闭",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "start",
+      "meaning": "开始",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "finish",
+      "meaning": "完成",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "choose",
+      "meaning": "选择",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "bring",
+      "meaning": "带来",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "carry",
+      "meaning": "搬运",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "catch",
+      "meaning": "接住",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "follow",
+      "meaning": "跟随",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "listen",
+      "meaning": "听",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "speak",
+      "meaning": "说话",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "remember",
+      "meaning": "记住",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "understand",
+      "meaning": "理解",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "practise",
+      "meaning": "练习",
+      "topic": "actions",
+      "kind": "word"
+    },
+    {
+      "text": "Can you help me?",
+      "meaning": "你能帮我吗？",
+      "topic": "actions",
+      "kind": "phrase"
+    },
+    {
+      "text": "Try again, please.",
+      "meaning": "请再试一次。",
+      "topic": "actions",
+      "kind": "phrase"
+    },
+    {
+      "text": "good",
+      "meaning": "好的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "bad",
+      "meaning": "坏的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "nice",
+      "meaning": "友好的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "kind",
+      "meaning": "和善的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "safe",
+      "meaning": "安全的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "busy",
+      "meaning": "忙碌的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "easy",
+      "meaning": "容易的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "hard",
+      "meaning": "困难的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "slow",
+      "meaning": "缓慢的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "fast",
+      "meaning": "快速的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "happy",
+      "meaning": "开心的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "sad",
+      "meaning": "难过的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "angry",
+      "meaning": "生气的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "tired",
+      "meaning": "疲倦的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "hungry",
+      "meaning": "饥饿的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "thirsty",
+      "meaning": "口渴的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "afraid",
+      "meaning": "害怕的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "excited",
+      "meaning": "兴奋的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "bored",
+      "meaning": "无聊的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "quiet",
+      "meaning": "安静的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "loud",
+      "meaning": "响亮的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "friendly",
+      "meaning": "友善的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "careful",
+      "meaning": "小心的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "clever",
+      "meaning": "聪明的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "brave",
+      "meaning": "勇敢的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "funny",
+      "meaning": "有趣的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "lovely",
+      "meaning": "可爱的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "great",
+      "meaning": "很棒的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "ready",
+      "meaning": "准备好的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "surprised",
+      "meaning": "惊讶的",
+      "topic": "feelings",
+      "kind": "word"
+    },
+    {
+      "text": "Are you ready?",
+      "meaning": "你准备好了吗？",
+      "topic": "feelings",
+      "kind": "phrase"
+    },
+    {
+      "text": "I feel happy today.",
+      "meaning": "我今天很开心。",
+      "topic": "feelings",
+      "kind": "phrase"
+    },
+    {
+      "text": "day",
+      "meaning": "一天",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "week",
+      "meaning": "一周",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "year",
+      "meaning": "一年",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "hour",
+      "meaning": "小时",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "date",
+      "meaning": "日期",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "time",
+      "meaning": "时间",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "late",
+      "meaning": "迟到的",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "soon",
+      "meaning": "不久",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "now",
+      "meaning": "现在",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "once",
+      "meaning": "一次",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "today",
+      "meaning": "今天",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "tomorrow",
+      "meaning": "明天",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "yesterday",
+      "meaning": "昨天",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "morning",
+      "meaning": "早晨",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "afternoon",
+      "meaning": "下午",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "evening",
+      "meaning": "傍晚",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "night",
+      "meaning": "夜晚",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "minute",
+      "meaning": "分钟",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "second",
+      "meaning": "秒",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "month",
+      "meaning": "月",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "weekend",
+      "meaning": "周末",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "early",
+      "meaning": "早的",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "always",
+      "meaning": "总是",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "often",
+      "meaning": "经常",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "never",
+      "meaning": "从不",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "sometimes",
+      "meaning": "有时",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "before",
+      "meaning": "之前",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "after",
+      "meaning": "之后",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "again",
+      "meaning": "再次",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "already",
+      "meaning": "已经",
+      "topic": "time",
+      "kind": "word"
+    },
+    {
+      "text": "See you tomorrow!",
+      "meaning": "明天见！",
+      "topic": "time",
+      "kind": "phrase"
+    },
+    {
+      "text": "It is time to go.",
+      "meaning": "该出发了。",
+      "topic": "time",
+      "kind": "phrase"
+    },
+    {
+      "text": "app",
+      "meaning": "应用",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "web",
+      "meaning": "网络",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "key",
+      "meaning": "按键",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "link",
+      "meaning": "链接",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "file",
+      "meaning": "文件",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "save",
+      "meaning": "保存",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "send",
+      "meaning": "发送",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "call",
+      "meaning": "呼叫",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "chat",
+      "meaning": "聊天",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "text",
+      "meaning": "文字",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "phone",
+      "meaning": "电话",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "computer",
+      "meaning": "电脑",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "laptop",
+      "meaning": "笔记本电脑",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "tablet",
+      "meaning": "平板电脑",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "screen",
+      "meaning": "屏幕",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "keyboard",
+      "meaning": "键盘",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "printer",
+      "meaning": "打印机",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "internet",
+      "meaning": "互联网",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "website",
+      "meaning": "网站",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "email",
+      "meaning": "电子邮件",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "message",
+      "meaning": "消息",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "online",
+      "meaning": "在线的",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "download",
+      "meaning": "下载",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "video",
+      "meaning": "视频",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "radio",
+      "meaning": "收音机",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "digital",
+      "meaning": "数字的",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "battery",
+      "meaning": "电池",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "electric",
+      "meaning": "电力的",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "machine",
+      "meaning": "机器",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "robot",
+      "meaning": "机器人",
+      "topic": "technology",
+      "kind": "word"
+    },
+    {
+      "text": "Save your work.",
+      "meaning": "保存你的作品。",
+      "topic": "technology",
+      "kind": "phrase"
+    },
+    {
+      "text": "Send me a message.",
+      "meaning": "给我发条消息。",
+      "topic": "technology",
+      "kind": "phrase"
+    },
+    {
+      "text": "sale",
+      "meaning": "促销",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "price",
+      "meaning": "价格",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "cost",
+      "meaning": "花费",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "cash",
+      "meaning": "现金",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "coin",
+      "meaning": "硬币",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "money",
+      "meaning": "钱",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "change",
+      "meaning": "零钱",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "cheap",
+      "meaning": "便宜的",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "expensive",
+      "meaning": "昂贵的",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "customer",
+      "meaning": "顾客",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "assistant",
+      "meaning": "店员",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "receipt",
+      "meaning": "收据",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "bill",
+      "meaning": "账单",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "order",
+      "meaning": "订单",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "offer",
+      "meaning": "优惠",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "present",
+      "meaning": "礼物",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "gift",
+      "meaning": "礼品",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "pair",
+      "meaning": "一双",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "piece",
+      "meaning": "一件",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "pound",
+      "meaning": "英镑",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "dollar",
+      "meaning": "美元",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "cent",
+      "meaning": "美分",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "euro",
+      "meaning": "欧元",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "wallet",
+      "meaning": "钱包",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "purse",
+      "meaning": "小钱包",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "basket",
+      "meaning": "篮子",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "plastic",
+      "meaning": "塑料",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "bottle",
+      "meaning": "瓶子",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "box",
+      "meaning": "盒子",
+      "topic": "shopping",
+      "kind": "word"
+    },
+    {
+      "text": "How much is this?",
+      "meaning": "这个多少钱？",
+      "topic": "shopping",
+      "kind": "phrase"
+    },
+    {
+      "text": "I need a new bag.",
+      "meaning": "我需要一个新包。",
+      "topic": "shopping",
+      "kind": "phrase"
+    },
+    {
+      "text": "job",
+      "meaning": "工作",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "work",
+      "meaning": "劳动",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "boss",
+      "meaning": "老板",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "staff",
+      "meaning": "员工",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "actor",
+      "meaning": "演员",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "artist",
+      "meaning": "艺术家",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "baker",
+      "meaning": "面包师",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "chef",
+      "meaning": "厨师",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "cook",
+      "meaning": "厨师",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "driver",
+      "meaning": "司机",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "engineer",
+      "meaning": "工程师",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "farmer",
+      "meaning": "农民",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "journalist",
+      "meaning": "记者",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "manager",
+      "meaning": "经理",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "mechanic",
+      "meaning": "机修工",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "musician",
+      "meaning": "音乐家",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "pilot",
+      "meaning": "飞行员",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "secretary",
+      "meaning": "秘书",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "shopper",
+      "meaning": "购物者",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "singer",
+      "meaning": "歌手",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "waiter",
+      "meaning": "男服务员",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "waitress",
+      "meaning": "女服务员",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "worker",
+      "meaning": "工人",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "writer",
+      "meaning": "作家",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "dentist",
+      "meaning": "牙医",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "business",
+      "meaning": "商业",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "company",
+      "meaning": "公司",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "meeting",
+      "meaning": "会议",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "interview",
+      "meaning": "面试",
+      "topic": "jobs",
+      "kind": "word"
+    },
+    {
+      "text": "My aunt is a pilot.",
+      "meaning": "我的阿姨是飞行员。",
+      "topic": "jobs",
+      "kind": "phrase"
+    },
+    {
+      "text": "What is your dream job?",
+      "meaning": "你梦想的工作是什么？",
+      "topic": "jobs",
+      "kind": "phrase"
+    },
+    {
+      "text": "red",
+      "meaning": "红色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "blue",
+      "meaning": "蓝色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "green",
+      "meaning": "绿色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "yellow",
+      "meaning": "黄色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "orange",
+      "meaning": "橙色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "purple",
+      "meaning": "紫色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "pink",
+      "meaning": "粉色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "brown",
+      "meaning": "棕色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "black",
+      "meaning": "黑色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "white",
+      "meaning": "白色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "grey",
+      "meaning": "灰色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "gold",
+      "meaning": "金色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "silver",
+      "meaning": "银色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "colour",
+      "meaning": "颜色",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "light",
+      "meaning": "浅色的",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "dark",
+      "meaning": "深色的",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "bright",
+      "meaning": "明亮的",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "round",
+      "meaning": "圆的",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "circle",
+      "meaning": "圆形",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "triangle",
+      "meaning": "三角形",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "shape",
+      "meaning": "形状",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "line",
+      "meaning": "线条",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "point",
+      "meaning": "点",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "side",
+      "meaning": "边",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "middle",
+      "meaning": "中间",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "top",
+      "meaning": "顶部",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "bottom",
+      "meaning": "底部",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "straight",
+      "meaning": "直的",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "curly",
+      "meaning": "卷曲的",
+      "topic": "colours",
+      "kind": "word"
+    },
+    {
+      "text": "My hat is blue.",
+      "meaning": "我的帽子是蓝色的。",
+      "topic": "colours",
+      "kind": "phrase"
+    },
+    {
+      "text": "Draw a red circle.",
+      "meaning": "画一个红色圆圈。",
+      "topic": "colours",
+      "kind": "phrase"
+    },
+    {
+      "text": "tree",
+      "meaning": "树",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "leaf",
+      "meaning": "叶子",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "flower",
+      "meaning": "花",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "grass",
+      "meaning": "草",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "plant",
+      "meaning": "植物",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "wood",
+      "meaning": "木头",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "stone",
+      "meaning": "石头",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "rock",
+      "meaning": "岩石",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "sand",
+      "meaning": "沙子",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "field",
+      "meaning": "田地",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "soil",
+      "meaning": "土壤",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "seed",
+      "meaning": "种子",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "rose",
+      "meaning": "玫瑰",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "fruit",
+      "meaning": "水果",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "water",
+      "meaning": "水",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "earth",
+      "meaning": "地球",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "world",
+      "meaning": "世界",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "country",
+      "meaning": "国家",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "nature",
+      "meaning": "自然",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "north",
+      "meaning": "北方",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "south",
+      "meaning": "南方",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "east",
+      "meaning": "东方",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "west",
+      "meaning": "西方",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "valley",
+      "meaning": "山谷",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "stream",
+      "meaning": "小溪",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "ocean",
+      "meaning": "海洋",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "desert",
+      "meaning": "沙漠",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "moon",
+      "meaning": "月亮",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "star",
+      "meaning": "星星",
+      "topic": "countryside",
+      "kind": "word"
+    },
+    {
+      "text": "The flowers are lovely.",
+      "meaning": "这些花真可爱。",
+      "topic": "countryside",
+      "kind": "phrase"
+    },
+    {
+      "text": "Look at the stars!",
+      "meaning": "看看星星！",
+      "topic": "countryside",
+      "kind": "phrase"
+    },
+    {
+      "text": "hello",
+      "meaning": "你好",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "hi",
+      "meaning": "嗨",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "bye",
+      "meaning": "再见",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "yes",
+      "meaning": "是的",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "no",
+      "meaning": "不",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "please",
+      "meaning": "请",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "thanks",
+      "meaning": "谢谢",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "sorry",
+      "meaning": "抱歉",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "welcome",
+      "meaning": "欢迎",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "excuse",
+      "meaning": "原谅",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "pardon",
+      "meaning": "请再说一次",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "word",
+      "meaning": "单词",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "letter",
+      "meaning": "字母",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "language",
+      "meaning": "语言",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "English",
+      "meaning": "英语",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "French",
+      "meaning": "法语",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "German",
+      "meaning": "德语",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "Spanish",
+      "meaning": "西班牙语",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "Chinese",
+      "meaning": "中文",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "talk",
+      "meaning": "交谈",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "tell",
+      "meaning": "告诉",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "say",
+      "meaning": "说",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "spell",
+      "meaning": "拼写",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "mean",
+      "meaning": "意思是",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "reply",
+      "meaning": "回复",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "invite",
+      "meaning": "邀请",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "invitation",
+      "meaning": "邀请函",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "news",
+      "meaning": "消息",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "information",
+      "meaning": "信息",
+      "topic": "communication",
+      "kind": "word"
+    },
+    {
+      "text": "How do you spell it?",
+      "meaning": "这个怎么拼写？",
+      "topic": "communication",
+      "kind": "phrase"
+    },
+    {
+      "text": "Please say that again.",
+      "meaning": "请再说一遍。",
+      "topic": "communication",
+      "kind": "phrase"
+    },
+    {
+      "text": "wake",
+      "meaning": "醒来",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "wash",
+      "meaning": "清洗",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "clean",
+      "meaning": "清洁",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "brush",
+      "meaning": "刷",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "eat",
+      "meaning": "吃",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "drink",
+      "meaning": "喝",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "breakfast",
+      "meaning": "早餐",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "lunch",
+      "meaning": "午餐",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "dinner",
+      "meaning": "晚餐",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "supper",
+      "meaning": "晚饭",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "meal",
+      "meaning": "一顿饭",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "snack",
+      "meaning": "点心",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "shower",
+      "meaning": "淋浴",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "toilet",
+      "meaning": "卫生间",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "towel",
+      "meaning": "毛巾",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "soap",
+      "meaning": "肥皂",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "comb",
+      "meaning": "梳子",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "toothbrush",
+      "meaning": "牙刷",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "toothpaste",
+      "meaning": "牙膏",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "tidy",
+      "meaning": "整齐的",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "leave",
+      "meaning": "离开",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "arrive",
+      "meaning": "到达",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "return",
+      "meaning": "返回",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "wait",
+      "meaning": "等待",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "stay",
+      "meaning": "停留",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "visit",
+      "meaning": "拜访",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "walk",
+      "meaning": "步行",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "live",
+      "meaning": "居住",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "grow",
+      "meaning": "成长",
+      "topic": "routine",
+      "kind": "word"
+    },
+    {
+      "text": "I walk to school.",
+      "meaning": "我走路去上学。",
+      "topic": "routine",
+      "kind": "phrase"
+    },
+    {
+      "text": "Have some breakfast.",
+      "meaning": "吃点早餐吧。",
+      "topic": "routine",
+      "kind": "phrase"
+    },
+    {
+      "text": "left",
+      "meaning": "左边",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "right",
+      "meaning": "右边",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "up",
+      "meaning": "上面",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "down",
+      "meaning": "下面",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "in",
+      "meaning": "里面",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "out",
+      "meaning": "外面",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "on",
+      "meaning": "在上方",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "off",
+      "meaning": "离开",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "near",
+      "meaning": "附近",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "far",
+      "meaning": "远处",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "here",
+      "meaning": "这里",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "there",
+      "meaning": "那里",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "inside",
+      "meaning": "在内部",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "outside",
+      "meaning": "在外部",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "above",
+      "meaning": "在上方",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "below",
+      "meaning": "在下方",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "under",
+      "meaning": "在下面",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "over",
+      "meaning": "越过",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "between",
+      "meaning": "在两者之间",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "behind",
+      "meaning": "在后面",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "opposite",
+      "meaning": "在对面",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "around",
+      "meaning": "周围",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "across",
+      "meaning": "横穿",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "along",
+      "meaning": "沿着",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "through",
+      "meaning": "穿过",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "towards",
+      "meaning": "朝向",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "away",
+      "meaning": "离去",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "front",
+      "meaning": "前面",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "next",
+      "meaning": "下一个",
+      "topic": "directions",
+      "kind": "word"
+    },
+    {
+      "text": "The shop is on your left.",
+      "meaning": "商店在你的左边。",
+      "topic": "directions",
+      "kind": "phrase"
+    },
+    {
+      "text": "Go straight on.",
+      "meaning": "一直往前走。",
+      "topic": "directions",
+      "kind": "phrase"
+    },
+    {
+      "text": "big",
+      "meaning": "大的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "small",
+      "meaning": "小的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "large",
+      "meaning": "宽大的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "little",
+      "meaning": "小巧的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "long",
+      "meaning": "长的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "short",
+      "meaning": "短的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "tall",
+      "meaning": "高的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "low",
+      "meaning": "低的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "high",
+      "meaning": "高处的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "wide",
+      "meaning": "宽的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "narrow",
+      "meaning": "窄的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "heavy",
+      "meaning": "重的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "thin",
+      "meaning": "薄的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "thick",
+      "meaning": "厚的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "deep",
+      "meaning": "深的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "full",
+      "meaning": "满的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "empty",
+      "meaning": "空的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "new",
+      "meaning": "新的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "old",
+      "meaning": "旧的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "young",
+      "meaning": "年幼的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "strong",
+      "meaning": "强壮的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "weak",
+      "meaning": "虚弱的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "soft",
+      "meaning": "柔软的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "sweet",
+      "meaning": "甜的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "fresh",
+      "meaning": "新鲜的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "different",
+      "meaning": "不同的",
+      "topic": "describing",
+      "kind": "word"
+    },
+    {
+      "text": "This box is heavy.",
+      "meaning": "这个盒子很重。",
+      "topic": "describing",
+      "kind": "phrase"
+    },
+    {
+      "text": "The water is deep.",
+      "meaning": "水很深。",
+      "topic": "describing",
+      "kind": "phrase"
+    }
+  ]
+}

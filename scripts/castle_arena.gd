@@ -9,6 +9,7 @@ var terrain: Node2D
 var enemy_motion := ArcadeMotion.new()
 var enemy_reactions: Dictionary = {}
 var last_enemy_flash: Dictionary = {}
+var label_offsets: Dictionary = {}
 const ROYAL_MAP = preload("res://assets/worlds/royal-battlefield.png")
 const GUARD_IDLE = preload("res://assets/animations/royal-guard-idle-v002/idle.tres")
 
@@ -21,6 +22,7 @@ func _ready() -> void:
 	clip_contents = true
 	battle.effect.connect(receive_effect)
 	battle.phase_changed.connect(func(): banner_time = 3.0)
+	battle.key_feedback.connect(on_key_feedback)
 
 func receive_effect(kind: String, origin: Vector2, destination: Vector2, amount: int) -> void:
 	var duration := 0.8
@@ -42,6 +44,10 @@ func _process(delta: float) -> void:
 		return
 	if not battle.paused:
 		clock += delta
+		step_feedback(delta)
+		for id in label_offsets.keys():
+			if battle.target_by_id(id).is_empty():
+				label_offsets.erase(id)
 		var active_ids: Array = []
 		for target in battle.targets:
 			if target.kind!="goblin":
@@ -215,8 +221,11 @@ func draw_pad(index: int) -> void:
 	var tint: Color = {"fire":Color("ffb96d"),"ice":Color("a2e6ec"),"storm":Color("c7b5ff")}[tower.kind]
 	if art.sprites.has("tower_"+str(tower.kind)):
 		var pulse := 0.0 if reduced_motion else sin(clock*3+index)*0.025
+		var recovery: float = float(tower.cooldown)/(float(CastleRun.TOWERS[tower.kind].cooldown)/(1.0+(tower.level-1)*.15))
+		var kick := 0.0 if reduced_motion else clampf((recovery-.82)/.18,0,1)*.08
 		draw_circle(p-Vector2(0,65),28+sin(clock*3)*3,Color(tint,0.13))
-		art.draw_sprite(self,"tower_"+str(tower.kind),p-Vector2(0,36),Vector2(100*(1-pulse),116*(1+pulse))*(1.0+(tower.level-1)*0.1))
+		draw_arc(p,31,-PI/2,-PI/2+TAU*maxf(.001,1-recovery),40,Color(tint,.65),2,true)
+		art.draw_sprite(self,"tower_"+str(tower.kind),p-Vector2(0,36-kick*80),Vector2(100*(1-pulse+kick),116*(1+pulse-kick))*(1.0+(tower.level-1)*0.1))
 		for i in range(tower.level):
 			draw_circle(p+Vector2((i-(tower.level-1)/2.0)*10,29),3,tint)
 		write(str(index+1),p+Vector2(0,51),14,GOLD,true)
@@ -250,6 +259,11 @@ func draw_enemy(target: Dictionary) -> void:
 	draw_ellipse_shadow(p+Vector2(0,15),Vector2(23,9)*s)
 	if target.id == battle.locked:
 		draw_arc(p+Vector2(0,8),29*s,0,TAU,40,GOLD,2,true)
+		for side in [-1,1]:
+			draw_line(p+Vector2(side*33,-25),p+Vector2(side*33,-14),PlayTheme.PRIMARY,2,true)
+			draw_line(p+Vector2(side*33,-25),p+Vector2(side*23,-25),PlayTheme.PRIMARY,2,true)
+		if key_pulse>0:
+			draw_arc(p,34*s,0,TAU,40,Color(.3,.7,1,key_pulse*2),3,true)
 	if target.slow > 0:
 		draw_circle(p,25*s,Color(0.5,0.85,1,0.12))
 		draw_arc(p+Vector2(0,12),23*s,0,TAU,24,Color("a2e6ec"),2,true)
@@ -327,34 +341,44 @@ func draw_enemy(target: Dictionary) -> void:
 
 func draw_target_label(target: Dictionary, occupied: Array[Rect2]) -> void:
 	var word: String = target.word
-	var width := maxf(48,FONT.get_string_size(word,HORIZONTAL_ALIGNMENT_LEFT,-1,22).x+24)
+	var font_size := 30 if word.length()==1 else 25 if word.length()<14 else 20
+	var width := maxf(60,FONT.get_string_size(word,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x+24)
 	var at: Vector2 = target.position-Vector2(width/2,79 if target.kind=="boss" else 63)
 	at.x = clampf(at.x,12,size.x-width-12)
 	var top_limit := 110.0 if battle.targets.any(func(t): return t.kind=="boss") else 72.0
 	at.y = clampf(at.y,top_limit,size.y-74)
-	var rect := Rect2(at,Vector2(width,46))
-	for i in range(8):
-		if not occupied.any(func(r): return r.grow(3).intersects(rect)):
-			break
-		rect.position.y += 48 if i%2==0 else -96
-		rect.position.y = clampf(rect.position.y,top_limit,size.y-64)
+	var rect := Rect2(at+label_offsets.get(target.id,Vector2.ZERO),Vector2(width,50))
+	rect.position = rect.position.clamp(Vector2(12,top_limit),Vector2(size.x-width-12,size.y-64))
+	if occupied.any(func(r): return r.grow(5).intersects(rect)):
+		var found := false
+		for dy in [0,-56,56,-112,112,-168,168]:
+			for dx in [0,-width-12,width+12]:
+				var candidate := Rect2((at+Vector2(dx,dy)).clamp(Vector2(12,top_limit),Vector2(size.x-width-12,size.y-64)),rect.size)
+				if not occupied.any(func(r): return r.grow(5).intersects(candidate)):
+					rect = candidate
+					found = true
+					break
+			if found:
+				break
+	label_offsets[target.id] = rect.position-at
 	occupied.append(rect)
 	var suggested := battle.recommended_target()
 	var selected: bool = not suggested.is_empty() and target.id == suggested.id
-	draw_line(rect.get_center()+Vector2(0,18),target.position-Vector2(0,22),Color(0.75,0.82,0.68,0.4),1,true)
+	draw_line(rect.get_center()+Vector2(0,18),target.position-Vector2(0,22),Color(.3,.6,.86,.65) if selected else Color(.55,.68,.55,.4),2 if selected else 1,true)
 	panel(rect,Color("effaff") if selected else Color.WHITE,9,PlayTheme.PRIMARY if selected else Color("adc593"))
 	if selected:
 		var tip := rect.get_center()+Vector2(0,-rect.size.y/2-6)
 		draw_colored_polygon(PackedVector2Array([tip+Vector2(-6,-6),tip+Vector2(6,-6),tip]),PlayTheme.PRIMARY)
-	write(word,rect.position+Vector2(12,26),22,Color("293c59"))
+	write(word,rect.position+Vector2(12,29),font_size,Color("293c59"))
 	if target.typed>0:
-		write(word.substr(0,target.typed),rect.position+Vector2(12,26),22,MINT)
+		write(word.substr(0,target.typed),rect.position+Vector2(12,29),font_size,MINT)
 	var bar_width: float = (width-14)*maxf(0,float(target.health)/target.max_health)
 	draw_rect(Rect2(rect.position+Vector2(7,36),Vector2(width-14,3)),Color("dfebd3"))
 	draw_rect(Rect2(rect.position+Vector2(7,36),Vector2(bar_width,3)),Color("dca86d") if target.kind=="boss" else MINT)
 	if selected:
-		var prefix := FONT.get_string_size(word.substr(0,target.typed),HORIZONTAL_ALIGNMENT_LEFT,-1,22).x
-		draw_line(rect.position+Vector2(12+prefix,30),rect.position+Vector2(24+prefix,30),GOLD,2,true)
+		var prefix := FONT.get_string_size(word.substr(0,target.typed),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
+		var next_width := FONT.get_string_size(word.substr(target.typed,1),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
+		draw_line(rect.position+Vector2(12+prefix,33),rect.position+Vector2(12+prefix+maxf(9,next_width),33),GOLD,2,true)
 
 func draw_effect(fx: Dictionary) -> void:
 	var t: float = 1-fx.life/fx.duration

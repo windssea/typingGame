@@ -24,6 +24,7 @@ func _process(delta: float) -> void:
 		var run: GameRun = app.run
 		value.run = {"mode":run.mode,"context":run.context,"hp":run.hp,"kills":run.kills,"score":run.score,"correct":run.correct,"attempts":run.attempts,"elapsed":run.elapsed,"done":run.done,"won":run.won,"paused":run.paused,"targets":[]}
 		value.run.merge({"difficulty":run.difficulty,"rank":run.challenge_rank})
+		value.run.merge({"vocabulary_topic":run.lesson.get("vocabulary_topic","basic"),"pool_size":run.lesson.words.size(),"last_word":run.last_word,"last_meaning":run.last_meaning})
 		var recommended := run.recommended_target()
 		value.run.recommended = recommended.get("id",-1)
 		for arena in app.layer.get_children():

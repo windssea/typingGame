@@ -126,20 +126,7 @@ func wave_name() -> String:
 	return ["森林哨兵","疾影突袭","裂岩统领","巫术之夜","爆破军团","最后的王座"][wave-1]
 
 func choose_word() -> String:
-	var pool: Array = lesson.words.duplicate()
-	for i in range(pool.size()-1,0,-1):
-		var j := rng.randi_range(0,i)
-		var value = pool[i]
-		pool[i] = pool[j]
-		pool[j] = value
-	for word in pool:
-		var used := false
-		for other in targets:
-			if str(other.word).begins_with(str(word)[0]):
-				used = true
-		if not used:
-			return word
-	return pool[0]
+	return next_word()
 
 func spawn_target() -> void:
 	var pool := ["goblin"]
@@ -175,6 +162,7 @@ func spawn_enemy(kind: String) -> Dictionary:
 		"speed":float(lesson.speed)*float(definition.speed)*difficulty*(1.0+(wave-1)*0.07),
 		"kind":kind,"health":health,"max_health":health,"slow":0.0,"flash":0.0,
 		"timer":8.0,"windup":0.0,"rage":false,"phase":0.0,"siege":0.0}
+	target.speed *= minf(1,5.0/maxi(5,str(target.word).length()))
 	targets.append(target)
 	next_id += 1
 	if kind == "boss":

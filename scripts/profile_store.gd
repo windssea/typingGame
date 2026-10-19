@@ -33,6 +33,8 @@ func valid(value: Variant) -> bool:
 		return false
 	if not value.settings.get("challenge_rank","normal") in SessionOptions.RANK_IDS:
 		return false
+	if not value.settings.get("vocabulary_topic","mixed") in Vocabulary.topics().map(func(t): return t.id):
+		return false
 	for record in value.records.values():
 		if not record is Dictionary:
 			return false
@@ -76,6 +78,8 @@ func save_profile() -> bool:
 func record_run(run: RefCounted, lesson_index: int) -> void:
 	var id: String = run.context + ":" + run.mode + ":" + run.lesson.id
 	id += SessionOptions.record_suffix(run.context,run.difficulty,run.challenge_rank)
+	if run.lesson.has("vocabulary_topic"):
+		id += ":a2:"+str(run.lesson.vocabulary_topic)
 	var result: Dictionary = {"score":run.score,"accuracy":run.accuracy(),"wpm":run.wpm()}
 	if result.score >= data.records.get(id, {}).get("score", -1):
 		data.records[id] = result
