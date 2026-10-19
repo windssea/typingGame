@@ -10,7 +10,7 @@ body { background:#f4f9fd; color:#2d405b; }
 </style>
 <script>
 addEventListener('keydown',function(event){
- if(document.activeElement?.id==='canvas' && ['F1','F2','Tab',' '].includes(event.key)) event.preventDefault();
+ if(document.activeElement?.id==='canvas' && ['F1','F2','F3','Tab',' '].includes(event.key)) event.preventDefault();
 });
 </script>
 '@

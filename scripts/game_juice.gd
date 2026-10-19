@@ -19,7 +19,8 @@ func burst(point: Vector2, color: Color, tier := 1, kind := "spark") -> void:
 			particles.pop_front()
 		var direction := Vector2.from_angle(rng.randf_range(0,TAU))
 		var life := rng.randf_range(0.35,0.8)+tier*0.06
-		particles.append({"p":point,"v":direction*rng.randf_range(45,130+tier*65),"life":life,"total":life,"color":color if i%3 else Color.WHITE,"radius":rng.randf_range(2,5+tier),"angle":rng.randf_range(0,TAU),"spin":rng.randf_range(-7,7),"kind":kind,"gravity":180.0 if kind in ["confetti","soil"] else 35.0})
+		var tint: Color = [Color("ffbf68"),Color("78cafa"),Color("f58d9d"),Color("a3dfaf")][i%4] if kind=="confetti" else color
+		particles.append({"p":point,"v":direction*rng.randf_range(45,130+tier*65),"life":life,"total":life,"color":tint if i%3 else Color.WHITE,"radius":rng.randf_range(2,5+tier),"angle":rng.randf_range(0,TAU),"spin":rng.randf_range(-7,7),"kind":kind,"gravity":180.0 if kind in ["confetti","soil"] else 35.0})
 	if not reduced_motion:
 		if particles.size()>=LIMIT:
 			particles.pop_front()
@@ -52,7 +53,11 @@ func draw(canvas: CanvasItem) -> void:
 			canvas.draw_arc(p,item.radius+(1-alpha)*60,0,TAU,32,color,1+alpha*3,true)
 		elif item.kind=="confetti":
 			var axis := Vector2.from_angle(item.angle)*radius
-			canvas.draw_line(p-axis,p+axis,color,radius*0.7,true)
+			var cross_axis := axis.orthogonal()*(0.25+absf(sin(item.angle*2))*0.5)
+			canvas.draw_colored_polygon(PackedVector2Array([p-axis,p+cross_axis,p+axis,p-cross_axis]),color)
+		elif item.kind=="soil":
+			canvas.draw_circle(p,radius,Color(item.color,alpha*0.65))
+			canvas.draw_circle(p+Vector2(-radius*0.2,-radius*0.25),radius*0.4,Color(0.95,0.83,0.65,alpha*0.55))
 		elif item.kind=="spark":
 			var axis := Vector2.from_angle(item.angle)*radius
 			canvas.draw_line(p-axis*1.7,p+axis*1.7,color,1.5,true)

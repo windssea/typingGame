@@ -45,7 +45,7 @@ func _initialize() -> void:
 	check(aliens.shield==30 and aliens.hp==100,"alien shield absorbs damage before hull")
 	for i in range(3):
 		complete_word(aliens)
-	check(aliens.shield==42,"three consecutive hits recharge alien shield")
+	check(aliens.shield==50,"three consecutive hits recharge shield and typed supply ship adds eight")
 	var balloons := make_run("balloons",6,"challenge")
 	balloons.type_character(str(balloons.targets[0].word)[0])
 	var target := balloons.target_by_id(balloons.locked)

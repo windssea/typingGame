@@ -83,7 +83,8 @@ func _draw() -> void:
 		write("防 线", Vector2(680, 620), 16, GOLD, true)
 	for target in run.targets:
 		var pos: Vector2 = target.position
-		var selected: bool = target.id == run.locked
+		var suggested := run.recommended_target()
+		var selected: bool = not suggested.is_empty() and target.id == suggested.id
 		if run.mode == "castle":
 			monster(pos, target.kind, selected)
 		else:
@@ -197,7 +198,9 @@ func word_plate(target: Dictionary, at: Vector2, selected: bool) -> void:
 	var width := FONT.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x + 28
 	at.x = clampf(at.x, width / 2 + 12, size.x - width / 2 - 12)
 	at.y = maxf(at.y, 20)
-	panel(Rect2(at - Vector2(width / 2, 23), Vector2(width, 36)), Color.WHITE, 11, PlayTheme.PRIMARY if selected else Color("bfd3e5"))
+	if selected:
+		panel(Rect2(at - Vector2(width / 2+3, 26), Vector2(width+6,42)),Color(0.35,0.65,0.88,0.17),14)
+	panel(Rect2(at - Vector2(width / 2, 23), Vector2(width, 36)), Color("effaff") if selected else Color.WHITE, 11, PlayTheme.PRIMARY if selected else Color("bfd3e5"))
 	write(word, at + Vector2(0, 3),22, Color("293c59"),true)
 	if target.typed > 0:
 		var part := word.substr(0,target.typed)

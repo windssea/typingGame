@@ -1,0 +1,17 @@
+{
+  "source": "assets/generated/arcade-sprites.png",
+  "source_region": [
+    1164,
+    29,
+    351,
+    297
+  ],
+  "source_tool": "built-in Image Gen (existing approved atlas)",
+  "processing": [
+    "extract declared RGBA atlas region",
+    "uniform fit within 510x510",
+    "center on 768x768 flat magenta for Grok reference"
+  ],
+  "seed_is_animation": false,
+  "prompt": "motion-v001.txt"
+}

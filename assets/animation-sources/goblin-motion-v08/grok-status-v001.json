@@ -1,0 +1,21 @@
+{
+  "tool": "local Grok Build / reference_to_video",
+  "status": "generated-and-normalized",
+  "provider_request_id": null,
+  "provider_model": null,
+  "identity": "existing approved Image Gen atlas region",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\goblin-motion-v08\\v001\\grok-raw.mp4",
+  "sha256": "ddc6f3e65901e0e949dc347c19e7568389cc1ac3b31a1e5811d9ce532f60e196",
+  "actual": {
+    "width": 720,
+    "height": 720,
+    "fps": "24/1",
+    "frames": "193",
+    "duration": 8.041667
+  },
+  "limitations": [
+    "The generation returned no separate provider request id/model in the local receipt. CLI session/request IDs are not substituted.",
+    "Native source contains audio/attached preview; runtime uses only decoded video frames.",
+    "Short idle loops may show a seam; selected intervals and runtime reactions are reviewed separately."
+  ]
+}

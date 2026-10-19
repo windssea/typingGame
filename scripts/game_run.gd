@@ -59,6 +59,16 @@ func target_by_id(id: int) -> Dictionary:
 			return target
 	return {}
 
+func recommended_target() -> Dictionary:
+	var target := target_by_id(locked)
+	if not target.is_empty():
+		return target
+	if targets.is_empty():
+		return {}
+	var ordered := targets.duplicate()
+	ordered.sort_custom(func(a,b): return priority(a)<priority(b))
+	return ordered[0]
+
 func spawn_target() -> void:
 	var pool: Array = lesson.words.duplicate()
 	# Distinct initials when possible; early lessons intentionally share initials.

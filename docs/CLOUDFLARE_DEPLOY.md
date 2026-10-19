@@ -20,11 +20,13 @@ python tools/prepare-cloudflare.py --asset-base-url https://pub-2fecf2e531bd4f9c
 .\tools\deploy-cloudflare.ps1 -Package build/cloudflare-next
 ```
 
+引擎哈希与线上一致时，可给发布脚本添加 `-ReuseEngine`，它会先检查该R2对象存在，再只上传新PCK。
+
 打包器拒绝覆盖非空 Pages 输出目录；每次更新更换 `--out`。`manifest.json` 记录对象哈希、压缩前后尺寸、MIME 和本机上传路径。发布脚本先上传 R2 并配置 CORS，成功后才发布 Pages。无需重新创建项目或桶。
 
 不同内容使用不同对象名，可让旧页面继续加载原版本。只修改 Pages 壳时，可以直接运行 `npx --yes wrangler pages deploy <包目录>/pages --project-name typinggame --branch main`。恢复旧版本时重新发布对应的 Pages 壳即可，需保留它引用的 R2 对象。
 
-默认只开放正式站点的 CORS。若使用临时部署预览地址，需要将其精确 origin 加入桶 CORS，或直接通过正式地址验证。首次加载约 42.4 MB 压缩资源，之后资源使用浏览器缓存；当前未启用 PWA 离线模式。
+默认只开放正式站点的 CORS。若使用临时部署预览地址，需要将其精确 origin 加入桶 CORS，或直接通过正式地址验证。0.8 首次加载约 50.3 MB 压缩资源，之后资源使用浏览器缓存；当前未启用 PWA 离线模式。
 
 当前使用 R2 的公开 `r2.dev` 地址完成上线验证。面向大量用户长期运营时，应为 R2 配置自定义资源域名；官方将 `r2.dev` 定位为开发用途并限制速率，见 [R2 公开桶说明](https://developers.cloudflare.com/r2/buckets/public-buckets/)。Pages 的单文件限制见 [官方限制说明](https://developers.cloudflare.com/pages/platform/limits/)。
 

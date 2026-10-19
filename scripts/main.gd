@@ -29,15 +29,12 @@ var guide_open := false
 var guide_was_paused := false
 var previous_focus: Control
 var sound_button: Button
-var world_index := -1
 var challenge_index := 0
 var ui_tweens: Dictionary = {}
 var live_hud: LiveHud
-const WORLD_NAMES := ["皇家奇幻战争","科幻星港","现代工坊","古文明遗迹","童话花园"]
-const WORLD_MODES := [["castle","fighter"],["aliens","rain"],["racing","sprint"],["dojo","moles"],["balloons","bubbles"]]
-const PORTALS = preload("res://assets/worlds/portals.png")
-
 func _ready() -> void:
+	if OS.has_feature("web") and JavaScriptBridge.eval("new URLSearchParams(location.search).has('qa') && new URLSearchParams(location.search).has('qa_profile')",true):
+		store.path = "user://browser-validation.json"
 	store.load_profile()
 	lesson_index = int(store.data.last_lesson)
 	pace = float(store.data.settings.get("training_speed",1.0))
@@ -176,75 +173,68 @@ func select_rank(index: int) -> void:
 	layer.find_child("ChallengeRank%d" % index,true,false).grab_focus()
 
 func navigation(active: String) -> void:
-	panel(Vector2(0,0),Vector2(252,900),Color("ffffff"))
-	panel(Vector2(28,31),Vector2(55,58),PlayTheme.YELLOW)
-	label("K",Vector2(43,34),34,TEXT)
-	label("键境",Vector2(100,39),30)
-	label("键 盘 游 乐 园",Vector2(31,106),18,GOLD)
-	label("小小手指，大大冒险！",Vector2(30,148),16,MUTED)
-	var nav := [["home","游戏集合",show_home],["lessons","打字训练",show_lessons],["challenges","打字挑战",show_challenges],["library","玩法图鉴",show_library],["profile","学习档案",show_profile]]
-	for i in range(nav.size()):
-		button(nav[i][1],Vector2(24,223+i*64),Vector2(204,48),nav[i][2],active==nav[i][0])
+	panel(Vector2(0,0),Vector2(252,900),Color.WHITE)
+	label("K / 键境",Vector2(31,37),33)
+	label("让输入成为你的力量",Vector2(31,91),16,MUTED)
+	button("01   打字训练",Vector2(22,179),Vector2(208,65),show_lessons,active!="challenges").name = "TrainingNav"
+	label("从 F / J 开始，一步一步学",Vector2(31,256),14,MUTED)
+	button("02   打字挑战",Vector2(22,311),Vector2(208,65),show_challenges,active=="challenges").name = "ChallengeNav"
+	label("用学会的本领，完成冒险",Vector2(31,388),14,MUTED)
 	var pal := PlayfulArt.new()
 	pal.variant = "sidebar"
-	pal.position = Vector2(36,557)
+	pal.position = Vector2(36,482)
 	pal.scale = Vector2.ONE*0.8
 	layer.add_child(pal)
-	label("每天进步一点点",Vector2(30,686),20,GOLD)
-	label("Lv. %02d  /  %d XP" % [1+int(store.data.xp/100),store.data.xp],Vector2(30,725),17)
-	label("已掌握 %d / 10 节" % store.data.completed.size(),Vector2(30,759),16,MUTED)
-	label("方向键 / Tab 选择 · Enter 确认",Vector2(24,816),13,MUTED)
-	label("键境 · 动感版 0.7",Vector2(30,845),14,MUTED)
+	label("每次练习，都算进步",Vector2(30,624),19,GOLD)
+	label("Lv. %02d  /  %d XP" % [1+int(store.data.xp/100),store.data.xp],Vector2(30,665),17)
+	label("已掌握 %d / 10 节" % store.data.completed.size(),Vector2(30,699),16,MUTED)
+	button("存档与设置",Vector2(28,755),Vector2(194,42),show_profile).name = "ProfileUtility"
+	label("Tab 选择 · Enter 确认",Vector2(31,821),14,MUTED)
+	label("键境 · 冒险版 0.8",Vector2(31,853),14,MUTED)
 
 func show_home() -> void:
 	page = "home"
 	run = null
 	clear_ui()
-	navigation("home")
-	label("KEYBOUND / 键盘里的五个世界",Vector2(300,36),16,GOLD)
-	label("小小手指，探索大大世界。",Vector2(300,72),38)
-	label("先练 F 和 J，再把每一个单词变成冒险的力量。",Vector2(300,128),18,MUTED)
-	panel(Vector2(300,175),Vector2(1090,100),Color("edf6ff"))
-	label("继续学习  /  "+lessons[lesson_index].name,Vector2(324,189),23)
-	label(lessons[lesson_index].hint,Vector2(324,231),16,MUTED)
-	button("更换课程",Vector2(895,195),Vector2(172,54),show_lessons)
-	button("继续本课  →",Vector2(1082,195),Vector2(280,54),show_training_games,true).grab_focus()
-	label("五个世界，同一场成长",Vector2(300,289),21)
-	for i in range(5):
-		var index := i
-		var card := button("",Vector2(300+i*220,330),Vector2(204,184),func(): select_world(index),world_index==i)
-		card.name = "WorldPortal%d" % i
-		var texture := AtlasTexture.new()
-		texture.atlas = PORTALS
-		texture.region = Rect2(i*PORTALS.get_width()/5.0,[365,405,385,370,445][i],PORTALS.get_width()/5.0,240)
-		texture.filter_clip = true
+	navigation("lessons")
+	label("KEYBOUND / 每一次输入，都有回应",Vector2(300,45),16,MINT)
+	label("练会一个键，闯过一场冒险。",Vector2(300,85),40)
+	label("切换英文输入法。看清蓝色目标，输入就能挥锤、发射或前进。",Vector2(302,151),19,MUTED)
+	for i in range(2):
+		var x := 300+i*552
+		var card := panel(Vector2(x,216),Vector2(530,526),Color.WHITE)
+		card.clip_contents = true
 		var picture := TextureRect.new()
 		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		picture.texture = texture
-		picture.position = Vector2(4,4)
-		picture.size = Vector2(196,126)
+		picture.texture = load("res://assets/generated/"+("moles-background" if i==0 else "aliens-background")+".png")
+		picture.position = Vector2(10,10)
+		picture.size = Vector2(510,243)
 		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		picture.clip_contents = true
 		picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(picture)
-		label(WORLD_NAMES[i],Vector2(12,133),18,TEXT,card).mouse_filter = Control.MOUSE_FILTER_IGNORE
-		label("◆ 当前世界 · 2款玩法" if i==world_index else "进入世界 · 2款玩法",Vector2(12,160),13,MUTED,card).mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label("全部小游戏" if world_index<0 else WORLD_NAMES[world_index]+" · 开始冒险",Vector2(300,539),23)
-	button("全部十款游戏",Vector2(1195,530),Vector2(195,42),func(): world_index=-1; show_home(),world_index<0)
-	game_grid(available_modes(),Vector2(300,584),Vector2(1100,242),"training")
-	label("课程决定练习内容 · 世界决定游戏画面 · 每次结算自动保存成绩",Vector2(300,848),16,MUTED)
+		add_badge("moles" if i==0 else "aliens",Vector2(140,54),Vector2(250,170),card)
+		label("01 / 学会键盘" if i==0 else "02 / 使用你的本领",Vector2(25,279),16,MINT if i==0 else GOLD,card)
+		label("打字训练" if i==0 else "打字挑战",Vector2(25,312),35,TEXT,card)
+		label("先练少量按键，在小任务里建立指法。\n每六次命中一个阶段，攒能量释放技能。" if i==0 else "保卫飞船、赢下赛车、守住城堡。\n选择难度，看清目标，决定何时使用技能。",Vector2(25,369),18,MUTED,card)
+		var launch := button("继续训练  →" if i==0 else "选择挑战  →",Vector2(25,452),Vector2(480,54),begin_recommended_training if i==0 else show_challenges,i==0,card)
+		launch.name = "StartTraining" if i==0 else "StartChallenge"
+		if i==0:
+			launch.grab_focus()
+	panel(Vector2(300,777),Vector2(1082,82),Color("edf7ff"))
+	label("当前课程  /  "+lessons[lesson_index].name,Vector2(324,792),22)
+	label(lessons[lesson_index].hint+" · 训练与挑战成绩分别保存",Vector2(324,828),16,MUTED)
 
-func select_world(index: int) -> void:
-	world_index = index
-	show_home()
-	var card := layer.find_child("WorldPortal%d" % index,true,false) as Button
-	if card!=null:
-		card.grab_focus()
+func recommended_mode() -> String:
+	return ["moles","balloons","aliens","moles","racing","balloons","fighter","racing","aliens","sprint"][lesson_index]
 
-func available_modes() -> Array:
-	if world_index<0:
-		return GameContent.modes()
-	return GameContent.modes().filter(func(mode): return mode.id in WORLD_MODES[world_index])
+func begin_recommended_training() -> void:
+	start_game(recommended_mode(),"training")
+
+func continue_training() -> void:
+	lesson_index = mini(lessons.size()-1,lesson_index+1)
+	store.data.last_lesson = lesson_index
+	store.save_profile()
+	begin_recommended_training()
 
 func add_badge(mode: String, at: Vector2, dimensions: Vector2, parent: Control = layer) -> void:
 	var badge := ModeBadge.new()
@@ -254,6 +244,19 @@ func add_badge(mode: String, at: Vector2, dimensions: Vector2, parent: Control =
 	badge.size = dimensions
 	parent.add_child(badge)
 
+func mission_goal(mode: String, purpose: String) -> String:
+	if mode=="castle":
+		return "守住六波进攻 · 击败两位统领"
+	if mode=="rain":
+		return "守住 90 秒 · 防线体力归零则失败"
+	if mode=="sprint":
+		return "60 秒内 ≥%d 字符 · 准确率 ≥%d%%" % [[18,36,60][challenge_index],[85,90,95][challenge_index]] if purpose=="challenge" else "60 秒专注输入 · 看见速度和准确率"
+	if mode in ["dojo","bubbles"]:
+		return "完成 18 次输入 · 不限时、没有失败"
+	if mode=="racing":
+		return "先于对手冲线 · F3 干扰对手" if purpose=="challenge" else "输入推进赛程 · 自由完赛"
+	return "完成 %d 次命中 · 体力归零则失败" % (30+challenge_index*6) if purpose=="challenge" else "三个小阶段 · 完成 18 次命中"
+
 func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String) -> void:
 	var scroll := ScrollContainer.new()
 	scroll.name = "GameCollection"
@@ -262,52 +265,55 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String) 
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.follow_focus = true
 	var grid := GridContainer.new()
-	grid.columns = 3
+	grid.columns = 2
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.add_theme_constant_override("h_separation",16)
-	grid.add_theme_constant_override("v_separation",16)
+	grid.add_theme_constant_override("h_separation",18)
+	grid.add_theme_constant_override("v_separation",18)
 	layer.add_child(scroll)
 	scroll.add_child(grid)
-	for i in range(modes.size()):
-		var mode: Dictionary = modes[i]
+	for definition in modes:
+		var mode: Dictionary = definition
 		var card := Panel.new()
-		card.custom_minimum_size = Vector2(350,241)
+		card.custom_minimum_size = Vector2(531,245)
+		card.clip_contents = true
 		card.add_theme_stylebox_override("panel",style(PANEL))
 		grid.add_child(card)
-		var cap := panel(Vector2(8,8),Vector2(334,77),PlayTheme.PASTELS[i%5],card)
-		cap.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		cap.clip_contents = true
-		var scene_art := TextureRect.new()
-		scene_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		var background_name: String = "balloons-background-v2" if mode.id=="balloons" else str(mode.id)+"-background"
-		scene_art.texture = load("res://assets/generated/"+background_name+".png")
-		scene_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		scene_art.size = Vector2(334,77)
-		scene_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		cap.add_child(scene_art)
-		var veil := ColorRect.new()
-		veil.color = Color(1,1,1,0.89)
-		veil.size = Vector2(226,77)
-		veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		cap.add_child(veil)
-		add_badge(mode.id,Vector2(242,7),Vector2(95,75),card)
-		label(str(mode.tag).split("/")[-1].strip_edges(),Vector2(19,17),14,MUTED,card)
-		label(mode.name,Vector2(19,49),24,TEXT,card)
-		label(mode.description,Vector2(19,94),16,MUTED,card)
-		label(mode.goal,Vector2(19,150),14,MINT,card)
-		button("开始挑战  →" if purpose=="challenge" else "用本课内容开始",Vector2(19,184),Vector2(312,41),func(): start_game(mode.id,purpose),false,card)
+		var picture := TextureRect.new()
+		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		picture.texture = load("res://assets/generated/"+("balloons-background-v2" if mode.id=="balloons" else str(mode.id)+"-background")+".png")
+		picture.position = Vector2(349,10)
+		picture.size = Vector2(172,168)
+		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card.add_child(picture)
+		add_badge(mode.id,Vector2(361,26),Vector2(145,130),card)
+		label("训练任务" if purpose=="training" else "挑战任务",Vector2(22,18),14,MINT,card)
+		label(mode.name,Vector2(22,45),27,TEXT,card)
+		var examples: String = "  /  ".join(lessons[lesson_index].words.slice(0,3))
+		if examples.length()>25:
+			examples = str(lessons[lesson_index].words[0])
+		label("输入："+examples,Vector2(22,91),17,GOLD,card)
+		label("输入完成 → "+ActionCue.VERBS.get(mode.id,"完成目标"),Vector2(22,121),16,TEXT,card)
+		var rule := label(mission_goal(mode.id,purpose),Vector2(22,151),13,MUTED,card)
+		rule.size = Vector2(307,35)
+		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var enter := button("进入挑战  →" if purpose=="challenge" else "开始这项训练  →",Vector2(20,188),Vector2(490,42),func(): start_game(mode.id,purpose),false,card)
+		enter.name = "Mission_"+str(mode.id)
 
 func show_training_games() -> void:
 	page = "training_games"
 	run = null
 	clear_ui()
 	navigation("lessons")
-	label("这节课，你想怎么玩？",Vector2(300,46),34)
+	label("把这几个键，练成你的本领。",Vector2(300,46),34)
 	label(lessons[lesson_index].name+"  /  "+lessons[lesson_index].hint,Vector2(300,106),17,MINT)
-	label("训练内容保持一致，只改变玩法。新手建议先选无压力练习。",Vector2(300,143),17,MUTED)
+	label("推荐先试打地鼠：看蓝色词牌 → 输入 → 挥锤。命中三次后按 F3 释放技能。",Vector2(300,143),17,MUTED)
 	speed_controls(Vector2(300,198))
 	label("速度调整敌人移动和目标时限；无压力练习与一分钟计时保持原规则。",Vector2(300,240),15,MUTED)
-	game_grid(available_modes(),Vector2(300,282),Vector2(1100,502),"training")
+	var order := ["moles","balloons","aliens","racing","fighter","dojo","bubbles","rain","sprint","castle"]
+	var modes := GameContent.modes()
+	modes.sort_custom(func(a,b): return order.find(a.id)<order.find(b.id))
+	game_grid(modes,Vector2(300,282),Vector2(1100,502),"training")
 	button("返回课程",Vector2(300,807),Vector2(180,46),show_lessons)
 	label("当前："+SessionOptions.SPEED_NAMES[SessionOptions.SPEEDS.find(pace)],Vector2(510,816),18,MINT)
 
@@ -316,8 +322,8 @@ func show_challenges() -> void:
 	run = null
 	clear_ui()
 	navigation("challenges")
-	label("准备好，挑战自己。",Vector2(300,48),36)
-	label("已学会输入？现在用速度、反应和策略，检验你的稳定性。",Vector2(302,111),18,MUTED)
+	label("看清目标，再决定你的下一步。",Vector2(300,48),36)
+	label("蓝色词牌标记推荐目标，底部写明完整输入。动作任务可用 F3 技能，胜负条件见下方。",Vector2(302,111),18,MUTED)
 	panel(Vector2(300,170),Vector2(1090,84))
 	label("挑战文本："+lessons[lesson_index].name,Vector2(324,194),21,MINT)
 	var selector := OptionButton.new()
@@ -345,7 +351,7 @@ func show_lessons() -> void:
 	run = null
 	clear_ui()
 	navigation("lessons")
-	label("从第一枚字母开始",Vector2(300,48),36)
+	label("先选今天要学的按键",Vector2(300,48),36)
 	label("通关、准确率 ≥90% 且有效输入 ≥18 字符记录掌握。所有课程开放。",Vector2(302,107),17,MUTED)
 	button("先学手指摆放",Vector2(1180,54),Vector2(210,46),show_fingering)
 	for i in range(lessons.size()):
@@ -358,8 +364,8 @@ func show_lessons() -> void:
 		label(lesson.name + ("  ✓" if store.data.completed.has(lesson.id) else ""),Vector2(x+18,y+13),21,GOLD if i==lesson_index else TEXT)
 		label(lesson.description,Vector2(x+18,y+53),14,MUTED)
 		button("已选" if i==lesson_index else "选择",Vector2(x+423,y+13),Vector2(88,40),func(): select_lesson(i),i==lesson_index)
-	button("下一步：选择小游戏",Vector2(300,791),Vector2(270,54),show_training_games,true)
-	label("下一步可选择游戏和五档训练速度。",Vector2(610,807),17,MUTED)
+	button("进入本课训练任务  →",Vector2(300,791),Vector2(270,54),show_training_games,true)
+	label("在任务里学习：输入 → 行动 → 充能 → 使用技能。",Vector2(610,807),17,MUTED)
 
 func select_lesson(index: int) -> void:
 	lesson_index = index
@@ -415,28 +421,6 @@ func close_game_guide() -> void:
 		run.paused = false
 		if guide_was_paused:
 			toggle_pause()
-
-func show_library() -> void:
-	page = "library"
-	run = null
-	clear_ui()
-	navigation("library")
-	label("一套键盘，无数种冒险。",Vector2(300,48),36)
-	label("10 款已可玩 · 下方为后续扩展规划 · 当前游戏请从游戏集合进入",Vector2(302,110),18,MUTED)
-	var groups := [
-		["01 / 基础与节奏","星火练习场 · 字母泡泡 · 指法花园\n节奏列车 · 双手鼓点 · 拼字积木"],
-		["02 / 射击与反应","字母陨落 · 星际射手 · 西部快枪\n气球猎手 · 深海鱼雷 · 流星拦截"],
-		["03 / 塔防与策略","守护键之城 · 符文炮台 · 四门要塞\n护送商队 · 元素防线 · 无尽围城"],
-		["04 / 横版与冒险","键帽跑酷 · 云端攀登 · 矿洞逃生\n森林游侠 · 单词钩索 · 巨龙追逐"],
-		["05 / 模拟与经营","魔药工坊 · 打字餐厅 · 邮局物语\n农场物语 · 修理小铺 · 城镇建设"],
-		["06 / 高阶与挑战","符文地牢 · Boss 试炼 · 校对侦探\n代码工匠 · 每日远征 · 自定义训练"]]
-	for i in range(groups.size()):
-		var x := 300+(i%2)*550
-		var y := 179+(i/2)*208
-		panel(Vector2(x,y),Vector2(530,185))
-		label(groups[i][0],Vector2(x+24,y+21),23,GOLD)
-		label(groups[i][1],Vector2(x+24,y+72),19,MUTED)
-	label("已可玩：气球、外星攻防、地鼠、赛车、格斗、城堡等十种游戏。",Vector2(300,838),17,MUTED)
 
 func show_profile() -> void:
 	page = "profile"
@@ -557,6 +541,7 @@ func start_game(mode: String, purpose := "training") -> void:
 	hud = label("",Vector2(500,35),22,TEXT)
 	hud.visible = false
 	live_hud = LiveHud.new()
+	live_hud.reduced_motion = store.data.settings.reduced_motion
 	live_hud.position = Vector2(430,14)
 	live_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(live_hud)
@@ -598,7 +583,11 @@ func start_game(mode: String, purpose := "training") -> void:
 	guide_button.add_theme_font_size_override("font_size",14)
 	guide_button.focus_mode = Control.FOCUS_NONE
 	hint = label("",Vector2(42,798),20,MINT)
-	label("%s  |  退格：撤回  Tab：换目标  F1：指法  F2：音效  Esc：暂停" % lessons[lesson_index].hint,Vector2(42,850),15,MUTED)
+	hint.visible = false
+	var cue := ActionCue.new()
+	cue.position = Vector2(40,795)
+	cue.run = run
+	layer.add_child(cue)
 	update_hud()
 
 func _input(event: InputEvent) -> void:
@@ -637,6 +626,10 @@ func _input(event: InputEvent) -> void:
 			return
 		if event.keycode == KEY_F2:
 			toggle_sound()
+			get_viewport().set_input_as_handled()
+			return
+		if event.keycode==KEY_F3 and run is ArcadeRun and not guide_open and not is_instance_valid(overlay):
+			run.activate_skill()
 			get_viewport().set_input_as_handled()
 			return
 		if guide_open:
@@ -764,8 +757,8 @@ func toggle_pause() -> void:
 	var root := modal()
 	label("休息一下，冒险等你回来。",Vector2(410,227),30,TEXT,root)
 	label("计时与敌人已暂停。\n\n准备好后，双手回到 F / J 定位键。\n离开本局不会保存本局成绩。",Vector2(410,310),20,MUTED,root)
-	button("继续训练",Vector2(410,524),Vector2(620,54),toggle_pause,true,root).grab_focus()
-	button("返回大厅",Vector2(410,602),Vector2(620,48),show_home,false,root)
+	button("继续挑战" if session_context=="challenge" else "继续训练",Vector2(410,524),Vector2(620,54),toggle_pause,true,root).grab_focus()
+	button("返回训练与挑战",Vector2(410,602),Vector2(620,48),show_home,false,root)
 
 func finish_game() -> void:
 	store.record_run(run,lesson_index)
@@ -783,6 +776,7 @@ func finish_game() -> void:
 		label("统领 %d / 2   ·   建造 %d 座塔   ·   抵达第 %d 波" % [run.bosses_defeated,run.towers.size(),run.wave],Vector2(410,485),16,GOLD,root)
 	label(store.status,Vector2(410,521),16,MUTED,root)
 	var mode := run.mode
-	button("再练一次",Vector2(410,563),Vector2(290,54),func(): start_game(mode,session_context),true,root).grab_focus()
-	button("返回大厅",Vector2(720,563),Vector2(310,54),show_home,false,root)
+	var mastered: bool = session_context=="training" and run.won and run.accuracy()>=0.9 and run.correct>=18 and lesson_index<lessons.size()-1
+	button("继续下一课  →" if mastered else "再练一次",Vector2(410,563),Vector2(290,54),continue_training if mastered else func(): start_game(mode,session_context),true,root).grab_focus()
+	button("选择其他训练" if session_context=="training" else "选择其他挑战",Vector2(720,563),Vector2(310,54),show_training_games if session_context=="training" else show_challenges,false,root)
 	label("训练通关、准确率 ≥90% 且有效输入 ≥18 字符，记录掌握。" if session_context=="training" else "本次记录为挑战成绩，不改变课程掌握状态。",Vector2(410,657),15,MUTED,root)

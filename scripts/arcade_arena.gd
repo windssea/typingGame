@@ -8,6 +8,16 @@ var last_impact := ""
 var blue_attack_age := -1.0
 var coral_attack_age := -1.0
 var trail_clock := 0.0
+var motion := ArcadeMotion.new()
+var reaction_echoes: Array[Dictionary] = []
+var nitro_age := -1.0
+var shield_pulse := 0.0
+var impact_freeze := 0.0
+var pose_clock := 0.0
+var previous_correct := 0
+var charge_flash := 0.0
+var checkpoint_age := 0.0
+var checkpoint_label := ""
 const CORAL := Color("e96b70")
 const BLUE := Color("448fce")
 
@@ -15,13 +25,33 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	clip_contents = true
 	art.setup(run.mode)
+	motion.setup(run.mode)
 	juice.reduced_motion = reduced_motion
 	run.impact.connect(on_impact)
 
 func on_impact(kind: String, point: Vector2, power: int) -> void:
+	if kind=="skill":
+		shield_pulse = 0.65
+		var location := Vector2(350,410) if run.mode=="fighter" else Vector2(120+run.rival*770,510) if run.mode=="racing" else Vector2(520,480)
+		juice.burst(location,Color("8ae3eb"),2,"spark")
+		return
+	if kind in ["moles","aliens"]:
+		reaction_echoes.append({"point":point,"age":0.0,"kind":kind})
+		if reaction_echoes.size()>8:
+			reaction_echoes.pop_front()
+	if kind=="racing":
+		nitro_age = 0.0
+	if kind==run.mode and run.context=="training" and run.kills>0 and run.kills%6==0 and run.kills<run.goal:
+		checkpoint_age = 1.6
+		checkpoint_label = "阶段完成！技能已充满 · 下一段继续冒险"
+		juice.burst(Vector2(520,100),PlayTheme.YELLOW,1,"confetti")
+	if kind=="aliens" and power%3==0:
+		shield_pulse = 0.65
+	if kind!="miss":
+		impact_freeze = 0.045 if kind in ["moles","fighter"] else 0.025
 	if run.mode=="fighter":
-		point = Vector2(420,410) if kind=="miss" else Vector2(635,410)
-		if kind=="miss":
+		point = Vector2(420,410) if kind in ["miss","block"] else Vector2(635,410)
+		if kind in ["miss","block"]:
 			coral_attack_age = 0.0
 		else:
 			blue_attack_age = 0.0
@@ -38,6 +68,22 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 func _process(delta: float) -> void:
 	if run != null and not run.paused:
 		clock += delta
+		# Freeze only the character pose for an impact beat; input, timers and FX continue.
+		impact_freeze = maxf(0,impact_freeze-delta)
+		if impact_freeze<=0 or reduced_motion:
+			pose_clock += delta
+		shield_pulse = maxf(0,shield_pulse-delta)
+		charge_flash = maxf(0,charge_flash-delta)
+		checkpoint_age = maxf(0,checkpoint_age-delta)
+		if previous_correct!=run.correct:
+			charge_flash = 0.18
+			previous_correct = run.correct
+		if nitro_age>=0:
+			nitro_age += delta
+		for echo in reaction_echoes.duplicate():
+			echo.age += delta
+			if echo.age>=maxf(0.6,motion.duration("hit")):
+				reaction_echoes.erase(echo)
 		juice.step(delta)
 		if blue_attack_age>=0:
 			blue_attack_age += delta
@@ -79,8 +125,12 @@ func _draw() -> void:
 			"moles": moles()
 			"racing": racing()
 			"fighter": fighter()
+	draw_skill_field()
 	for burst in bursts:
 		draw_burst(burst)
+	if checkpoint_age>0:
+		panel(Rect2(242,77,560,33),Color(1,0.96,0.82,0.96),12)
+		write(checkpoint_label,Vector2(522,100),17,PlayTheme.ORANGE,true)
 	juice.draw(self)
 	draw_set_transform(Vector2.ZERO)
 	# Words stay still and above feedback; readability takes priority over particles.
@@ -88,16 +138,27 @@ func _draw() -> void:
 		var p: Vector2 = target.position
 		if run.mode in ["balloons", "moles"]:
 			p += Vector2(0,-65)
+			p.y = maxf(100,p.y)
 		elif run.mode == "aliens":
 			p += Vector2(0,-55)
-		word_plate(target,p,run.locked == target.id)
+		var suggested := run.recommended_target()
+		var active: bool = not suggested.is_empty() and suggested.id==target.id
+		word_plate(target,p,active)
+		if active:
+			draw_colored_polygon(PackedVector2Array([p+Vector2(-6,-38),p+Vector2(6,-38),p+Vector2(0,-29)]),PlayTheme.PRIMARY)
 		if run.mode != "racing":
 			var fraction: float = clampf(target.remaining/target.duration,0,1)
 			panel(Rect2(p+Vector2(-42,20),Vector2(84,4)),Color("d4e3ee"),2)
 			panel(Rect2(p+Vector2(-42,20),Vector2(84*fraction,4)),CORAL if fraction<0.25 else MINT,2)
-	panel(Rect2(24,588,992,43),Color("ffffff"),8)
+		var feature: String = target.get("feature","")
+		if not feature.is_empty():
+			var badge: Vector2 = target.position+Vector2(0,52 if run.mode=="aliens" else 63)
+			var color: Color = MINT if feature=="supply" else CORAL if feature=="scout" else PlayTheme.ORANGE
+			panel(Rect2(badge-Vector2(54,18),Vector2(108,25)),Color(1,1,1,0.94),10)
+			write({"supply":"补给 +8 盾","scout":"快速侦察舰","bonus":"奖励 +40 分"}[feature],badge,13,color,true)
+	panel(Rect2(24,588,992,43),Color(1,1,1,0.96),14)
 	var notes := {"balloons":"输入击破气球 · 越靠近顶部，越需要优先处理", "aliens":"输入发射激光 · 每三连击补充护盾 · 拦截俯冲外星舰", "moles":"输入举牌文字敲击地鼠 · 训练中漏掉不会扣体力", "racing":"完整输入推进赛程 · 三连击氮气加速 · 挑战需先于对手冲线", "fighter":"在蓄力条耗尽前输入 · 重拳打断攻击 · 四次命中击倒一位对手"}
-	write(notes[run.mode],Vector2(44,616),17,Color("455d75"))
+	write(notes[run.mode],Vector2(44,615),16,Color("455d75"))
 
 func draw_atmosphere() -> void:
 	if reduced_motion:
@@ -111,16 +172,51 @@ func draw_atmosphere() -> void:
 		else:
 			draw_circle(p,1.5+i%3,Color(1,0.96,0.7,0.24+sin(clock*2+i)*0.12))
 
+func draw_skill_field() -> void:
+	if run.mode=="fighter" and run.guard_ready:
+		var alpha := 0.6 if reduced_motion else 0.5+sin(clock*3)*0.1
+		draw_arc(Vector2(350,430),80,-PI/2,PI/2,40,Color(0.4,0.85,1,alpha),5,true)
+		panel(Rect2(250,275,196,33),Color(0.92,0.98,1,0.94),12)
+		write("格挡已准备 · 抵挡一次反击",Vector2(348,297),13,BLUE,true)
+	elif run.skill_time>0 and run.mode in ["moles","balloons"]:
+		for target in run.targets:
+			var p: Vector2 = target.position
+			var radius := 63.0 if reduced_motion else 63+sin(clock*3)*5
+			draw_arc(p,radius,0,TAU,48,Color(0.3,0.76,0.85,0.55),2,true)
+			if not reduced_motion:
+				for i in range(3):
+					var angle := clock*1.3+i*TAU/3
+					draw_circle(p+Vector2.from_angle(angle)*radius,3,Color("c6f4ed"))
+	elif run.mode=="racing" and run.skill_time>3:
+		var point := Vector2(120+run.rival*770,510)
+		draw_arc(point,65,0,TAU,40,Color(0.4,0.8,1,run.skill_time-3),3,true)
+		panel(Rect2(point+Vector2(-66,50),Vector2(132,29)),Color.WHITE,10)
+		write("干扰成功 -8%",point+Vector2(0,70),15,BLUE,true)
+
 func sprite_pose(id: String, center: Vector2, bounds: Vector2, angle: float, stretch: Vector2) -> void:
 	draw_set_transform(center,angle,stretch)
 	art.draw_sprite(self,id,Vector2.ZERO,bounds)
 	draw_set_transform(Vector2.ZERO)
 
 func banner(title: String, subtitle: String) -> void:
-	panel(Rect2(16,14,1008,76),Color(1,1,1,0.95),16)
-	write(title,Vector2(32,43),24,GOLD)
-	write(subtitle,Vector2(32,74),16,Color("586d84"))
-	write("%03d%%" % roundi(run.distance*100) if run.mode=="racing" else "%02d / %02d" % [run.kills,run.goal],Vector2(920,43),23,MINT,true)
+	panel(Rect2(20,18,570,48),Color(1,1,1,0.94),16)
+	draw_circle(Vector2(40,42),5,MINT)
+	write(title,Vector2(54,49),21,INK)
+	write(subtitle,Vector2(227,48),14,PlayTheme.MUTED)
+	panel(Rect2(770,18,248,48),Color(1,1,1,0.94),16)
+	var streak := run.combo%3
+	for i in range(3):
+		draw_circle(Vector2(795+i*19,42),5,MINT if i<streak or (run.combo>0 and streak==0) else Color("dbe7ee"))
+	write("连击 %d" % run.combo,Vector2(854,49),17,MINT)
+	if run.combo>=3 and not reduced_motion:
+		draw_arc(Vector2(1000,42),8,-PI/2,-PI/2+TAU*minf(1,strike*2),20,PlayTheme.ORANGE,2,true)
+
+func motion_sprite(state: String, seconds: float, center: Vector2, bounds: Vector2, tint := Color.WHITE) -> bool:
+	var texture := motion.texture(state,seconds,reduced_motion)
+	if texture==null:
+		return false
+	draw_texture_rect(texture,Rect2(center-bounds/2,bounds),false,tint)
+	return true
 
 func draw_generated_game() -> void:
 	var titles := {"balloons":"风起气球节","aliens":"星港防卫线","moles":"地鼠的午后","racing":"键盘拉力赛","fighter":"指尖格斗馆"}
@@ -140,15 +236,41 @@ func draw_generated_game() -> void:
 				var sway := 0.0 if reduced_motion else sin(clock*2+target.id)*0.065
 				sprite_pose(["balloon_coral","balloon_blue","balloon_gold"][target.lane%3],p+Vector2(bob,22),Vector2(117,155),sway,Vector2(1+sway,1-sway))
 			"aliens":
-				sprite_pose("ufo",p+Vector2(0,bob),Vector2(125,90),0.0 if reduced_motion else sin(clock*3+target.id)*0.075,Vector2.ONE)
+				var reacting := reaction_echoes.any(func(e): return e.point.distance_to(p)<65 and e.age<0.65)
+				if not reacting and not motion_sprite("idle",pose_clock+target.id*0.37,p+Vector2(0,bob),Vector2(190,190)):
+					sprite_pose("ufo",p+Vector2(0,bob),Vector2(125,90),0,Vector2.ONE)
 				draw_circle(p+Vector2(0,27),18+sin(clock*7)*4,Color(0.5,0.8,1,0.13))
 			"moles":
 				var emergence: float = 1.0 if reduced_motion else minf(clampf((target.duration-target.remaining)/0.24,0.12,1),clampf(target.remaining/0.25,0.12,1))
-				sprite_pose("mole",p+Vector2(0,36-43*emergence),Vector2(113,107),0.0 if reduced_motion else sin(clock*4)*0.025,Vector2(1.05,emergence))
+				var reveal := Vector2(0,36-43*emergence)
+				var reacting := reaction_echoes.any(func(e): return e.point.distance_to(p)<65 and e.age<0.65)
+				if not reacting and not motion_sprite("idle",pose_clock+target.id*0.41,p+reveal,Vector2(182,182*emergence)):
+					sprite_pose("mole",p+reveal,Vector2(113,107),0,Vector2(1.05,emergence))
+	var drawn_points: Array[Vector2] = []
+	for index in range(reaction_echoes.size()-1,-1,-1):
+		var echo: Dictionary = reaction_echoes[index]
+		if drawn_points.any(func(p): return p.distance_to(echo.point)<65):
+			continue
+		drawn_points.append(echo.point)
+		var alpha := 1.0-clampf((echo.age-0.28)/0.5,0,1)
+		var bounds := Vector2(182,182) if echo.kind=="moles" else Vector2(190,190)
+		var point: Vector2 = echo.point+Vector2(0,-7) if echo.kind=="moles" else echo.point
+		motion_sprite("hit",echo.age,point,bounds,Color(1,1,1,alpha))
+		if echo.kind=="moles" and not reduced_motion:
+			for i in range(3):
+				var angle: float = echo.age*7+i*TAU/3
+				var star := point+Vector2(cos(angle)*35,-42+sin(angle)*7)
+				draw_line(star-Vector2(4,0),star+Vector2(4,0),Color(1,0.8,0.3,alpha),2,true)
+				draw_line(star-Vector2(0,4),star+Vector2(0,4),Color(1,0.8,0.3,alpha),2,true)
 	if run.mode == "aliens":
 		sprite_pose("ship",Vector2(520,518+ (0.0 if reduced_motion else sin(clock*3)*4)),Vector2(137,122),0.0 if reduced_motion else sin(clock*2)*0.035,Vector2.ONE)
 		if run.shield>0:
 			draw_arc(Vector2(520,518),84,PI,TAU,48,Color(0.65,0.93,1,0.8),3,true)
+		if shield_pulse>0:
+			var pulse := 1-shield_pulse/0.65
+			draw_arc(Vector2(520,518),84+(0 if reduced_motion else pulse*30),PI,TAU,48,Color(0.45,0.9,1,1-pulse),4,true)
+		if charge_flash>0:
+			draw_circle(Vector2(520,471),8+charge_flash*45,Color(0.8,0.95,1,charge_flash*2))
 		panel(Rect2(26,499,215,64),Color(1,1,1,0.95),12)
 		write("护盾 %d / 60" % run.shield,Vector2(40,525),17,BLUE)
 		panel(Rect2(40,540,185,9),Color("d3e6f3"),4)
@@ -162,7 +284,9 @@ func draw_generated_game() -> void:
 					draw_rect(Rect2(939+col*13,y+row*16,13,16),Color.WHITE if (row+col)%2==0 else INK)
 		if run.boost>0 and run.combo>=3:
 			art.draw_sprite(self,"impact",player-Vector2(65,0),Vector2(96,62))
-		sprite_pose("car_mint",player,Vector2(136,88),0.0 if reduced_motion else sin(clock*15)*0.012,Vector2(1.05 if run.boost>0 and not reduced_motion else 1.0,1))
+		var state := "boost" if nitro_age>=0 and nitro_age<motion.duration("boost") else "idle"
+		if not motion_sprite(state,nitro_age if state=="boost" else pose_clock,player,Vector2(205,205)):
+			sprite_pose("car_mint",player,Vector2(136,88),0,Vector2.ONE)
 		sprite_pose("car_coral",rival,Vector2(136,88),0.0 if reduced_motion else sin(clock*13)*0.012,Vector2.ONE)
 		panel(Rect2(player-Vector2(52,71),Vector2(104,29)),Color.WHITE,9)
 		write("你  %d%%" % roundi(run.distance*100),player-Vector2(33,50),17,MINT)
@@ -172,8 +296,8 @@ func draw_generated_game() -> void:
 		write("三连击 · 氮气加速" if run.boost>0 and run.combo>=3 else "连续输入为赛车充能",Vector2(520,234),22,GOLD,true)
 	elif run.mode == "fighter":
 		var punch := 0.0 if reduced_motion else sin(clampf(strike/0.5,0,1)*PI)
-		var left := Vector2(350,440)+Vector2(punch*(55 if last_impact!="miss" else -16),0)
-		var right := Vector2(690,440)+Vector2(punch*(-55 if last_impact=="miss" else 16),0)
+		var left := Vector2(350,440)+Vector2(punch*(0 if last_impact=="block" else -16 if last_impact=="miss" else 55),0)
+		var right := Vector2(690,440)+Vector2(punch*(-55 if last_impact in ["miss","block"] else 16),0)
 		draw_ellipse_shadow(Vector2(350,560),Vector2(67,16))
 		draw_ellipse_shadow(Vector2(690,560),Vector2(67,16))
 		draw_texture_rect(BoxingMotion.texture(0,clock,blue_attack_age,reduced_motion),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
@@ -368,6 +492,16 @@ func draw_burst(burst: Dictionary) -> void:
 		if burst.kind=="moles":
 			var hammer := p+Vector2(35,-50-25*t)
 			sprite_pose("mallet",hammer,Vector2(110,110),-0.7+sin(t*PI)*0.85,Vector2.ONE)
+		if burst.kind=="balloons":
+			# Short curled ribbons sell the pop without a full-screen flash.
+			for i in range(6):
+				var angle := i*TAU/6+0.2
+				var tip := p+Vector2.from_angle(angle)*(18+70*t)
+				draw_arc(tip,6+8*t,angle,angle+PI*1.2,12,Color([PlayTheme.CORAL,PlayTheme.SKY,PlayTheme.YELLOW][i%3],1-t),2,true)
+		if burst.kind=="racing":
+			for i in range(3):
+				var trail_at := Vector2(90+run.distance*770-i*23,356)
+				draw_line(trail_at-Vector2(35,12+i*3),trail_at+Vector2(4,-8+i*3),Color(0.45,0.86,1,(1-t)*0.6),3,true)
 		if burst.kind=="fighter":
 			art.draw_sprite(self,"impact",p,Vector2(160,130)*(1-t),Color(1,1,1,1-t))
 		var radius := 100 if burst.power>0 and burst.power%5==0 else 65
@@ -376,7 +510,11 @@ func draw_burst(burst: Dictionary) -> void:
 			var direction := Vector2.from_angle(i*TAU/12)
 			var end := p+direction*(16+90*t)+Vector2(0,t*t*35)
 			draw_line(end,end-direction*9,Color(color,1-t),3,true)
-	var caption := "漏过" if burst.kind=="miss" else ("重击！" if burst.kind=="fighter" else "+ 命中")
+	var caption := "格挡！" if burst.kind=="block" else "漏过" if burst.kind=="miss" else ("重击！" if burst.kind=="fighter" else "推进！" if burst.kind=="racing" else "+ 命中")
 	var caption_at := p+Vector2(0,-15-(0 if reduced_motion else t*42))
+	if burst.kind=="aliens":
+		caption_at = p+Vector2(0,100-t*12)
+	elif burst.kind=="moles":
+		caption_at = p+Vector2(79,-5-t*22)
 	panel(Rect2(caption_at-Vector2(54,25),Vector2(108,35)),Color(1,1,1,(1-t)*0.92),12)
 	write(caption,caption_at,23,Color(PlayTheme.ORANGE if burst.kind!="miss" else Color("b13b4e"),1-t),true)

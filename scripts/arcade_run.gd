@@ -12,14 +12,42 @@ var boost := 0.0
 var enemy_hp := 100
 var round_number := 1
 var misses := 0
+var skill_charge := 0
+var skill_time := 0.0
+var skill_uses := 0
+var guard_ready := false
+
+func skill_name() -> String:
+	return {"balloons":"微风减速","aliens":"护盾脉冲","moles":"专注时刻","racing":"干扰对手","fighter":"准备格挡"}.get(mode,"")
+
+func activate_skill() -> bool:
+	if paused or done or skill_charge<3 or skill_time>0:
+		return false
+	skill_charge = 0
+	skill_uses += 1
+	skill_time = 4.0
+	if mode=="aliens":
+		shield = mini(60,shield+12)
+	elif mode=="racing":
+		rival = maxf(0,rival-0.08)
+	elif mode=="fighter":
+		guard_ready = true
+	impact.emit("skill",Vector2(520,350),3)
+	feedback = skill_name()+"！"+("对手退后 8%" if mode=="racing" else "专注输入，目标时间暂缓" if mode in ["moles","balloons","aliens"] else "下一次反击被格挡")
+	return true
 
 func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 0) -> void:
 	super.setup(mode_id, lesson_data, pace, seed_value)
-	goal = 24 if context == "training" else 30
+	goal = (24 if mode=="racing" else 18) if context == "training" else 30
 	if context=="challenge":
 		goal += SessionOptions.rank_index(challenge_rank)*6
 	feedback = "输入目标文字；先找准手指，再追求连击"
-	var count := 3 if mode in ["balloons", "aliens"] else 1
+	var initials: Array[String] = []
+	for word in lesson.words:
+		var initial := str(word).left(1)
+		if not initials.has(initial):
+			initials.append(initial)
+	var count := mini(3,initials.size()) if mode in ["balloons", "aliens"] else 1
 	if str(lesson.id) == "phrases":
 		count = 1
 	for i in range(count):
@@ -38,6 +66,17 @@ func spawn_target() -> void:
 	target.lane = lane
 	target.duration = time_budget(target.word)
 	target.remaining = target.duration
+	target.feature = ""
+	if mode=="balloons" and target.lane==2:
+		target.feature = "bonus"
+	elif mode=="aliens" and target.id%4==3:
+		target.feature = "supply"
+	elif mode=="aliens" and target.id%4==2:
+		target.feature = "scout"
+		target.duration *= 0.8
+		target.remaining = target.duration
+	elif mode=="moles" and target.id%4==3:
+		target.feature = "bonus"
 	match mode:
 		"balloons": target.position = Vector2(200 + lane * 320, 490)
 		"aliens": target.position = Vector2(200 + lane * 320, 180)
@@ -62,6 +101,7 @@ func step(delta: float) -> void:
 
 func advance(delta: float) -> void:
 	elapsed += delta
+	skill_time = maxf(0,skill_time-delta)
 	boost = maxf(0, boost - delta)
 	if mode == "racing":
 		# Rival pace is based on this lesson's target lengths, not a fixed WPM gate.
@@ -76,7 +116,7 @@ func advance(delta: float) -> void:
 	for target in targets.duplicate():
 		if mode == "racing":
 			continue
-		target.remaining -= delta
+		target.remaining -= delta*(0.2 if skill_time>0 and mode in ["moles","balloons","aliens"] else 1.0)
 		var fraction: float = clampf(target.remaining / target.duration, 0, 1)
 		if mode == "balloons":
 			target.position.y = 115 + fraction * 375
@@ -99,11 +139,14 @@ func miss_target(target: Dictionary) -> void:
 		var absorbed := mini(shield, damage)
 		shield -= absorbed
 		damage -= absorbed
+	if mode=="fighter" and guard_ready:
+		damage = 0
+		guard_ready = false
 	# Moles retreat in training: repetition without a failure countdown.
 	if mode == "moles" and context == "training":
 		damage = 0
 	hp = maxi(0, hp - damage)
-	impact.emit("miss", target.position, damage)
+	impact.emit("block" if mode=="fighter" and damage==0 else "miss", target.position, damage)
 	feedback = "地鼠藏起来了，下一只慢慢找准键位" if damage == 0 and mode == "moles" else "错过目标！优先输入计时条最短的目标"
 	targets.erase(target)
 	if hp <= 0:
@@ -113,7 +156,15 @@ func miss_target(target: Dictionary) -> void:
 
 func on_word_completed(target: Dictionary) -> void:
 	var point: Vector2 = target.position
+	skill_charge = mini(3,skill_charge+1)
+	if target.get("feature","")=="bonus":
+		score += 40
+		skill_charge = mini(3,skill_charge+1)
+	elif target.get("feature","")=="supply":
+		shield = mini(60,shield+8)
 	defeat(target, combo % 5 == 0)
+	if context=="training" and kills%6==0 and kills<goal:
+		skill_charge = 3
 	impact.emit(mode, point, combo)
 	match mode:
 		"aliens":

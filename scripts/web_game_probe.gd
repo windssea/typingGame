@@ -24,6 +24,8 @@ func _process(delta: float) -> void:
 		var run: GameRun = app.run
 		value.run = {"mode":run.mode,"context":run.context,"hp":run.hp,"kills":run.kills,"score":run.score,"correct":run.correct,"attempts":run.attempts,"elapsed":run.elapsed,"done":run.done,"won":run.won,"paused":run.paused,"targets":[]}
 		value.run.merge({"difficulty":run.difficulty,"rank":run.challenge_rank})
+		var recommended := run.recommended_target()
+		value.run.recommended = recommended.get("id",-1)
 		for arena in app.layer.get_children():
 			if arena is GameArena:
 				value.run.merge({"particles":arena.juice.particles.size(),"motion_clock":arena.clock,"reduced_motion":arena.reduced_motion})
@@ -33,4 +35,5 @@ func _process(delta: float) -> void:
 			value.run.merge({"phase":run.phase,"gold":run.gold,"wave":run.wave,"towers":run.towers.size(),"words_completed":run.words_completed})
 		if run is ArcadeRun:
 			value.run.merge({"distance":run.distance,"rival":run.rival,"shield":run.shield,"enemy_hp":run.enemy_hp})
-	JavaScriptBridge.eval("window.keyboundGame = "+JSON.stringify(value)+";",true)
+			value.run.merge({"skill_charge":run.skill_charge,"skill_time":run.skill_time,"skill_uses":run.skill_uses,"goal":run.goal})
+	JavaScriptBridge.eval("window.keyboundGame = "+JSON.stringify(value)+"; document.documentElement.setAttribute('data-keybound-state',JSON.stringify(window.keyboundGame));",true)

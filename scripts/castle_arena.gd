@@ -6,12 +6,16 @@ var battle: CastleRun
 var banner_time := 3.0
 var shake := 0.0
 var terrain: Node2D
+var enemy_motion := ArcadeMotion.new()
+var enemy_reactions: Dictionary = {}
+var last_enemy_flash: Dictionary = {}
 const ROYAL_MAP = preload("res://assets/worlds/royal-battlefield.png")
 const GUARD_IDLE = preload("res://assets/animations/royal-guard-idle-v002/idle.tres")
 
 func _ready() -> void:
 	battle = run as CastleRun
 	art.setup("castle")
+	enemy_motion.setup("castle")
 	juice.reduced_motion = reduced_motion
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	clip_contents = true
@@ -38,6 +42,22 @@ func _process(delta: float) -> void:
 		return
 	if not battle.paused:
 		clock += delta
+		var active_ids: Array = []
+		for target in battle.targets:
+			if target.kind!="goblin":
+				continue
+			active_ids.append(target.id)
+			if target.flash>float(last_enemy_flash.get(target.id,0))+0.001:
+				enemy_reactions[target.id] = 0.0
+			last_enemy_flash[target.id] = target.flash
+			if enemy_reactions.has(target.id):
+				enemy_reactions[target.id] += delta
+				if enemy_reactions[target.id]>=enemy_motion.duration("hit"):
+					enemy_reactions.erase(target.id)
+		for id in last_enemy_flash.keys():
+			if id not in active_ids:
+				last_enemy_flash.erase(id)
+				enemy_reactions.erase(id)
 		juice.step(delta)
 		banner_time = maxf(0,banner_time-delta)
 		shake = maxf(0,shake-delta)
@@ -237,7 +257,14 @@ func draw_enemy(target: Dictionary) -> void:
 		var stride := 0.0 if reduced_motion else sin(target.phase*1.6)
 		var recoil: Vector2 = Vector2.ZERO if reduced_motion else (p-CastleRun.KEEP).normalized()*target.flash*55
 		draw_set_transform(p+recoil+Vector2(0,18),stride*0.045,Vector2(1+stride*0.025,1-absf(stride)*0.05))
-		art.draw_sprite(self,kind,Vector2(0,-35+bob),Vector2(68,78)*s,Color("fff0c2") if target.flash>0 else Color.WHITE)
+		if kind=="goblin" and not enemy_motion.clips.is_empty():
+			var state := "hit" if enemy_reactions.has(target.id) else "idle"
+			var seconds: float = float(enemy_reactions.get(target.id,0)) if state=="hit" else clock+target.id*0.19
+			var frame := enemy_motion.texture(state,seconds,reduced_motion)
+			var facing := -1.0 if p.x>CastleRun.KEEP.x else 1.0
+			draw_texture_rect(frame,Rect2(Vector2(-55*facing,-90+bob),Vector2(110*facing,110)),false,Color("fff0c2") if target.flash>0 else Color.WHITE)
+		else:
+			art.draw_sprite(self,kind,Vector2(0,-35+bob),Vector2(68,78)*s,Color("fff0c2") if target.flash>0 else Color.WHITE)
 		draw_set_transform(Vector2.ZERO)
 		if kind=="boss":
 			if target.rage:
@@ -312,9 +339,13 @@ func draw_target_label(target: Dictionary, occupied: Array[Rect2]) -> void:
 		rect.position.y += 48 if i%2==0 else -96
 		rect.position.y = clampf(rect.position.y,top_limit,size.y-64)
 	occupied.append(rect)
-	var selected: bool = target.id == battle.locked
+	var suggested := battle.recommended_target()
+	var selected: bool = not suggested.is_empty() and target.id == suggested.id
 	draw_line(rect.get_center()+Vector2(0,18),target.position-Vector2(0,22),Color(0.75,0.82,0.68,0.4),1,true)
-	panel(rect,Color("ffffff"),7,GOLD if selected else Color("adc593"))
+	panel(rect,Color("effaff") if selected else Color.WHITE,9,PlayTheme.PRIMARY if selected else Color("adc593"))
+	if selected:
+		var tip := rect.get_center()+Vector2(0,-rect.size.y/2-6)
+		draw_colored_polygon(PackedVector2Array([tip+Vector2(-6,-6),tip+Vector2(6,-6),tip]),PlayTheme.PRIMARY)
 	write(word,rect.position+Vector2(12,26),22,Color("293c59"))
 	if target.typed>0:
 		write(word.substr(0,target.typed),rect.position+Vector2(12,26),22,MINT)

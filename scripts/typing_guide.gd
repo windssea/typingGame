@@ -31,11 +31,7 @@ func suggested_character() -> String:
 		return preview_character
 	if run.targets.is_empty():
 		return ""
-	var target := run.target_by_id(run.locked)
-	if target.is_empty():
-		var ordered := run.targets.duplicate()
-		ordered.sort_custom(func(a,b): return run.priority(a) < run.priority(b))
-		target = ordered[0]
+	var target := run.recommended_target()
 	return str(target.word).substr(target.typed, 1)
 
 func _ready() -> void:
