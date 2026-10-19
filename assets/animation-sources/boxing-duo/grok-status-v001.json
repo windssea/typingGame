@@ -1,0 +1,32 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "model": null,
+  "status": "succeeded",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\boxing-duo\\v001\\grok-raw.mp4",
+  "requested": {
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "aspect_ratio": "3:2",
+    "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\boxing-duo\\seed-v001.png",
+    "fps": null,
+    "audio": "disable not supported"
+  },
+  "actual": {
+    "width": 1168,
+    "height": 768,
+    "fps": "24/1",
+    "frame_count": 193,
+    "video_duration_seconds": 8.041667,
+    "audio": "aac stereo 48000 Hz",
+    "container_bytes": 6024093,
+    "sha256": "7CED3EAF7B4A21C5F8E7CDEF3D818269EDDFD697EEB129889F79AFA47835205D"
+  },
+  "limitations": [
+    "image_to_video documents duration as only 6 or 10 seconds and has no pinned-frame field. reference_to_video was used once because its schema supports a pinned first_frame and duration 1-15.",
+    "The tool response contained no request ID and no model name. The same call blocked until the file was saved, so there was no separate poll handle.",
+    "No fps argument exists. Measured video stream is 24/1, 193 frames, duration 8.041667 seconds. File was byte-copied, not re-encoded.",
+    "No audio-disable argument exists. The raw file includes an AAC stereo stream and was left intact.",
+    "resolution_name 720p produced 1168x768, not 1280x720. Seed is 1536x1024 (3:2); the video frame is 1168x768."
+  ]
+}

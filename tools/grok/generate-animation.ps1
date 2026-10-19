@@ -21,7 +21,7 @@ The human user explicitly authorizes using their installed Grok Build to produce
 $imagePath
 Read the motion brief from:
 $motionPath
-Use currently available built-in Grok Imagine image_to_video, or reference_to_video only if it supports a pinned source first frame. Inspect actual tool schema. Keep source aspect ratio, target 720p and native 24fps if supported, request 8 seconds; report actual resolution/FPS/duration rather than inventing arguments. Disable audio where supported. Follow the game brief's LOCKED CAMERA and planted feet; do not add cinematic camera moves or generic parallax. Preserve original face, shield silhouette, costume, palette, green-screen background and proportions.
+Use currently available built-in Grok Imagine image_to_video, or reference_to_video only if it supports a pinned source first frame. Inspect actual tool schema. Keep source aspect ratio, target 720p and native 24fps if supported, request 8 seconds; report actual resolution/FPS/duration rather than inventing arguments. Disable audio where supported. Follow the game brief's LOCKED CAMERA and motion constraints; do not add cinematic camera moves or generic parallax. Preserve original identities, silhouettes, costumes, palette, green-screen background and proportions. The supplied brief defines the exact action and timing.
 Submit only once. Record request ID immediately. Poll/wait the SAME request after submission. Save actual successful raw video as:
 $rawPath
 Write a concise status.json containing tool, request ID, model if known, actual status, output path and any limitations. Write only inside:

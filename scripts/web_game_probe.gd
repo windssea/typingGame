@@ -23,6 +23,10 @@ func _process(delta: float) -> void:
 	if app.run!=null:
 		var run: GameRun = app.run
 		value.run = {"mode":run.mode,"context":run.context,"hp":run.hp,"kills":run.kills,"score":run.score,"correct":run.correct,"attempts":run.attempts,"elapsed":run.elapsed,"done":run.done,"won":run.won,"paused":run.paused,"targets":[]}
+		value.run.merge({"difficulty":run.difficulty,"rank":run.challenge_rank})
+		for arena in app.layer.get_children():
+			if arena is GameArena:
+				value.run.merge({"particles":arena.juice.particles.size(),"motion_clock":arena.clock,"reduced_motion":arena.reduced_motion})
 		for target in run.targets:
 			value.run.targets.append({"id":target.id,"word":target.word,"typed":target.typed,"position":[target.position.x,target.position.y],"health":target.get("health",1),"kind":str(target.kind)})
 		if run is CastleRun:

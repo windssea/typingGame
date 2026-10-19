@@ -11,17 +11,22 @@ var reduced_motion := false
 var clock := 0.0
 var effects: Array[Dictionary] = []
 var art := GeneratedArt.new()
+var juice := GameJuice.new()
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if run != null:
 		art.setup(run.mode)
 		clip_contents = true
-		run.spell.connect(func(a, b, lightning): effects.append({"from":a,"to":b,"lightning":lightning,"life":0.55}))
+		juice.reduced_motion = reduced_motion
+		run.spell.connect(func(a, b, lightning):
+			effects.append({"from":a,"to":b,"lightning":lightning,"life":0.55})
+			juice.burst(b,PlayTheme.SKY if lightning else PlayTheme.YELLOW,2 if lightning else 1,"spark"))
 
 func _process(delta: float) -> void:
 	if run == null or not run.paused:
 		clock += delta
+		juice.step(delta)
 		for effect in effects.duplicate():
 			effect.life -= delta
 			if effect.life <= 0:
@@ -56,12 +61,15 @@ func _draw() -> void:
 	draw_texture_rect(art.background,Rect2(Vector2.ZERO,size),false)
 	if run.mode == "dojo":
 		draw_dojo()
+		juice.draw(self)
 		return
 	if run.mode == "bubbles":
 		draw_bubbles()
+		juice.draw(self)
 		return
 	if run.mode == "sprint":
 		draw_sprint()
+		juice.draw(self)
 		return
 	if run.mode == "castle":
 		draw_land(GameRun.CENTER, 1.0)

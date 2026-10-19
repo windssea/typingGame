@@ -1,4 +1,5 @@
 .godot/
+.wrangler/
 build/*
 !build/.gitkeep
 !build/.gdignore

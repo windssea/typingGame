@@ -1,0 +1,9 @@
+{
+  "generator": "OpenAI Image Gen (built-in edit)",
+  "prompt": "EDIT TARGET: existing game sprite atlas. Extract and redraw ONLY the two boxing athletes from row3 columns2 and3 into an animation production reference, preserving their identities, hair, costumes, blue boy on left facing RIGHT and coral girl on right facing LEFT, oversized boxing gloves, friendly child cartoon athletes, premium American Heroic Toy-Stylized game look with designed broad highlights and rounded forms. Output landscape 1536x1024. TWO separate full-body figures, each centered inside its own half of the image: blue boxer at x384, coral boxer at x1152, feet both on baseline y900, each figure approx 650 pixels tall, all limbs and gloves visible. Neutral guard pose, knees slightly bent and ready, 3/4 side camera matching original characters. Each stays in their own half, 15% padding, wide gap at middle, no overlapping subjects. Replace all background with perfectly UNIFORM pure chroma GREEN RGB(0,255,0), including entire ground; no shadows, gradients, halos, UI, text, props, other atlas objects. This green is a technical key background for animation extraction; do not include green on costumes. Locked front camera, no perspective change. Keep original subject rendering style and facial identity.",
+  "reference": "assets/generated/arcade-sprites.png",
+  "source": "C:/Users/windssea/.codex/generated_images/01a15294-8334-75c2-ab9d-fb510040e509/exec-35750cab-bdd6-487a-b742-f63e69292dc5.png",
+  "path": "assets/animation-sources/boxing-duo/seed-v001.png",
+  "motion": "motion-v001.txt",
+  "date": "2026-10-19"
+}

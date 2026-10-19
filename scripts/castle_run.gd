@@ -169,6 +169,8 @@ func spawn_enemy(kind: String) -> Dictionary:
 	var health: int = definition.health
 	if kind == "boss" and wave == 6:
 		health = 550
+	if context=="challenge":
+		health = ceili(health*(1.0+SessionOptions.rank_index(challenge_rank)*0.2))
 	var target := {"id":next_id,"word":choose_word(),"typed":0,"position":position,
 		"speed":float(lesson.speed)*float(definition.speed)*difficulty*(1.0+(wave-1)*0.07),
 		"kind":kind,"health":health,"max_health":health,"slow":0.0,"flash":0.0,
@@ -264,6 +266,8 @@ func update_boss(target: Dictionary, dt: float) -> void:
 			effect.emit("warning",target.position,KEEP,0)
 
 func damage_castle(amount: int) -> void:
+	if context=="challenge":
+		amount = ceili(amount*(1.0+SessionOptions.rank_index(challenge_rank)*0.15))
 	hp = maxi(0,hp-amount)
 	combo = 0
 	feedback = "城堡受到 %d 点伤害，优先拦截最近的敌人。" % amount

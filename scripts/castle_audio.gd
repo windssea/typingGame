@@ -8,6 +8,13 @@ var streams: Dictionary = {}
 var last_played: Dictionary = {}
 var cursor := 0
 
+func _exit_tree() -> void:
+	for player in players:
+		if is_instance_valid(player):
+			player.stop()
+			player.stream = null
+	streams.clear()
+
 func _ready() -> void:
 	for kind in ["fire","storm","ice","build","warning","damage"]:
 		streams[kind] = load("res://assets/audio/"+kind+".wav")

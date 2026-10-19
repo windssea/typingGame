@@ -1,0 +1,8 @@
+{
+  "generator": "OpenAI Image Gen (built-in edit)",
+  "prompt": "Edit target: two-fighter reference. Keep ONLY the BLUE boy boxer, exact same friendly face, brown swept hair, blue gloves, blue shorts, white waistband and high-top blue shoes. Remove the coral girl. Output 1024x1024 square flat chroma-green RGB(0,255,0) background with no shading, ground, shadows, gradients or other objects. Full body boy in guard facing RIGHT, positioned left-of-center so his body center is x380 and baseline y850. Entire body height about580px, generous room for extending the rightward glove to x850 without leaving the canvas. Premium American animated Heroic Toy-Stylized original character matching reference. No words, no UI, no watermark. This is a fixed-camera game animation seed with transparent extraction planned.",
+  "reference": "assets/animation-sources/boxing-duo/seed-v001.png",
+  "source": "C:/Users/windssea/.codex/generated_images/01a15294-8334-75c2-ab9d-fb510040e509/exec-f67bb130-aed5-4c41-aaa0-c821abf12ae6.png",
+  "reason": "Solo attack source avoids glove being clipped by the two-actor split.",
+  "date": "2026-10-19"
+}

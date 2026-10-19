@@ -2,11 +2,26 @@ class_name ModeBadge
 extends Control
 
 var mode := "dojo"
+var reduced_motion := false
+var clock := 0.0
+var art := GeneratedArt.new()
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	art.setup(mode)
+
+func _process(delta: float) -> void:
+	if not reduced_motion:
+		clock += delta
+		queue_redraw()
 
 func _draw() -> void:
+	var sprite: String = {"balloons":"balloon_coral","aliens":"ufo","moles":"mole","racing":"car_mint","fighter":"boxer_blue","castle":"tower_fire"}.get(mode,"")
+	if art.sprites.has(sprite):
+		var bob := 0.0 if reduced_motion else sin(clock*2.5)*3
+		draw_circle(size/2,30,Color(1,1,1,0.85))
+		art.draw_sprite(self,sprite,size/2+Vector2(0,bob),Vector2(86,74))
+		return
 	draw_set_transform(size/2,0,Vector2.ONE*minf(1.0,size.x/120.0))
 	var c := Vector2.ZERO
 	var gold := PlayTheme.YELLOW

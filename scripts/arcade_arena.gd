@@ -5,6 +5,9 @@ var bursts: Array[Dictionary] = []
 var trauma := 0.0
 var strike := 0.0
 var last_impact := ""
+var blue_attack_age := -1.0
+var coral_attack_age := -1.0
+var trail_clock := 0.0
 const CORAL := Color("e96b70")
 const BLUE := Color("448fce")
 
@@ -12,10 +15,21 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	clip_contents = true
 	art.setup(run.mode)
+	juice.reduced_motion = reduced_motion
 	run.impact.connect(on_impact)
 
 func on_impact(kind: String, point: Vector2, power: int) -> void:
+	if run.mode=="fighter":
+		point = Vector2(420,410) if kind=="miss" else Vector2(635,410)
+		if kind=="miss":
+			coral_attack_age = 0.0
+		else:
+			blue_attack_age = 0.0
 	bursts.append({"kind":kind,"point":point,"power":power,"life":0.7})
+	if bursts.size()>18:
+		bursts.pop_front()
+	var color: Color = {"aliens":Color("88eaff"),"balloons":Color("ffcb72"),"moles":Color("d5b079"),"fighter":Color("ffd574"),"miss":CORAL}.get(kind,Color("a1e8c1"))
+	juice.burst(point,color,3 if power>0 and power%5==0 else 1,"soil" if kind=="moles" else "confetti" if kind=="balloons" else "spark")
 	strike = 0.5
 	last_impact = kind
 	if kind in ["fighter", "aliens", "miss"]:
@@ -24,6 +38,21 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 func _process(delta: float) -> void:
 	if run != null and not run.paused:
 		clock += delta
+		juice.step(delta)
+		if blue_attack_age>=0:
+			blue_attack_age += delta
+		if coral_attack_age>=0:
+			coral_attack_age += delta
+		trail_clock -= delta
+		if trail_clock<=0:
+			trail_clock = 0.05
+			if run.mode=="aliens":
+				juice.trail(Vector2(520+sin(clock*3)*7,560),Vector2(0,65),Color("7ae2ff"),8)
+			elif run.mode=="racing":
+				var p := Vector2(70+run.distance*770,364)
+				juice.trail(p,Vector2(-120,15),Color("d9e3f2"),7)
+				if run.boost>0 and run.combo>=3:
+					juice.trail(p,Vector2(-220,0),Color("67e5ff"),11)
 		trauma = maxf(0,trauma-delta*2.5)
 		strike = maxf(0,strike-delta)
 		for burst in bursts.duplicate():
@@ -38,6 +67,7 @@ func _draw() -> void:
 	var backgrounds := {"balloons":Color("e9f7ff"),"aliens":Color("eef0ff"),"moles":Color("e9f5d9"),"racing":Color("eef7fe"),"fighter":Color("f5edff")}
 	panel(Rect2(Vector2.ZERO,size),backgrounds[run.mode],24,Color("cbdff0"))
 	draw_texture_rect(art.background,Rect2(Vector2.ZERO,size),false)
+	draw_atmosphere()
 	var offset := Vector2.ZERO if reduced_motion else Vector2(sin(clock*45),cos(clock*38))*trauma*trauma*7
 	draw_set_transform(offset)
 	if not art.sprites.is_empty():
@@ -51,6 +81,7 @@ func _draw() -> void:
 			"fighter": fighter()
 	for burst in bursts:
 		draw_burst(burst)
+	juice.draw(self)
 	draw_set_transform(Vector2.ZERO)
 	# Words stay still and above feedback; readability takes priority over particles.
 	for target in run.targets:
@@ -67,6 +98,23 @@ func _draw() -> void:
 	panel(Rect2(24,588,992,43),Color("ffffff"),8)
 	var notes := {"balloons":"输入击破气球 · 越靠近顶部，越需要优先处理", "aliens":"输入发射激光 · 每三连击补充护盾 · 拦截俯冲外星舰", "moles":"输入举牌文字敲击地鼠 · 训练中漏掉不会扣体力", "racing":"完整输入推进赛程 · 三连击氮气加速 · 挑战需先于对手冲线", "fighter":"在蓄力条耗尽前输入 · 重拳打断攻击 · 四次命中击倒一位对手"}
 	write(notes[run.mode],Vector2(44,616),17,Color("455d75"))
+
+func draw_atmosphere() -> void:
+	if reduced_motion:
+		return
+	for i in range(16):
+		var p := Vector2(fposmod(i*193.0-clock*(18 if run.mode=="aliens" else 5),1040),110+fposmod(i*113.0+sin(clock+i)*8,440))
+		if run.mode=="racing":
+			var y := 350.0 if i%2==0 else 505.0
+			var x := fposmod(i*139.0-clock*(320 if run.boost>0 and run.combo>=3 else 90),1040)
+			draw_line(Vector2(x,y),Vector2(x+32,y),Color(1,1,1,0.36),2,true)
+		else:
+			draw_circle(p,1.5+i%3,Color(1,0.96,0.7,0.24+sin(clock*2+i)*0.12))
+
+func sprite_pose(id: String, center: Vector2, bounds: Vector2, angle: float, stretch: Vector2) -> void:
+	draw_set_transform(center,angle,stretch)
+	art.draw_sprite(self,id,Vector2.ZERO,bounds)
+	draw_set_transform(Vector2.ZERO)
 
 func banner(title: String, subtitle: String) -> void:
 	panel(Rect2(16,14,1008,76),Color(1,1,1,0.95),16)
@@ -89,13 +137,16 @@ func draw_generated_game() -> void:
 		var bob := 0.0 if reduced_motion else sin(clock*2+target.id)*5
 		match run.mode:
 			"balloons":
-				art.draw_sprite(self,["balloon_coral","balloon_blue","balloon_gold"][target.lane%3],p+Vector2(bob,22),Vector2(117,155))
+				var sway := 0.0 if reduced_motion else sin(clock*2+target.id)*0.065
+				sprite_pose(["balloon_coral","balloon_blue","balloon_gold"][target.lane%3],p+Vector2(bob,22),Vector2(117,155),sway,Vector2(1+sway,1-sway))
 			"aliens":
-				art.draw_sprite(self,"ufo",p+Vector2(0,bob),Vector2(125,90))
+				sprite_pose("ufo",p+Vector2(0,bob),Vector2(125,90),0.0 if reduced_motion else sin(clock*3+target.id)*0.075,Vector2.ONE)
+				draw_circle(p+Vector2(0,27),18+sin(clock*7)*4,Color(0.5,0.8,1,0.13))
 			"moles":
-				art.draw_sprite(self,"mole",p+Vector2(0,-7),Vector2(113,107))
+				var emergence: float = 1.0 if reduced_motion else minf(clampf((target.duration-target.remaining)/0.24,0.12,1),clampf(target.remaining/0.25,0.12,1))
+				sprite_pose("mole",p+Vector2(0,36-43*emergence),Vector2(113,107),0.0 if reduced_motion else sin(clock*4)*0.025,Vector2(1.05,emergence))
 	if run.mode == "aliens":
-		art.draw_sprite(self,"ship",Vector2(520,518),Vector2(137,122))
+		sprite_pose("ship",Vector2(520,518+ (0.0 if reduced_motion else sin(clock*3)*4)),Vector2(137,122),0.0 if reduced_motion else sin(clock*2)*0.035,Vector2.ONE)
 		if run.shield>0:
 			draw_arc(Vector2(520,518),84,PI,TAU,48,Color(0.65,0.93,1,0.8),3,true)
 		panel(Rect2(26,499,215,64),Color(1,1,1,0.95),12)
@@ -111,8 +162,8 @@ func draw_generated_game() -> void:
 					draw_rect(Rect2(939+col*13,y+row*16,13,16),Color.WHITE if (row+col)%2==0 else INK)
 		if run.boost>0 and run.combo>=3:
 			art.draw_sprite(self,"impact",player-Vector2(65,0),Vector2(96,62))
-		art.draw_sprite(self,"car_mint",player,Vector2(136,88))
-		art.draw_sprite(self,"car_coral",rival,Vector2(136,88))
+		sprite_pose("car_mint",player,Vector2(136,88),0.0 if reduced_motion else sin(clock*15)*0.012,Vector2(1.05 if run.boost>0 and not reduced_motion else 1.0,1))
+		sprite_pose("car_coral",rival,Vector2(136,88),0.0 if reduced_motion else sin(clock*13)*0.012,Vector2.ONE)
 		panel(Rect2(player-Vector2(52,71),Vector2(104,29)),Color.WHITE,9)
 		write("你  %d%%" % roundi(run.distance*100),player-Vector2(33,50),17,MINT)
 		panel(Rect2(rival-Vector2(52,71),Vector2(104,29)),Color.WHITE,9)
@@ -121,10 +172,12 @@ func draw_generated_game() -> void:
 		write("三连击 · 氮气加速" if run.boost>0 and run.combo>=3 else "连续输入为赛车充能",Vector2(520,234),22,GOLD,true)
 	elif run.mode == "fighter":
 		var punch := 0.0 if reduced_motion else sin(clampf(strike/0.5,0,1)*PI)
-		var left := Vector2(350,440)+Vector2(punch*(120 if last_impact!="miss" else -20),0)
-		var right := Vector2(690,440)+Vector2(punch*(-120 if last_impact=="miss" else 20),0)
-		art.draw_sprite(self,"boxer_blue",left,Vector2(200,250))
-		art.draw_sprite(self,"boxer_coral",right,Vector2(200,250))
+		var left := Vector2(350,440)+Vector2(punch*(55 if last_impact!="miss" else -16),0)
+		var right := Vector2(690,440)+Vector2(punch*(-55 if last_impact=="miss" else 16),0)
+		draw_ellipse_shadow(Vector2(350,560),Vector2(67,16))
+		draw_ellipse_shadow(Vector2(690,560),Vector2(67,16))
+		draw_texture_rect(BoxingMotion.texture(0,clock,blue_attack_age,reduced_motion),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
+		draw_texture_rect(BoxingMotion.texture(1,clock,coral_attack_age,reduced_motion),Rect2(right-Vector2(160,175),Vector2(320,320)),false)
 		for side in range(2):
 			var x := 50+side*560
 			var health: int = run.hp if side==0 else run.enemy_hp
@@ -308,12 +361,15 @@ func draw_burst(burst: Dictionary) -> void:
 	if not reduced_motion:
 		if burst.kind=="aliens":
 			draw_line(Vector2(520,478),p,Color(0.5,0.85,1,(1-t)*0.7),9*(1-t)+1,true)
+			draw_line(Vector2(520,478),p,Color(1,1,1,(1-t)*0.9),2,true)
+			draw_circle(Vector2(520,478),25*(1-t),Color(0.6,0.9,1,(1-t)*0.3))
 		elif burst.kind=="miss" and run.mode=="aliens":
 			draw_line(p,Vector2(520,518),Color(1,0.5,0.45,1-t),5,true)
 		if burst.kind=="moles":
 			var hammer := p+Vector2(35,-50-25*t)
-			draw_line(hammer,hammer+Vector2(46,56),Color("b99774"),10,true)
-			panel(Rect2(hammer-Vector2(28,12),Vector2(56,32)),PlayTheme.YELLOW,7)
+			sprite_pose("mallet",hammer,Vector2(110,110),-0.7+sin(t*PI)*0.85,Vector2.ONE)
+		if burst.kind=="fighter":
+			art.draw_sprite(self,"impact",p,Vector2(160,130)*(1-t),Color(1,1,1,1-t))
 		var radius := 100 if burst.power>0 and burst.power%5==0 else 65
 		draw_arc(p,12+t*radius,0,TAU,32,Color(color,1-t),3*(1-t)+1,true)
 		for i in range(12):
@@ -321,4 +377,6 @@ func draw_burst(burst: Dictionary) -> void:
 			var end := p+direction*(16+90*t)+Vector2(0,t*t*35)
 			draw_line(end,end-direction*9,Color(color,1-t),3,true)
 	var caption := "漏过" if burst.kind=="miss" else ("重击！" if burst.kind=="fighter" else "+ 命中")
-	write(caption,p+Vector2(0,-15-(0 if reduced_motion else t*42)),23,Color(PlayTheme.ORANGE if burst.kind!="miss" else Color("b13b4e"),1-t),true)
+	var caption_at := p+Vector2(0,-15-(0 if reduced_motion else t*42))
+	panel(Rect2(caption_at-Vector2(54,25),Vector2(108,35)),Color(1,1,1,(1-t)*0.92),12)
+	write(caption,caption_at,23,Color(PlayTheme.ORANGE if burst.kind!="miss" else Color("b13b4e"),1-t),true)

@@ -1,0 +1,7 @@
+Create an 8-second GAME ANIMATION SOURCE from the two-athlete reference. Exactly TWO separate athletes. Locked orthographic camera: no zoom, pan, tilt, shake or reframing. Preserve each original face, hair, costume and scale. Blue boy stays entirely in LEFT half; coral girl stays entirely in RIGHT half. Do not approach each other, do not touch, no extra characters. Green screen is perfectly uniform RGB(0,255,0) throughout, including ground. No shadows or added light effects, no text or UI.
+
+0.0–3.8 seconds: both athletes loop a lively boxing guard in place: subtle alternating knee flex, heel lift, shoulder counter-rotation, individual glove readjustments, blinking, ponytail follow-through. This must be articulated body motion with changing arms and legs, not the whole still image sliding or scaling. Keep body center and foot baseline stable; no foot sliding. At about 0, 1.8 and 3.6 seconds return close to the same guard pose for looping.
+
+4.0–5.5 seconds: BLUE boy performs one clear rightward straight jab: brief shoulder anticipation, elbow extends, blue glove punches forward inside his own half, torso rotates, back heel lifts, arm retracts to original guard. Coral girl keeps guarding in place. No contact or impact particles.
+
+6.0–7.5 seconds: CORAL girl performs one clear leftward straight jab with the same articulated action and return. Blue boy keeps guarding. Both return to initial guard pose by 8 seconds. Keep 8% padding from outer canvas and the center division. No limbs may cross x=50%. Native frame rate only, no interpolation.

@@ -12,6 +12,7 @@ const GUARD_IDLE = preload("res://assets/animations/royal-guard-idle-v002/idle.t
 func _ready() -> void:
 	battle = run as CastleRun
 	art.setup("castle")
+	juice.reduced_motion = reduced_motion
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	clip_contents = true
 	battle.effect.connect(receive_effect)
@@ -25,6 +26,9 @@ func receive_effect(kind: String, origin: Vector2, destination: Vector2, amount:
 		shake = 0.26
 	if kind == "defeat":
 		duration = 1.2
+	if kind in ["fire","ember","ice","storm","defeat","build","damage","quake","interrupt"]:
+		var tint: Color = {"ice":Color("74dcff"),"storm":Color("b192ff"),"damage":Color("ed8b71"),"defeat":Color("ffd261")}.get(kind,Color("ffb34d"))
+		juice.burst(destination,tint,3 if kind in ["quake","defeat"] else 1,"confetti" if kind=="defeat" else "spark")
 	effects.append({"kind":kind,"from":origin,"to":destination,"amount":amount,"life":duration,"duration":duration})
 	if effects.size() > 90:
 		effects.pop_front()
@@ -34,6 +38,7 @@ func _process(delta: float) -> void:
 		return
 	if not battle.paused:
 		clock += delta
+		juice.step(delta)
 		banner_time = maxf(0,banner_time-delta)
 		shake = maxf(0,shake-delta)
 		for effect in effects.duplicate():
@@ -68,6 +73,7 @@ func _draw() -> void:
 		draw_enemy(target)
 	for effect in effects:
 		draw_effect(effect)
+	juice.draw(self)
 	var occupied: Array[Rect2] = []
 	for target in ordered:
 		draw_target_label(target,occupied)
@@ -188,7 +194,9 @@ func draw_pad(index: int) -> void:
 		return
 	var tint: Color = {"fire":Color("ffb96d"),"ice":Color("a2e6ec"),"storm":Color("c7b5ff")}[tower.kind]
 	if art.sprites.has("tower_"+str(tower.kind)):
-		art.draw_sprite(self,"tower_"+str(tower.kind),p-Vector2(0,36),Vector2(100,116)*(1.0+(tower.level-1)*0.1))
+		var pulse := 0.0 if reduced_motion else sin(clock*3+index)*0.025
+		draw_circle(p-Vector2(0,65),28+sin(clock*3)*3,Color(tint,0.13))
+		art.draw_sprite(self,"tower_"+str(tower.kind),p-Vector2(0,36),Vector2(100*(1-pulse),116*(1+pulse))*(1.0+(tower.level-1)*0.1))
 		for i in range(tower.level):
 			draw_circle(p+Vector2((i-(tower.level-1)/2.0)*10,29),3,tint)
 		write(str(index+1),p+Vector2(0,51),14,GOLD,true)
@@ -226,7 +234,11 @@ func draw_enemy(target: Dictionary) -> void:
 		draw_circle(p,25*s,Color(0.5,0.85,1,0.12))
 		draw_arc(p+Vector2(0,12),23*s,0,TAU,24,Color("a2e6ec"),2,true)
 	if art.sprites.has(kind):
-		art.draw_sprite(self,kind,p+Vector2(0,-17+bob),Vector2(68,78)*s,Color("fff0c2") if target.flash>0 else Color.WHITE)
+		var stride := 0.0 if reduced_motion else sin(target.phase*1.6)
+		var recoil: Vector2 = Vector2.ZERO if reduced_motion else (p-CastleRun.KEEP).normalized()*target.flash*55
+		draw_set_transform(p+recoil+Vector2(0,18),stride*0.045,Vector2(1+stride*0.025,1-absf(stride)*0.05))
+		art.draw_sprite(self,kind,Vector2(0,-35+bob),Vector2(68,78)*s,Color("fff0c2") if target.flash>0 else Color.WHITE)
+		draw_set_transform(Vector2.ZERO)
 		if kind=="boss":
 			if target.rage:
 				draw_arc(p,61,clock,clock+TAU*0.9,50,Color("d67c59"),2,true)

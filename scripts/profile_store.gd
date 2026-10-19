@@ -28,6 +28,11 @@ func valid(value: Variant) -> bool:
 		return false
 	if not value.settings.get("sound", true) is bool:
 		return false
+	var speed = value.settings.get("training_speed",1.0)
+	if (not speed is float and not speed is int) or not speed in SessionOptions.SPEEDS:
+		return false
+	if not value.settings.get("challenge_rank","normal") in SessionOptions.RANK_IDS:
+		return false
 	for record in value.records.values():
 		if not record is Dictionary:
 			return false
@@ -70,6 +75,7 @@ func save_profile() -> bool:
 
 func record_run(run: RefCounted, lesson_index: int) -> void:
 	var id: String = run.context + ":" + run.mode + ":" + run.lesson.id
+	id += SessionOptions.record_suffix(run.context,run.difficulty,run.challenge_rank)
 	var result: Dictionary = {"score":run.score,"accuracy":run.accuracy(),"wpm":run.wpm()}
 	if result.score >= data.records.get(id, {}).get("score", -1):
 		data.records[id] = result

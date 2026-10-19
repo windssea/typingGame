@@ -1,6 +1,8 @@
-# 键境 0.6 · 网页可玩版
+# 键境 0.7 · 网页可玩版
 
-实际游戏地址：<http://127.0.0.1:8765/build/web/index.html>。请先运行 `tools/export-web.ps1` 导出，再运行 `tools/serve-web.ps1`。本地服务终端需要保持运行。`docs/design-v2/index.html` 是旧设计演示，顶部另有可玩版入口。
+线上地址：<https://typinggame-cl5.pages.dev>。更新方式见 [Cloudflare 发布](CLOUDFLARE_DEPLOY.md)，五档训练速度、三档挑战与动画说明见 [0.7 更新](MOTION_AND_DIFFICULTY.md)。
+
+本机游戏地址：<http://127.0.0.1:8765/build/web/index.html>。请先运行 `tools/export-web.ps1` 导出，再运行 `tools/serve-web.ps1`。本地服务终端需要保持运行。旧设计地址通过 HTTP 默认进入真实游戏；`?design=1` 保留归档演示。
 
 ## 课程到游戏
 
@@ -35,4 +37,4 @@
 
 `scripts/main.gd` 是真正的页面与输入入口。`game_run.gd`、`arcade_run.gd`、`castle_run.gd` 执行玩法规则；场景绘制读取同一个运行状态。`tools/check-web-runtime.cjs` 用独立 Edge 配置和真实浏览器按键测试 Web 构建；只有 URL 带 `?qa=1` 才启用只读状态观察桥，观察桥不提供游戏指令。截图与机器报告在忽略提交的 `build/runtime-qa/`。
 
-可将 `build/web/` 整个目录上传到静态主机。当前已完成本机 HTTP 浏览器构建，不等于已发布公网或完成所有浏览器兼容性验证。
+可将 `build/web/` 整个目录上传到静态主机。当前已在 Cloudflare Pages + R2 实际发布，并验证公网启动、键盘训练结算和刷新存档；未完成所有浏览器兼容性验证。

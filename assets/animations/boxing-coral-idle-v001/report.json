@@ -1,0 +1,37 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\boxing-duo\\v001\\grok-raw.mp4",
+  "native": {
+    "width": 1168,
+    "height": 768,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/boxing-coral-idle-v001/idle-atlas.png",
+    "cell": 192,
+    "columns": 8,
+    "rows": 6,
+    "frames": 48,
+    "fps": "24",
+    "interval": [
+      0.0,
+      2.0
+    ],
+    "decoded_rgba_bytes": 7077888
+  },
+  "processing": [
+    "native frame interval extraction",
+    "green chroma key",
+    "green despill",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "native-scale runtime reviewed; short idle loop has a visible reset; punch is one-shot",
+  "status": "accepted-runtime-v07",
+  "static_crop": "584:0:584:768",
+  "animation": "idle",
+  "loop": true
+}

@@ -1,0 +1,38 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "tool_call_id": "call-d360d4f0-12b8-4aed-b6ff-44d52a5ef42a-4",
+  "model": null,
+  "status": "succeeded",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\boxing-blue-solo\\v001\\grok-raw.mp4",
+  "source_image": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\boxing-blue-solo\\seed-v001.png",
+  "source_pixels": "1254x1254",
+  "requested": {
+    "first_frame": "seed-v001.png",
+    "aspect_ratio": "1:1",
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "fps": null,
+    "voices": []
+  },
+  "actual": {
+    "width": 960,
+    "height": 960,
+    "video_codec": "h264",
+    "r_frame_rate": "24/1",
+    "avg_frame_rate": "24/1",
+    "video_frames": 193,
+    "video_duration_seconds": 8.041667,
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "audio_duration_seconds": 8.0,
+    "file_bytes": 4116887
+  },
+  "limitations": [
+    "image_to_video only accepts duration 6 or 10 and has no pinned-frame, fps, or audio parameter. reference_to_video was used once because it accepts a pinned first_frame and duration 8.",
+    "No fps or audio-disable argument exists. Measured rate is 24 fps. The file includes an AAC stereo track. Bytes were copied raw; frames were not re-encoded, interpolated, or duplicated.",
+    "resolution_name 720p with aspect_ratio 1:1 produced 960x960.",
+    "The call returned a file path only. No Imagine request ID and no model name were exposed. tool_call_id is the harness id for that single call. Container tags name Lavc62.34.102 libx264 and Lavf62.18.100, which are muxer tags, not a generation model."
+  ]
+}

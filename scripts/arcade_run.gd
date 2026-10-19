@@ -16,6 +16,8 @@ var misses := 0
 func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 0) -> void:
 	super.setup(mode_id, lesson_data, pace, seed_value)
 	goal = 24 if context == "training" else 30
+	if context=="challenge":
+		goal += SessionOptions.rank_index(challenge_rank)*6
 	feedback = "输入目标文字；先找准手指，再追求连击"
 	var count := 3 if mode in ["balloons", "aliens"] else 1
 	if str(lesson.id) == "phrases":
@@ -91,6 +93,8 @@ func miss_target(target: Dictionary) -> void:
 	if locked == target.id:
 		locked = -1
 	var damage := 10 if context == "training" else 20
+	if context=="challenge":
+		damage += SessionOptions.rank_index(challenge_rank)*5
 	if mode == "aliens":
 		var absorbed := mini(shield, damage)
 		shield -= absorbed

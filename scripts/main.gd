@@ -30,6 +30,9 @@ var guide_was_paused := false
 var previous_focus: Control
 var sound_button: Button
 var world_index := -1
+var challenge_index := 0
+var ui_tweens: Dictionary = {}
+var live_hud: LiveHud
 const WORLD_NAMES := ["皇家奇幻战争","科幻星港","现代工坊","古文明遗迹","童话花园"]
 const WORLD_MODES := [["castle","fighter"],["aliens","rain"],["racing","sprint"],["dojo","moles"],["balloons","bubbles"]]
 const PORTALS = preload("res://assets/worlds/portals.png")
@@ -37,6 +40,8 @@ const PORTALS = preload("res://assets/worlds/portals.png")
 func _ready() -> void:
 	store.load_profile()
 	lesson_index = int(store.data.last_lesson)
+	pace = float(store.data.settings.get("training_speed",1.0))
+	challenge_index = SessionOptions.rank_index(store.data.settings.get("challenge_rank","normal"))
 	theme = PlayTheme.ui(FONT)
 	show_home()
 	if OS.has_feature("web") and JavaScriptBridge.eval("new URLSearchParams(location.search).has('qa')",true):
@@ -68,10 +73,12 @@ func clear_ui() -> void:
 	typing_guide = null
 	guide_open = false
 	sound_button = null
+	live_hud = null
 	if is_instance_valid(layer):
 		remove_child(layer)
 		layer.queue_free()
 	layer = Control.new()
+	ui_tweens.clear()
 	layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(layer)
 	var backdrop := ColorRect.new()
@@ -122,8 +129,51 @@ func button(value: String, at: Vector2, dimensions: Vector2, callback: Callable,
 		item.add_theme_color_override(state, PlayTheme.ACTION_INK if primary else TEXT)
 	item.pressed.connect(callback)
 	parent.add_child(item)
+	item.pivot_offset = dimensions/2
+	item.mouse_entered.connect(func(): animate_button(item,1.025))
+	item.mouse_exited.connect(func(): animate_button(item,1.0))
+	item.focus_entered.connect(func(): animate_button(item,1.025))
+	item.focus_exited.connect(func(): animate_button(item,1.0))
+	item.button_down.connect(func(): animate_button(item,0.97))
+	item.button_up.connect(func(): animate_button(item,1.0))
 	ensure_keyboard_focus.call_deferred()
 	return item
+
+func animate_button(control: Control, factor: float) -> void:
+	if store.data.settings.reduced_motion or not is_instance_valid(control) or not control.is_inside_tree() or not is_inside_tree():
+		return
+	var id := control.get_instance_id()
+	if ui_tweens.has(id) and ui_tweens[id].is_valid():
+		ui_tweens[id].kill()
+	var tween := control.create_tween()
+	ui_tweens[id] = tween
+	tween.tween_property(control,"scale",Vector2.ONE*factor,0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _exit_tree() -> void:
+	for tween in ui_tweens.values():
+		if tween.is_valid():
+			tween.kill()
+	ui_tweens.clear()
+
+func speed_controls(at: Vector2, parent: Control = layer) -> void:
+	label("训练速度",at,17,TEXT,parent)
+	for i in range(SessionOptions.SPEEDS.size()):
+		var index := i
+		button(SessionOptions.SPEED_NAMES[i],at+Vector2(100+i*164,-8),Vector2(154,42),func(): select_speed(index),is_equal_approx(pace,SessionOptions.SPEEDS[i]),parent).name = "TrainingSpeed%d" % i
+
+func select_speed(index: int) -> void:
+	pace = SessionOptions.SPEEDS[index]
+	store.data.settings.training_speed = pace
+	store.save_profile()
+	show_training_games()
+	layer.find_child("TrainingSpeed%d" % index,true,false).grab_focus()
+
+func select_rank(index: int) -> void:
+	challenge_index = index
+	store.data.settings.challenge_rank = SessionOptions.RANK_IDS[index]
+	store.save_profile()
+	show_challenges()
+	layer.find_child("ChallengeRank%d" % index,true,false).grab_focus()
 
 func navigation(active: String) -> void:
 	panel(Vector2(0,0),Vector2(252,900),Color("ffffff"))
@@ -144,7 +194,7 @@ func navigation(active: String) -> void:
 	label("Lv. %02d  /  %d XP" % [1+int(store.data.xp/100),store.data.xp],Vector2(30,725),17)
 	label("已掌握 %d / 10 节" % store.data.completed.size(),Vector2(30,759),16,MUTED)
 	label("方向键 / Tab 选择 · Enter 确认",Vector2(24,816),13,MUTED)
-	label("键境 · 可玩版 0.6",Vector2(30,845),14,MUTED)
+	label("键境 · 动感版 0.7",Vector2(30,845),14,MUTED)
 
 func show_home() -> void:
 	page = "home"
@@ -199,6 +249,7 @@ func available_modes() -> Array:
 func add_badge(mode: String, at: Vector2, dimensions: Vector2, parent: Control = layer) -> void:
 	var badge := ModeBadge.new()
 	badge.mode = mode
+	badge.reduced_motion = store.data.settings.reduced_motion
 	badge.position = at
 	badge.size = dimensions
 	parent.add_child(badge)
@@ -225,6 +276,20 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String) 
 		grid.add_child(card)
 		var cap := panel(Vector2(8,8),Vector2(334,77),PlayTheme.PASTELS[i%5],card)
 		cap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cap.clip_contents = true
+		var scene_art := TextureRect.new()
+		scene_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		var background_name: String = "balloons-background-v2" if mode.id=="balloons" else str(mode.id)+"-background"
+		scene_art.texture = load("res://assets/generated/"+background_name+".png")
+		scene_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		scene_art.size = Vector2(334,77)
+		scene_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cap.add_child(scene_art)
+		var veil := ColorRect.new()
+		veil.color = Color(1,1,1,0.89)
+		veil.size = Vector2(226,77)
+		veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cap.add_child(veil)
 		add_badge(mode.id,Vector2(242,7),Vector2(95,75),card)
 		label(str(mode.tag).split("/")[-1].strip_edges(),Vector2(19,17),14,MUTED,card)
 		label(mode.name,Vector2(19,49),24,TEXT,card)
@@ -240,9 +305,11 @@ func show_training_games() -> void:
 	label("这节课，你想怎么玩？",Vector2(300,46),34)
 	label(lessons[lesson_index].name+"  /  "+lessons[lesson_index].hint,Vector2(300,106),17,MINT)
 	label("训练内容保持一致，只改变玩法。新手建议先选无压力练习。",Vector2(300,143),17,MUTED)
-	game_grid(available_modes(),Vector2(300,194),Vector2(1100,590),"training")
+	speed_controls(Vector2(300,198))
+	label("速度调整敌人移动和目标时限；无压力练习与一分钟计时保持原规则。",Vector2(300,240),15,MUTED)
+	game_grid(available_modes(),Vector2(300,282),Vector2(1100,502),"training")
 	button("返回课程",Vector2(300,807),Vector2(180,46),show_lessons)
-	button("舒缓节奏" if pace<1 else "标准节奏",Vector2(500,807),Vector2(180,46),func(): pace=0.65 if pace>=1 else 1.0; show_training_games())
+	label("当前："+SessionOptions.SPEED_NAMES[SessionOptions.SPEEDS.find(pace)],Vector2(510,816),18,MINT)
 
 func show_challenges() -> void:
 	page = "challenges"
@@ -266,8 +333,12 @@ func show_challenges() -> void:
 		show_challenges())
 	layer.add_child(selector)
 	var modes := GameContent.modes().filter(func(m): return m.id not in ["dojo","bubbles"])
-	game_grid(modes,Vector2(300,280),Vector2(1100,530),"challenge")
-	label("挑战成绩单独记录。课程掌握情况只由训练更新。",Vector2(300,845),17,MUTED)
+	for i in range(3):
+		var index := i
+		button(SessionOptions.RANK_NAMES[i]+"  "+str(SessionOptions.RANK_SPEEDS[i])+"×",Vector2(300+i*184,273),Vector2(172,46),func(): select_rank(index),i==challenge_index).name = "ChallengeRank%d" % i
+	label(SessionOptions.RANK_HINTS[challenge_index],Vector2(880,284),16,MINT)
+	game_grid(modes,Vector2(300,338),Vector2(1100,472),"challenge")
+	label("不同难度分别记录成绩。训练进度由训练更新。",Vector2(300,845),17,MUTED)
 
 func show_lessons() -> void:
 	page = "lessons"
@@ -288,8 +359,7 @@ func show_lessons() -> void:
 		label(lesson.description,Vector2(x+18,y+53),14,MUTED)
 		button("已选" if i==lesson_index else "选择",Vector2(x+423,y+13),Vector2(88,40),func(): select_lesson(i),i==lesson_index)
 	button("下一步：选择小游戏",Vector2(300,791),Vector2(270,54),show_training_games,true)
-	button("舒缓" if pace < 1 else "标准",Vector2(590,791),Vector2(150,54),func(): pace = 0.65 if pace >= 1 else 1.0; show_lessons())
-	label("节奏只影响敌人移动和刷新速度。",Vector2(749,807),17,MUTED)
+	label("下一步可选择游戏和五档训练速度。",Vector2(610,807),17,MUTED)
 
 func select_lesson(index: int) -> void:
 	lesson_index = index
@@ -475,15 +545,21 @@ func start_game(mode: String, purpose := "training") -> void:
 	clear_ui()
 	run = CastleRun.new() if mode == "castle" else (ArcadeRun.new() if mode in ArcadeRun.MODES else GameRun.new())
 	run.context = purpose
-	run.setup(mode,lessons[lesson_index],pace if purpose=="training" else 1.0)
+	run.challenge_rank = SessionOptions.RANK_IDS[challenge_index] if purpose=="challenge" else "normal"
+	run.setup(mode,lessons[lesson_index],pace if purpose=="training" else SessionOptions.RANK_SPEEDS[challenge_index])
 	run.ended.connect(finish_game)
 	var title := ""
 	for definition in GameContent.modes():
 		if definition.id == mode:
 			title = definition.name
 	label("K / " + title,Vector2(40,24),28,GOLD)
-	label(("训练 / " if purpose=="training" else "挑战 / ")+lessons[lesson_index].name,Vector2(40,75),17,MUTED)
+	label(("训练 %.2f× / " % pace if purpose=="training" else "挑战 · "+SessionOptions.RANK_NAMES[challenge_index]+" / ")+lessons[lesson_index].name,Vector2(40,75),17,MUTED)
 	hud = label("",Vector2(500,35),22,TEXT)
+	hud.visible = false
+	live_hud = LiveHud.new()
+	live_hud.position = Vector2(430,14)
+	live_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(live_hud)
 	pause_button = button("暂停  Esc",Vector2(1230,28),Vector2(170,48),toggle_pause)
 	pause_button.focus_mode = Control.FOCUS_NONE
 	var arena: GameArena = CastleArena.new() if mode == "castle" else (ArcadeArena.new() if run is ArcadeRun else GameArena.new())
@@ -515,9 +591,11 @@ func start_game(mode: String, purpose := "training") -> void:
 		castle_audio.battle = run
 		castle_audio.enabled = store.data.settings.get("sound",true)
 		layer.add_child(castle_audio)
-		sound_button = button("音效 F2：开" if castle_audio.enabled else "音效 F2：关",Vector2(1230,84),Vector2(170,32),toggle_sound)
+		sound_button = button("F2 声音开" if castle_audio.enabled else "F2 声音关",Vector2(1318,82),Vector2(82,34),toggle_sound)
+		sound_button.add_theme_font_size_override("font_size",13)
 		sound_button.focus_mode = Control.FOCUS_NONE
-	var guide_button := button("指法 F1",Vector2(1100,84),Vector2(120,32),show_game_guide)
+	var guide_button := button("F1 指法",Vector2(1230,82),Vector2(80,34),show_game_guide)
+	guide_button.add_theme_font_size_override("font_size",14)
 	guide_button.focus_mode = Control.FOCUS_NONE
 	hint = label("",Vector2(42,798),20,MINT)
 	label("%s  |  退格：撤回  Tab：换目标  F1：指法  F2：音效  Esc：暂停" % lessons[lesson_index].hint,Vector2(42,850),15,MUTED)
@@ -589,7 +667,7 @@ func toggle_sound() -> void:
 	store.data.settings.sound = castle_audio.enabled
 	store.save_profile()
 	if is_instance_valid(sound_button):
-		sound_button.text = "音效 F2：开" if castle_audio.enabled else "音效 F2：关"
+		sound_button.text = "F2 声音开" if castle_audio.enabled else "F2 声音关"
 
 func keyboard_controls() -> Array[Control]:
 	var root: Control = overlay if is_instance_valid(overlay) else layer
@@ -655,6 +733,8 @@ func capture_preview() -> void:
 func update_hud() -> void:
 	if not is_instance_valid(hud) or run == null:
 		return
+	if is_instance_valid(live_hud):
+		live_hud.refresh(run)
 	var progress := "第 %d / 6 波" % run.wave
 	if run.mode in ["dojo","bubbles"]:
 		progress = "%d / 18 目标" % run.kills

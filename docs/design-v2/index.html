@@ -3,6 +3,12 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>键境 · 五世界设计原型 v2</title>
+<script>
+// The historical HTTP entry now leads players to the real game. ?design=1 preserves the archived mockup.
+if(location.protocol.startsWith('http')&&!new URLSearchParams(location.search).has('design')){
+ fetch('../../build/web/index.html',{method:'HEAD'}).then(r=>{if(r.ok)location.replace('../../build/web/index.html?v=07')}).catch(()=>{});
+}
+</script>
 <link rel="stylesheet" href="prototype.css">
 <link rel="stylesheet" href="light-theme.css">
 </head>

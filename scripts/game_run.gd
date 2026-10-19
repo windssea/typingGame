@@ -28,6 +28,7 @@ var paused := false
 var feedback := "输入目标的第一个字母即可锁定"
 var difficulty := 1.0
 var context := "training"
+var challenge_rank := "normal"
 const CENTER := Vector2(680, 345)
 
 func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 0) -> void:
@@ -106,7 +107,8 @@ func step(delta: float) -> void:
 		return
 	if mode == "sprint":
 		if elapsed >= 60:
-			finish(true)
+			var rank := SessionOptions.rank_index(challenge_rank)
+			finish(context!="challenge" or (correct>=[18,36,60][rank] and accuracy()>=[0.85,0.9,0.95][rank]))
 		return
 	if mode == "rain" and elapsed >= 90:
 		finish(true)
@@ -120,7 +122,7 @@ func step(delta: float) -> void:
 		target.position.y += target.speed * delta
 		var reached: bool = target.position.y > 575
 		if reached:
-			hp = maxi(0, hp - 20)
+			hp = maxi(0, hp - (20+5*SessionOptions.rank_index(challenge_rank) if context=="challenge" else 20))
 			combo = 0
 			feedback = "防线受损！先处理距离最近的目标"
 			if locked == target.id:
