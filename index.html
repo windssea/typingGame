@@ -1,0 +1,5 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>键境 · 开始游戏</title>
+<style>body{margin:0;background:#f4f9fd;color:#2d405b;font:18px/1.8 system-ui,sans-serif;display:grid;place-items:center;min-height:100vh}main{max-width:650px;padding:40px}h1{font-size:42px}a{display:inline-block;background:#ffe2af;color:#5b4327;padding:12px 28px;border-radius:16px;text-decoration:none}a:focus-visible{outline:3px solid #416db4;outline-offset:5px}small{display:block;color:#596d85;margin-top:28px}</style></head>
+<body><main><p>KEYBOUND · 键盘游乐园</p><h1>让每一次击键，变成一场冒险。</h1><p>选课程、练指法，再用键盘打气球、迎击外星舰、赛车或守护城堡。十款游戏，学习进度自动保存在当前浏览器。</p><a id="play" href="build/web/index.html" autofocus>开始游戏 →</a><small>实体键盘 · 英文输入法 · Tab 选择 / Enter 确认 / Esc 暂停</small><p id="missing" hidden>当前目录尚未导出游戏。请先运行 tools/export-web.ps1，再通过 HTTP 打开本页。</p></main>
+<script>fetch('build/web/index.html',{method:'HEAD'}).then(r=>{if(!r.ok)document.querySelector('#missing').hidden=false}).catch(()=>document.querySelector('#missing').hidden=false);document.querySelector('#play').focus();</script></body></html>

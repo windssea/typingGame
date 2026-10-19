@@ -80,8 +80,10 @@ func draw_generated_game() -> void:
 	if run.mode == "moles":
 		for i in range(6):
 			var hole := Vector2(240+(i%3)*280,326+(i/3)*170)
-			draw_ellipse_shadow(hole,Vector2(66,20))
-			draw_arc(hole,57,0,PI,32,Color("9e713f"),5,true)
+			draw_set_transform(hole,0,Vector2(1,0.32))
+			draw_circle(Vector2.ZERO,61,Color("ad8756"))
+			draw_circle(Vector2.ZERO,52,Color("574839"))
+			draw_set_transform(Vector2.ZERO)
 	for target in run.targets:
 		var p: Vector2 = target.position
 		var bob := 0.0 if reduced_motion else sin(clock*2+target.id)*5
@@ -107,7 +109,7 @@ func draw_generated_game() -> void:
 			for row in range(6):
 				for col in range(2):
 					draw_rect(Rect2(939+col*13,y+row*16,13,16),Color.WHITE if (row+col)%2==0 else INK)
-		if run.boost>0:
+		if run.boost>0 and run.combo>=3:
 			art.draw_sprite(self,"impact",player-Vector2(65,0),Vector2(96,62))
 		art.draw_sprite(self,"car_mint",player,Vector2(136,88))
 		art.draw_sprite(self,"car_coral",rival,Vector2(136,88))
@@ -116,7 +118,7 @@ func draw_generated_game() -> void:
 		panel(Rect2(rival-Vector2(52,71),Vector2(104,29)),Color.WHITE,9)
 		write("陪练车" if run.context=="training" else "对手",rival-Vector2(29,50),17,CORAL)
 		panel(Rect2(330,204,380,44),Color(1,1,1,0.95),12)
-		write("三连击 · 氮气加速" if run.boost>0 else "连续输入为赛车充能",Vector2(520,234),22,GOLD,true)
+		write("三连击 · 氮气加速" if run.boost>0 and run.combo>=3 else "连续输入为赛车充能",Vector2(520,234),22,GOLD,true)
 	elif run.mode == "fighter":
 		var punch := 0.0 if reduced_motion else sin(clampf(strike/0.5,0,1)*PI)
 		var left := Vector2(350,440)+Vector2(punch*(120 if last_impact!="miss" else -20),0)

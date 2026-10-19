@@ -26,14 +26,23 @@ var session_context := "training"
 var castle_audio: CastleAudio
 var typing_guide: TypingGuide
 var guide_open := false
+var guide_was_paused := false
 var previous_focus: Control
 var sound_button: Button
+var world_index := -1
+const WORLD_NAMES := ["皇家奇幻战争","科幻星港","现代工坊","古文明遗迹","童话花园"]
+const WORLD_MODES := [["castle","fighter"],["aliens","rain"],["racing","sprint"],["dojo","moles"],["balloons","bubbles"]]
+const PORTALS = preload("res://assets/worlds/portals.png")
 
 func _ready() -> void:
 	store.load_profile()
 	lesson_index = int(store.data.last_lesson)
 	theme = PlayTheme.ui(FONT)
 	show_home()
+	if OS.has_feature("web") and JavaScriptBridge.eval("new URLSearchParams(location.search).has('qa')",true):
+		var probe := WebGameProbe.new()
+		probe.app = self
+		add_child(probe)
 	if "--preview-castle" in OS.get_cmdline_user_args():
 		lesson_index = 6
 		start_game("castle","challenge")
@@ -101,16 +110,16 @@ func button(value: String, at: Vector2, dimensions: Vector2, callback: Callable,
 	item.position = at
 	item.size = dimensions
 	item.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	item.add_theme_stylebox_override("normal", style(GOLD if primary else Color("ffffff"), GOLD if primary else Color("cedcec"), 15))
-	item.add_theme_stylebox_override("hover", style(Color("3454c1") if primary else Color("eaf2ff"), GOLD, 15))
-	item.add_theme_stylebox_override("pressed", PlayTheme.surface(Color("2e49a8") if primary else Color("dce9ff"),GOLD,15))
-	var focus := PlayTheme.surface(Color.TRANSPARENT,Color("af6322"),15)
-	focus.set_border_width_all(3)
+	item.add_theme_stylebox_override("normal", style(PlayTheme.ACTION if primary else Color.WHITE, PlayTheme.ACTION_EDGE if primary else LINE, 15))
+	item.add_theme_stylebox_override("hover", style(Color("ffdf9f") if primary else Color("edf5ff"), Color("d8b16b") if primary else Color("a9c4e2"), 15))
+	item.add_theme_stylebox_override("pressed", PlayTheme.surface(Color("ffda95") if primary else Color("e5f0fc"),PlayTheme.ACTION_EDGE if primary else Color("a9c4e2"),15))
+	var focus := PlayTheme.surface(Color.TRANSPARENT,PlayTheme.PRIMARY,15)
+	focus.set_border_width_all(2)
 	item.add_theme_stylebox_override("focus", focus)
 	item.add_theme_stylebox_override("disabled", PlayTheme.surface(Color("edf1f6"),Color("dce4ee"),15))
 	item.add_theme_color_override("font_disabled_color",Color("718197"))
 	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-		item.add_theme_color_override(state, Color.WHITE if primary else GOLD)
+		item.add_theme_color_override(state, PlayTheme.ACTION_INK if primary else TEXT)
 	item.pressed.connect(callback)
 	parent.add_child(item)
 	ensure_keyboard_focus.call_deferred()
@@ -135,34 +144,57 @@ func navigation(active: String) -> void:
 	label("Lv. %02d  /  %d XP" % [1+int(store.data.xp/100),store.data.xp],Vector2(30,725),17)
 	label("已掌握 %d / 10 节" % store.data.completed.size(),Vector2(30,759),16,MUTED)
 	label("方向键 / Tab 选择 · Enter 确认",Vector2(24,816),13,MUTED)
-	label("一起快乐学打字 · 0.5",Vector2(30,845),14,MUTED)
+	label("键境 · 可玩版 0.6",Vector2(30,845),14,MUTED)
 
 func show_home() -> void:
 	page = "home"
 	run = null
 	clear_ui()
 	navigation("home")
-	label("欢迎来到键境  /  玩着学，更有趣",Vector2(300,36),16,MINT)
-	label("今天，想玩哪一种？",Vector2(300,73),42)
-	label("从 F 和 J 开始，和键帽小伙伴一起解锁打字的乐趣。",Vector2(301,138),19,MUTED)
-	var friends := PlayfulArt.new()
-	friends.position = Vector2(1105,24)
-	friends.size = Vector2(280,145)
-	layer.add_child(friends)
-	panel(Vector2(300,201),Vector2(535,220),Color("e8f3ff"))
-	label("一步一步，练出好指法",Vector2(326,220),16,GOLD)
-	label("打字训练",Vector2(326,246),30)
-	label("基础指法 → 几个按键 → 按键组合 → 单词与句子",Vector2(326,296),16,MUTED)
-	button("选择课程，再选小游戏  →",Vector2(326,346),Vector2(475,48),show_lessons,true)
-	panel(Vector2(855,201),Vector2(535,220),Color("fff0d4"))
-	label("准备好了吗？来闯一关！",Vector2(881,220),16,PlayTheme.ORANGE)
-	label("打字挑战",Vector2(881,246),30)
-	label("计时冲刺、反应挑战、塔防战役，多种方式检验实力。",Vector2(881,296),16,MUTED)
-	button("进入挑战大厅  →",Vector2(881,346),Vector2(475,48),show_challenges)
-	label("挑一个喜欢的小游戏",Vector2(300,460),26)
-	label("10 款可玩 · 向下滚动探索更多玩法",Vector2(980,468),16,MINT)
-	game_grid(GameContent.modes(),Vector2(300,511),Vector2(1100,305),"training")
-	label("当前训练：%s    ·    英文输入法 / 实体键盘" % lessons[lesson_index].name,Vector2(301,840),17,MUTED)
+	label("KEYBOUND / 键盘里的五个世界",Vector2(300,36),16,GOLD)
+	label("小小手指，探索大大世界。",Vector2(300,72),38)
+	label("先练 F 和 J，再把每一个单词变成冒险的力量。",Vector2(300,128),18,MUTED)
+	panel(Vector2(300,175),Vector2(1090,100),Color("edf6ff"))
+	label("继续学习  /  "+lessons[lesson_index].name,Vector2(324,189),23)
+	label(lessons[lesson_index].hint,Vector2(324,231),16,MUTED)
+	button("更换课程",Vector2(895,195),Vector2(172,54),show_lessons)
+	button("继续本课  →",Vector2(1082,195),Vector2(280,54),show_training_games,true).grab_focus()
+	label("五个世界，同一场成长",Vector2(300,289),21)
+	for i in range(5):
+		var index := i
+		var card := button("",Vector2(300+i*220,330),Vector2(204,184),func(): select_world(index),world_index==i)
+		card.name = "WorldPortal%d" % i
+		var texture := AtlasTexture.new()
+		texture.atlas = PORTALS
+		texture.region = Rect2(i*PORTALS.get_width()/5.0,[365,405,385,370,445][i],PORTALS.get_width()/5.0,240)
+		texture.filter_clip = true
+		var picture := TextureRect.new()
+		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		picture.texture = texture
+		picture.position = Vector2(4,4)
+		picture.size = Vector2(196,126)
+		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		picture.clip_contents = true
+		picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card.add_child(picture)
+		label(WORLD_NAMES[i],Vector2(12,133),18,TEXT,card).mouse_filter = Control.MOUSE_FILTER_IGNORE
+		label("◆ 当前世界 · 2款玩法" if i==world_index else "进入世界 · 2款玩法",Vector2(12,160),13,MUTED,card).mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label("全部小游戏" if world_index<0 else WORLD_NAMES[world_index]+" · 开始冒险",Vector2(300,539),23)
+	button("全部十款游戏",Vector2(1195,530),Vector2(195,42),func(): world_index=-1; show_home(),world_index<0)
+	game_grid(available_modes(),Vector2(300,584),Vector2(1100,242),"training")
+	label("课程决定练习内容 · 世界决定游戏画面 · 每次结算自动保存成绩",Vector2(300,848),16,MUTED)
+
+func select_world(index: int) -> void:
+	world_index = index
+	show_home()
+	var card := layer.find_child("WorldPortal%d" % index,true,false) as Button
+	if card!=null:
+		card.grab_focus()
+
+func available_modes() -> Array:
+	if world_index<0:
+		return GameContent.modes()
+	return GameContent.modes().filter(func(mode): return mode.id in WORLD_MODES[world_index])
 
 func add_badge(mode: String, at: Vector2, dimensions: Vector2, parent: Control = layer) -> void:
 	var badge := ModeBadge.new()
@@ -208,7 +240,7 @@ func show_training_games() -> void:
 	label("这节课，你想怎么玩？",Vector2(300,46),34)
 	label(lessons[lesson_index].name+"  /  "+lessons[lesson_index].hint,Vector2(300,106),17,MINT)
 	label("训练内容保持一致，只改变玩法。新手建议先选无压力练习。",Vector2(300,143),17,MUTED)
-	game_grid(GameContent.modes(),Vector2(300,194),Vector2(1100,590),"training")
+	game_grid(available_modes(),Vector2(300,194),Vector2(1100,590),"training")
 	button("返回课程",Vector2(300,807),Vector2(180,46),show_lessons)
 	button("舒缓节奏" if pace<1 else "标准节奏",Vector2(500,807),Vector2(180,46),func(): pace=0.65 if pace>=1 else 1.0; show_training_games())
 
@@ -289,8 +321,11 @@ func show_fingering() -> void:
 	button("回到课程，开始练习  →",Vector2(630,785),Vector2(375,52),show_lessons,true)
 
 func show_game_guide() -> void:
-	if run == null or run.done or is_instance_valid(overlay):
+	if run == null or run.done or guide_open:
 		return
+	guide_was_paused = run.paused
+	if is_instance_valid(overlay):
+		close_modal()
 	run.paused = true
 	guide_open = true
 	var root := modal()
@@ -308,6 +343,8 @@ func close_game_guide() -> void:
 	close_modal()
 	if run != null:
 		run.paused = false
+		if guide_was_paused:
+			toggle_pause()
 
 func show_library() -> void:
 	page = "library"
@@ -488,6 +525,10 @@ func start_game(mode: String, purpose := "training") -> void:
 
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed or event.echo:
+		return
+	if page == "game" and run != null and run.done and event.keycode == KEY_ESCAPE:
+		show_home()
+		get_viewport().set_input_as_handled()
 		return
 	if event.keycode == KEY_ESCAPE and page != "game":
 		if is_instance_valid(overlay):

@@ -1,0 +1,11 @@
+Purpose: a stable full-body idle animation for an original heroic royal guard, used as a 2D game sprite. Eight seconds, seamless idle cycle if possible, silent. Preserve the uploaded image as the exact first frame.
+
+Locked tripod camera: NO pan, tilt, roll, zoom, lens change, reframe, parallax, cropping or background movement. Keep the full guard and shield inside the frame. Keep both boots planted at exactly the starting screen coordinates throughout. No walking, turning, jumping or stepping. Fixed three-quarter facing and upper-left light. One character only.
+
+Motion: gentle visible torso breathing and tiny shoulder rise/fall, slight blue scarf edge movement, subtle wrist and shield settling within a few pixels, one natural blink around second 3, and another around second 6. Calm confident face. One slow breathing cycle approximately every two seconds. The main mass has weight; armor and shield remain rigid, do not bend or melt. Gentle breathing must be visible at small game scale but must not shift feet or make armor grow.
+
+Continuity locks: same original face, hair silhouette, broad shoulders, short thick legs, hands, fingers, shield, split-diamond emblem, colors and material highlights. No new weapons, no new markings, no missing boots or doubled fingers. No sparks, smoke, magic, text, UI or ground shadow. No fake cloth movement in the metal. Do not turn the head away from its original direction.
+
+Background: a perfectly solid, still PURE GREEN #00FF00 chroma-key background for the whole movie, no gradient, no scenery or reflections. Do not introduce green into the character. Maintain clean edges and all safety padding; the subject never touches the frame.
+
+End at the same planted idle pose and similar breathing phase as the first frame for a quiet loop. Preserve real native FPS; no post interpolation or duplicated-frame speedup. If audio cannot be disabled, retain the raw original and report it so the project can remove its audio track deterministically.

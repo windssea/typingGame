@@ -1,12 +1,16 @@
 # 键境 · Keybound
 
-Godot 2D 打字训练游戏集合，当前版本 0.4。中文引导，英文键盘训练，面向实体键盘与桌面浏览器。
+Godot 2D 打字训练游戏集合，当前版本 0.6。中文引导，英文键盘训练，面向实体键盘与桌面浏览器。
 
-**2026-10-19 设计重定义：** 新方向为 Heroic Toy-Stylized 五世界独立型。先打开 [五世界交互原型](docs/design-v2/index.html)（可直接双击，用方向键/Tab/Enter操作），并阅读 [完整视觉设计系统](docs/design-v2/DESIGN_SYSTEM.md)、[页面与键盘交互规范](docs/design-v2/INTERACTION_SPEC.md)、[美术生产与Godot迁移计划](docs/design-v2/PRODUCTION_PLAN.md)。原型使用演示数据；Godot主体尚未整体迁移到v2。
+**直接玩游戏：** 运行 `tools/export-web.ps1` 与 `tools/serve-web.ps1`，访问 [Godot 网页可玩版](http://127.0.0.1:8765/build/web/index.html)。这是实际执行游戏规则的 Godot/Wasm 程序，支持十种玩法、真实输入、胜负结算和浏览器存档。完整入口与操作见 [可玩版说明](docs/PLAYABLE_WEB.md)。
+
+五世界大厅已接入游戏，气球、外星舰、地鼠、赛车、格斗和城堡使用独立角色贴图。城堡包含六类敌人、三种元素塔及本机 Grok 生成的守卫待机动画。Heroic Toy-Stylized 的完整视觉和场景动画仍在逐步迁移，未宣称所有角色动作已制作完成。[设计原型](docs/design-v2/index.html) 仅用于设计评审，使用演示数据，和可玩版分开。
 
 0.4 将全套界面更新为面向儿童的明亮游乐园风格：浅色背景、彩色圆角卡片、F/J 键帽小伙伴、统一浅色指法教练，以及晴空、花园、淡紫太空和阳光森林等游戏配色。主题定义在 `scripts/play_theme.gd`，插画在 `scripts/playful_art.gd`。
 
 ## 先阅读
+
+- [本机 Grok Build 动画流程与已生成守卫样片](docs/design-v2/ANIMATION_PIPELINE.md)：Godot打开 `scenes/animation_preview.tscn` 按F6；Space暂停，R减少动态。
 
 - [完整游戏设计：课程、小游戏规划、技术框架与路线图](docs/GAME_DESIGN.md)
 - [城堡模式：操作、敌人、Boss、建塔与升级](docs/CASTLE_MODE.md)
@@ -60,9 +64,10 @@ Godot 2D 打字训练游戏集合，当前版本 0.4。中文引导，英文键�
 
 ```powershell
 .\tools\export-web.ps1
+.\tools\serve-web.ps1
 ```
 
-将 `build/web/` 完整上传到静态站点，通过 HTTP(S) 访问。预设使用 Compatibility 与单线程。导出配置已提供，但是否成功导出/完成浏览器测试请看验证记录，不能仅凭预设文件视为已部署。
+本机已安装匹配的 4.7.2 Web 导出模板，并实际导出、运行和测试浏览器版本。缺模板时，可运行 `tools/install-web-templates.py` 安装官方包内 Web 文件。将 `build/web/` 完整上传到静态站点，通过 HTTP(S) 访问；预设使用 Compatibility 与单线程。当前提供本地网页，没有公网发布地址。
 
 ## 存档
 
@@ -70,4 +75,4 @@ Godot 2D 打字训练游戏集合，当前版本 0.4。中文引导，英文键�
 
 ## 字体与素材
 
-字体源为 Google Fonts Noto Sans SC，SIL Open Font License，见 `assets/OFL-NotoSansSC.txt`。`assets/ui-font.ttf` 为 UI 字符子集。新增中文 UI 文案后运行 `tools/subset_font.py` 重建（需 Python `fonttools` 和原始字体）。战场、角色、塔与特效由本项目代码绘制。六种原创音效由 `tools/generate_audio.py` 生成。没有复制其他游戏项目的美术或字体。
+字体源为 Google Fonts Noto Sans SC，SIL Open Font License，见 `assets/OFL-NotoSansSC.txt`。`assets/ui-font.ttf` 为 UI 字符子集。新增中文 UI 文案后运行 `tools/subset_font.py` 重建（需 Python `fonttools` 和原始字体）。实际游戏组合 Image Gen 背景/角色/塔贴图与程序绘制技能特效；生成提示词和来源记录在素材旁的 provenance JSON 及 manifest 中。六种原创音效由 `tools/generate_audio.py` 生成。

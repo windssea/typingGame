@@ -1,0 +1,21 @@
+{
+  "actual_size": [
+    1024,
+    1536
+  ],
+  "frame_count": 96,
+  "fps": 24,
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "transparent_fraction": 0.5227,
+  "bottom_y_range": [
+    123,
+    123
+  ],
+  "adjacent_mae_mean": 0.6092118112664474,
+  "loop_seam_mae": 1.1083577473958333,
+  "metric_note": "mean8bitRGB difference, not human motion review",
+  "status": "candidate, technical checks passed; action-library approval pending"
+}

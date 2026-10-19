@@ -6,9 +6,12 @@ var battle: CastleRun
 var banner_time := 3.0
 var shake := 0.0
 var terrain: Node2D
+const ROYAL_MAP = preload("res://assets/worlds/royal-battlefield.png")
+const GUARD_IDLE = preload("res://assets/animations/royal-guard-idle-v002/idle.tres")
 
 func _ready() -> void:
 	battle = run as CastleRun
+	art.setup("castle")
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	clip_contents = true
 	battle.effect.connect(receive_effect)
@@ -55,7 +58,10 @@ func _draw() -> void:
 	draw_battlefield()
 	for i in range(CastleRun.PADS.size()):
 		draw_pad(i)
-	fortress(CastleRun.KEEP,0.82)
+	var guard_frame := 0 if reduced_motion else int(clock*GUARD_IDLE.get_animation_speed("idle"))%GUARD_IDLE.get_frame_count("idle")
+	draw_texture_rect(GUARD_IDLE.get_frame_texture("idle",guard_frame),Rect2(CastleRun.KEEP+Vector2(-110,24),Vector2(96,96)),false)
+	panel(Rect2(CastleRun.KEEP+Vector2(-55,84),Vector2(110,9)),Color("dbe7dc"),4)
+	panel(Rect2(CastleRun.KEEP+Vector2(-55,84),Vector2(110*float(battle.hp)/battle.max_hp,9)),MINT,4)
 	var ordered := battle.targets.duplicate()
 	ordered.sort_custom(func(a,b): return a.position.y < b.position.y)
 	for target in ordered:
@@ -69,6 +75,11 @@ func _draw() -> void:
 	draw_top_status()
 
 func draw_battlefield() -> void:
+	draw_texture_rect(ROYAL_MAP,Rect2(Vector2.ZERO,size),false)
+	# Paths, movement, tower pads and damage remain gameplay data, independent of the backdrop.
+	return
+
+func draw_legacy_battlefield() -> void:
 	panel(Rect2(Vector2.ZERO,size),Color("d6edbd"),18,Color("aacb99"))
 	# Irregular forest floor patches and sunlit grass retain a hand-built map feel.
 	for i in range(78):
@@ -176,6 +187,12 @@ func draw_pad(index: int) -> void:
 		write(str(index+1),p+Vector2(0,49),15,GOLD,true)
 		return
 	var tint: Color = {"fire":Color("ffb96d"),"ice":Color("a2e6ec"),"storm":Color("c7b5ff")}[tower.kind]
+	if art.sprites.has("tower_"+str(tower.kind)):
+		art.draw_sprite(self,"tower_"+str(tower.kind),p-Vector2(0,36),Vector2(100,116)*(1.0+(tower.level-1)*0.1))
+		for i in range(tower.level):
+			draw_circle(p+Vector2((i-(tower.level-1)/2.0)*10,29),3,tint)
+		write(str(index+1),p+Vector2(0,51),14,GOLD,true)
+		return
 	draw_rect(Rect2(p+Vector2(-17,-32),Vector2(34,43)),Color("65766e"))
 	draw_rect(Rect2(p+Vector2(0,-32),Vector2(17,43)),Color("425751"))
 	for i in range(3):
@@ -208,6 +225,15 @@ func draw_enemy(target: Dictionary) -> void:
 	if target.slow > 0:
 		draw_circle(p,25*s,Color(0.5,0.85,1,0.12))
 		draw_arc(p+Vector2(0,12),23*s,0,TAU,24,Color("a2e6ec"),2,true)
+	if art.sprites.has(kind):
+		art.draw_sprite(self,kind,p+Vector2(0,-17+bob),Vector2(68,78)*s,Color("fff0c2") if target.flash>0 else Color.WHITE)
+		if kind=="boss":
+			if target.rage:
+				draw_arc(p,61,clock,clock+TAU*0.9,50,Color("d67c59"),2,true)
+			if target.windup>0:
+				draw_arc(p,67,-PI/2,-PI/2+TAU*minf(1,target.windup/4.5),60,Color("ffb170"),4,true)
+				write("蓄力中 · 输入打断",p+Vector2(0,81),16,Color("8f4a23"),true)
+		return
 	if kind == "wolf":
 		var fur := Color("8c9c9c") if target.flash <= 0 else Color("fff5ce")
 		for dx in [-17,-6,9,19]:

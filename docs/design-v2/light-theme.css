@@ -1,0 +1,88 @@
+/* v2.1: bright surfaces, restrained depth, unchanged keyboard and semantic states. */
+:root {
+  --shell: #f4f9fd;
+  --frame: #ffffff;
+  --read: #ffffff;
+  --paper: #fffdf8;
+  --ink: #2d405b;
+  --muted: #596d85;
+  --gold: #ffe2af;
+  --gold-edge: #e9c88d;
+  --focus: #416db4;
+  --ui-tint: #edf4ff;
+  --ui-edge: #d4e2f2;
+  --ui-accent: #466a9d;
+  --soft-shadow: 0 3px 12px #3c638610;
+}
+body[data-world=royal_fantasy] { --ui-tint:#edf4ff; --ui-edge:#d4e2f2; --ui-accent:#466a9d; }
+body[data-world=sci_fi] { --ui-tint:#e9f9fc; --ui-edge:#cbe9ef; --ui-accent:#276c82; }
+body[data-world=modern] { --ui-tint:#ecf8f2; --ui-edge:#d0e8df; --ui-accent:#376c5d; }
+body[data-world=ancient] { --ui-tint:#fff7e9; --ui-edge:#eedfc1; --ui-accent:#7a5c2c; }
+body[data-world=fairytale] { --ui-tint:#f5efff; --ui-edge:#e1d6f1; --ui-accent:#745195; }
+html { background:var(--shell); }
+body { color:var(--ink); background:radial-gradient(ellipse at 82% 0%,#e6f3ff 0,transparent 50%),linear-gradient(140deg,#fffdf8,var(--shell) 60%); }
+button { background:#fff; color:var(--ink); border:1px solid var(--ui-edge); box-shadow:0 2px 0 #c9d9e755; font-weight:600; }
+button:hover { filter:none; background:var(--ui-tint); border-color:#a9c4e2; }
+button:active,.pressed-sample { transform:translateY(1px); box-shadow:none; background:var(--ui-tint); }
+button.primary { background:linear-gradient(#ffeac6,#ffe2af); color:#5b4327; border:1px solid #e9c88d; box-shadow:0 2px 0 #e9c88d66; }
+button.primary:hover { background:#ffdf9f; border-color:#d8b16b; }
+button.primary:active,.primary.pressed-sample { transform:translateY(1px); box-shadow:none; }
+button[aria-pressed=true] { border:2px solid var(--ui-accent); box-shadow:none; background:var(--ui-tint); }
+button:focus-visible,select:focus-visible,[tabindex]:focus-visible { outline:3px solid var(--focus); outline-offset:3px; box-shadow:0 0 0 2px #fff; }
+button[disabled] { background:#f0f3f6; border:1px solid #dce4eb; color:#667586; box-shadow:none; filter:none; }
+button.quiet { background:transparent; border-color:transparent; box-shadow:none; color:var(--ink); }
+button.quiet:hover { background:var(--ui-tint); }
+kbd { border-color:#adc3d8; background:#ffffff70; color:inherit; font-weight:600; }
+.prototype-label { color:#596d85; background:#eaf3fa; }
+.topbar { background:#ffffffd9; border-bottom:1px solid #dce7f1; box-shadow:0 2px 10px #53769c06; }
+.brand { font-weight:800; }
+.brand small { color:#67809b; }
+.crest { color:#4976ac; background:#e9f3ff; border:1px solid #c7dbef; box-shadow:none; }
+.topbar nav button { color:#596d85; font-weight:600; }
+.topbar nav button:hover { color:#355d91; background:#f0f6fd; }
+.topbar nav button[aria-current=page] { background:#e9f3ff; border:1px solid #c7dcf2; color:#315c93; box-shadow:none; }
+h1 { font-weight:800; letter-spacing:0; }
+.eyebrow { color:var(--ui-accent); }
+.page-head p,.section-head p,.light-muted,.flow-note { color:var(--muted); }
+body[data-world] .board { background:#fff; border:1px solid var(--ui-edge); padding:4px; box-shadow:var(--soft-shadow); border-radius:22px; }
+.paper { background:var(--paper); border:0; border-radius:18px; }
+.inset { background:var(--ui-tint); border:1px solid var(--ui-edge); box-shadow:none; }
+.continue { background:linear-gradient(110deg,#edf6ff,#f4faff 60%,#fff5df); border:0; }
+.continue .eyebrow { color:#4976a2; }
+.continue p { color:var(--muted); }
+.keycap { background:#fff; border:1px solid #c9dceb; border-bottom-width:3px; box-shadow:none; border-radius:9px; color:var(--ink); }
+.keycap.active { background:#ffe7b8; border-color:#ccad70; outline:2px solid #416db4; outline-offset:2px; }
+.world-card { border:1px solid #d8e5f1; background:#fff; box-shadow:var(--soft-shadow); }
+.world-card:hover { background:#fff; transform:translateY(-2px); }
+.world-art:after { background:linear-gradient(transparent 70%,#ffffff45); }
+.world-meta { padding-top:12px; color:var(--ink); }
+.world-meta small { color:var(--muted); }
+.world-card[aria-pressed=true] { border:2px solid #5e83b0; background:#fff; box-shadow:0 3px 12px #4e7bb71a; }
+.world-card[aria-pressed=true]:after { color:#305886; background:#eff7ff; border:1px solid #b5cfe8; }
+.game-tile { background:#fff; border:1px solid #d9e6f0; box-shadow:var(--soft-shadow); }
+.mode-icon { background:var(--ui-tint); color:var(--ui-accent); border:1px solid var(--ui-edge); box-shadow:none; }
+.tag { background:var(--ui-tint); color:var(--ui-accent); border:1px solid var(--ui-edge); font-weight:500; }
+.game-tile .mini,.game-tile p { color:var(--muted); }
+.control-strip { color:var(--muted); background:#ffffffb3; border-top:1px solid #dce7f1; }
+.control-strip #context-note { color:var(--ui-accent); }
+.lesson { background:#fff; border:1px solid #d8e5f1; }
+.lesson .number { background:var(--ui-tint); color:var(--ui-accent); border:1px solid var(--ui-edge); }
+.lesson[aria-pressed=true] { background:var(--ui-tint); outline:none; border:2px solid var(--ui-accent); }
+.lesson .state { color:#376c5d; }
+.stat { background:#fff; border:1px solid #d9e6ef; }
+.stage,.demo-battle { border:2px solid #d0dfeb; box-shadow:0 3px 10px #3c638615; }
+.stage .stage-note { background:#ffffffed; border:1px solid #d6e3eb; }
+.threat { background:#fffef9; border:2px solid #b4c9d5; box-shadow:0 2px 5px #375f7722; }
+.threat.selected { outline:3px solid #416db4; }
+.threat small { color:#6b5855; }
+.target-strip { background:#fffdf7; border:1px solid #e2dfd3; box-shadow:var(--soft-shadow); }
+.resource { background:#fff4df; border:1px solid #ead9b4; color:#5b4b32; }
+.coach-key { background:linear-gradient(#fff0d3,#ffe4af); border:1px solid #dbc18c; border-bottom-width:3px; }
+.keyboard .keycap { border-bottom-width:2px; }
+.finger.active,.thumb.active { background:#ffdfa5; border-color:#4976a2; outline-color:#4976a2; }
+.progress { border:1px solid #c7ded4; background:#eaf4ee; }
+.progress i { background:#73ba9c; }
+.modal-shade { background:#546d8c48; backdrop-filter:blur(2px); }
+.setting-row { border-bottom:1px solid #e2eaf1; }
+.toast { color:var(--ink); border:1px solid #c8dfd8; background:#f1fcf7; box-shadow:0 3px 12px #3c63861a; }
+.demo-battle .target-card { background:#fffffff5; border:1px solid #d5e4ef; box-shadow:0 3px 12px #3c638621; }

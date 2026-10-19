@@ -2,7 +2,11 @@
 
 2026-10-19。本目录是阅读四份输入文档后的设计重定义，状态为可评审基线。
 
+当前默认外观为 **v2.1 轻松浅色方案**：已按用户反馈减轻边框、阴影与按钮厚度，改用浅天蓝、暖白和柔和主题色。参见[界面减重说明](UI_LIGHTENING.md)。
+
 ## 直接体验
+
+**现在可以直接打开 [Godot 可玩游戏](http://127.0.0.1:8765/build/web/index.html)。** 先运行项目根目录的 `tools/serve-web.ps1`；构建与真实玩法见 [0.6 网页可玩版](../PLAYABLE_WEB.md)。下文只描述设计演示。
 
 双击 `index.html`，无需安装依赖或联网。界面支持方向键、Tab/Shift+Tab、Enter与Esc；游戏中F1指法、F2音效状态示例；城堡准备中1–4、Q/W/E、U、A/S/D、R、N均可试用。
 
@@ -15,6 +19,7 @@
 3. [生产迁移计划](PRODUCTION_PLAN.md)：旧资产审计、五套最小基准包、切片、技术约定、Godot结构与验收。
 4. [项目解析Tokens](tokens.resolved.json)：继承输入JSON，单独记录本项目覆盖；没有修改输入文件。
 5. [验收记录](VALIDATION.md)：自动检查与人工看图范围。
+6. [Grok动画生产流程](ANIMATION_PIPELINE.md)：本机调用、十玩法动作清单、首个守卫样片与Godot预览。
 
 美术样张保存在 `../../assets/design-v2/`，内置 Image Gen 生成，完整提示词及来源记录在该目录 `provenance.json`。两张均为概念样张，未标为生产就绪的逐帧角色或图集。
 

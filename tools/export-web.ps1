@@ -3,4 +3,5 @@ $projectPath = Split-Path -Parent $PSScriptRoot
 New-Item -ItemType Directory -Force -Path (Join-Path $projectPath 'build/web') | Out-Null
 & $Engine --headless --path $projectPath --export-release Web (Join-Path $projectPath 'build/web/index.html')
 if ($LASTEXITCODE -ne 0) { throw 'Web export failed. Install the export templates matching your exact Godot version.' }
+& (Join-Path $PSScriptRoot 'prepare-web.ps1')
 Write-Output 'Export complete: build/web. Serve over HTTP(S), not file://.'

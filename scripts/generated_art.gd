@@ -14,6 +14,8 @@ func setup(mode: String) -> void:
 		return
 	var atlas: Texture2D = load(atlas_path)
 	var regions: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/generated/regions.json"))
+	if not regions.has(family):
+		return
 	for id in regions[family]:
 		var coords: Array = regions[family][id]
 		var texture := AtlasTexture.new()

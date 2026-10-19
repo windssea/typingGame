@@ -1,0 +1,15 @@
+{
+  "prompt": "Production GAME SPRITE ATLAS for a 2D children's typing mini-game collection. Premium American animated Heroic Toy-Stylized art: chunky readable masses, rounded bevels, designed broad highlights, clear silhouette, controlled clean low-detail materials, warm upper-left light, friendly original characters. Use reference for ONLY the rendering quality/shape family. Output transparent background using native alpha, landscape 1536x1024. Strict 4 COLUMNS by 3 ROWS of equal cells, exactly TWELVE distinct assets, one per cell, row-major order. Each asset centered in its own cell with at least 18% padding; no crossing cell boundaries; no grid lines, no cell backing, no cast shadows outside object. Objects by position: Row1: (1) coral red balloon with tied knot and SHORT string, (2) sky-blue balloon with knot short string, (3) golden yellow balloon with knot short string, (4) friendly lime alien piloting a chunky violet UFO with glass canopy. Row2: (1) blue-and-cyan player spaceship pointing UP, shallow top-down view, (2) cute brown garden mole emerging torso, front-facing, (3) soft golden toy mallet at diagonal, (4) mint-green chunky race car TOP-DOWN ORTHOGRAPHIC pointing RIGHT. Row3: (1) coral chunky race car TOP-DOWN ORTHOGRAPHIC pointing RIGHT, (2) full-body friendly young BLUE boxing-suited cartoon athlete with oversized gloves facing RIGHT, (3) full-body friendly CORAL boxing-suited cartoon athlete with oversized gloves facing LEFT, (4) golden clean impact STARBURST with small sparkles. Each whole body fully visible, isolated transparent cutout. Characters have original friendly faces, not copies of commercial characters. No words, no UI, no letters, no numbers, no logo, no watermark, no scenery. Game-scale readability at 64-128 pixels is more important than micro-detail. All cells need exactly their specified subject.",
+  "source": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-e29f669f-32a5-455f-a4b9-3f6b1614faea.png",
+  "path": "assets/generated/arcade-sprites.png",
+  "generator": "OpenAI Image Gen (built-in)",
+  "generated_at": "2026-10-19",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "native_alpha": true,
+  "layout": "4 columns x 3 rows; nonuniform alpha bounding boxes recorded in regions.json",
+  "usage": "Runtime sprites for balloons, aliens, moles, racing and fighter.",
+  "validation": "RGBA; transparent pixels verified; individual atlas regions inspected in actual game."
+}

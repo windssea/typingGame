@@ -1,0 +1,11 @@
+{
+  "generator": "built-in image_gen",
+  "date": "2026-10-19",
+  "status": "animation-seed-candidate",
+  "asset": {
+    "prompt": "Use case: stylized-concept. Asset type: chroma-key animation source frame for an ORIGINAL royal fantasy guard in a children's 2D typing game. Reference image: ONLY use leftmost royal character's heroic chunky mass and blue-gold materials; new individual asset composition. A single friendly original stout guard with broad shoulders, short thick legs, oversized geometric kite shield in left hand, empty right hand relaxed, simple thick blue enamel armor #4365A0, warm brass trims #D7A857, original split-diamond insignia NOT crown, expressive heavy eyebrows, broad face, dark brown hair, warm skin, brave slightly humorous character. Full body centered, three-quarter view facing slightly right, feet both planted, shield held beside torso not covering face. No weapon, no violence. Broad bevels, designed wide highlights, low texture noise, clean animated-film game finish, not photographic. Upper-left warm key light and readable fill. Flat SOLID PURE CHROMA GREEN #00FF00 background everywhere, no scenery, no ground plane, no cast shadow extending outside feet, no gradient, no green reflections on character. Character has NO green costume, no green eyes and no green props. Entire body, shield and feet visible with at least 12% clear green padding on every side. Square 1024x1024 composition, subject occupies about 72% height. Neutral pose designed to be animated with breathing and gentle shield adjustment. No text, no UI, no labels, no numbers, no watermark, no existing recognizable game character.",
+    "source": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-970fcee9-825b-4f95-973c-883c93748832.png",
+    "path": "assets/animation-sources/royal-guard/seed-v001.png"
+  },
+  "note": "Requested square1024, actual1254x1254. Green is intentional chroma-key input, not a transparent output."
+}

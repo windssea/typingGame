@@ -2,12 +2,15 @@ class_name PlayTheme
 extends RefCounted
 
 # Text colors stay darker than toy/art colors so small labels remain readable.
-const BACKGROUND := Color("f7f9fd")
+const BACKGROUND := Color("f4f9fd")
 const SURFACE := Color("ffffff")
-const BORDER := Color("dbe5ef")
-const TEXT := Color("293c59")
-const MUTED := Color("586d84")
-const PRIMARY := Color("4263d7")
+const BORDER := Color("d8e5f1")
+const TEXT := Color("2d405b")
+const MUTED := Color("596d85")
+const PRIMARY := Color("416db4")
+const ACTION := Color("ffe2af")
+const ACTION_EDGE := Color("e9c88d")
+const ACTION_INK := Color("5b4327")
 const TEAL := Color("13766b")
 const ORANGE := Color("a65220")
 const YELLOW := Color("ffd56b")
@@ -25,9 +28,9 @@ static func surface(color: Color, border := BORDER, radius := 20, raised := fals
 	box.set_corner_radius_all(radius)
 	box.anti_aliasing = true
 	if raised:
-		box.shadow_color = Color(0.19,0.29,0.48,0.08)
+		box.shadow_color = Color(0.24,0.39,0.53,0.035)
 		box.shadow_size = 1
-		box.shadow_offset = Vector2(0,5)
+		box.shadow_offset = Vector2(0,2)
 	return box
 
 static func ui(font: Font) -> Theme:

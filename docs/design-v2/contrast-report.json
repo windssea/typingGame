@@ -1,32 +1,32 @@
 {
   "body": {
-    "foreground": "#243044",
-    "background": "#F2E6CF",
-    "ratio": 10.75,
+    "foreground": "#2D405B",
+    "background": "#FFFFFF",
+    "ratio": 10.52,
     "pass": true
   },
   "secondary": {
-    "foreground": "#536078",
-    "background": "#F2E6CF",
-    "ratio": 5.13,
+    "foreground": "#596D85",
+    "background": "#FFFDF8",
+    "ratio": 5.23,
     "pass": true
   },
   "action": {
-    "foreground": "#243044",
-    "background": "#F0C46B",
-    "ratio": 8.1,
+    "foreground": "#5B4327",
+    "background": "#FFE2AF",
+    "ratio": 7.36,
     "pass": true
   },
-  "on_dark": {
-    "foreground": "#FFFFFF",
-    "background": "#273950",
-    "ratio": 11.75,
+  "navigation": {
+    "foreground": "#315C93",
+    "background": "#E9F3FF",
+    "ratio": 6.08,
     "pass": true
   },
   "focus": {
-    "foreground": "#FFE2A0",
-    "background": "#192B42",
-    "ratio": 11.35,
+    "foreground": "#416DB4",
+    "background": "#F4F9FD",
+    "ratio": 4.87,
     "pass": true
   }
 }

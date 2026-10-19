@@ -1,0 +1,32 @@
+{
+  "tool": "reference_to_video",
+  "request_id": "call-e53f758a-c1bf-48cd-8730-504bd2506677-10",
+  "model": null,
+  "status": "success",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\royal-guard\\idle-v001\\grok-raw.mp4",
+  "source_image": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\royal-guard\\seed-v001.png",
+  "submitted": {
+    "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\royal-guard\\seed-v001.png",
+    "last_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\royal-guard\\seed-v001.png",
+    "aspect_ratio": "1:1",
+    "duration_s": 8,
+    "resolution_name": "720p"
+  },
+  "actual": {
+    "width": 720,
+    "height": 720,
+    "fps": 24,
+    "duration_s": 8.041667,
+    "nb_frames": 193,
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "bytes": 1985097
+  },
+  "limitations": [
+    "Built-in image_to_video duration is only 6 or 10; reference_to_video was used because it pins first_frame and accepts 8s.",
+    "No fps argument exists; native output is 24 fps.",
+    "No audio-disable argument exists; the raw file includes AAC 48 kHz stereo.",
+    "The tool completed in one blocking call and returned no provider request ID or model name; request_id is the local tool_call_id.",
+    "Source still is 1254x1254; output is 720x720 720p square."
+  ]
+}

@@ -1,7 +1,8 @@
 {
   "metadata": {
     "name": "Keybound design v2",
-    "version": "2.0.0",
+    "version": "2.1.0",
+    "ui_profile": "light-playful",
     "status": "review-prototype",
     "source": "../five_world_design_tokens_v0.2.json",
     "unit": "logical dp",
@@ -391,20 +392,37 @@
       "target": 36
     },
     "surfaces": {
-      "shell": "#192B42",
-      "frame": "#273950",
-      "reading": "#F2E6CF",
-      "reading_bright": "#FFF8E8",
-      "ink": "#243044",
-      "muted_ink": "#536078",
+      "shell": "#F4F9FD",
+      "frame": "#FFFFFF",
+      "reading": "#FFFFFF",
+      "reading_bright": "#FFFDF8",
+      "ink": "#2D405B",
+      "muted_ink": "#596D85",
       "ink_on_dark": "#FFFFFF"
     },
     "action": {
-      "face": "#F0C46B",
-      "edge": "#846029",
-      "ink": "#243044",
-      "focus_inner": "#192B42",
-      "focus_outer": "#FFE2A0"
+      "face": "#FFE2AF",
+      "edge": "#E9C88D",
+      "ink": "#5B4327",
+      "focus_inner": "#FFFFFF",
+      "focus_outer": "#416DB4"
+    },
+    "border_dp": {
+      "surface": 1,
+      "selected": 2,
+      "focus": 3
+    },
+    "raised_depth_dp": {
+      "surface": 0,
+      "button": 2,
+      "pressed": 0
+    },
+    "ui_theme_tints": {
+      "royal_fantasy": "#EDF4FF",
+      "sci_fi": "#E9F9FC",
+      "modern": "#ECF8F2",
+      "ancient": "#FFF7E9",
+      "fairytale": "#F5EFFF"
     },
     "layout": {
       "reference": [
