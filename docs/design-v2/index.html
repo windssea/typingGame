@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>键境 · 五世界设计原型 v2</title>
+<link rel="stylesheet" href="prototype.css">
+</head>
+<body>
+<div class="prototype-label">KEYBOUND / DESIGN v2 <span>交互原型 · 演示数据</span></div>
+<div class="app">
+<header class="topbar">
+ <button class="brand quiet" data-page="hall" aria-label="键境，返回世界大厅"><span class="crest">❯❮</span><span>键境<small>KEYBOUND</small></span></button>
+ <nav aria-label="主要页面"><button data-page="hall">世界大厅</button><button data-page="lessons">训练课程</button><button data-page="games">游戏集合</button><button data-page="challenges">打字挑战</button><button data-page="profile">学习档案</button></nav>
+ <button class="icon-btn" data-action="settings" aria-label="设置">设置 <kbd>Esc</kbd></button>
+</header>
+<main id="main" tabindex="-1"></main>
+<footer class="control-strip"><span id="context-note">每次击键，都是一次小小的冒险。</span><span><kbd>↑↓←→</kbd> 选择 <kbd>Enter</kbd> 确认 <kbd>Tab</kbd> 切换 <kbd>Esc</kbd> 返回</span><button class="quiet" data-page="components">设计组件</button></footer>
+</div>
+<div id="overlay"></div><div id="announcement" role="status" aria-live="polite"></div>
+<script src="tokens.js"></script><script src="prototype.js"></script>
+</body></html>

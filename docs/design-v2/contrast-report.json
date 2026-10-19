@@ -1,0 +1,32 @@
+{
+  "body": {
+    "foreground": "#243044",
+    "background": "#F2E6CF",
+    "ratio": 10.75,
+    "pass": true
+  },
+  "secondary": {
+    "foreground": "#536078",
+    "background": "#F2E6CF",
+    "ratio": 5.13,
+    "pass": true
+  },
+  "action": {
+    "foreground": "#243044",
+    "background": "#F0C46B",
+    "ratio": 8.1,
+    "pass": true
+  },
+  "on_dark": {
+    "foreground": "#FFFFFF",
+    "background": "#273950",
+    "ratio": 11.75,
+    "pass": true
+  },
+  "focus": {
+    "foreground": "#FFE2A0",
+    "background": "#192B42",
+    "ratio": 11.35,
+    "pass": true
+  }
+}

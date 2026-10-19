@@ -1,0 +1,6 @@
+.godot/
+build/*
+!build/.gitkeep
+!build/.gdignore
+assets/*-source.ttf
+*.tmp

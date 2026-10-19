@@ -1,0 +1,449 @@
+{
+  "metadata": {
+    "name": "Keybound design v2",
+    "version": "2.0.0",
+    "status": "review-prototype",
+    "source": "../five_world_design_tokens_v0.2.json",
+    "unit": "logical dp",
+    "date": "2026-10-19"
+  },
+  "core": {
+    "shape": {
+      "dominant_secondary_micro_heuristic": [
+        0.65,
+        0.25,
+        0.1
+      ],
+      "character_primary_forms": "one dominant mass, two to four readable secondary masses",
+      "principles": [
+        "chunky masses",
+        "rounded or chamfered edges",
+        "exaggerated focal features",
+        "clear silhouettes",
+        "restricted microdetails"
+      ],
+      "silhouette_review_sizes_px": [
+        48,
+        96,
+        192
+      ]
+    },
+    "material": {
+      "detail_policy": "large color regions first; medium features second; no photographic micro-noise",
+      "highlight": "broad, designed, material-specific",
+      "surface_families": [
+        "skin",
+        "paint",
+        "metal",
+        "wood",
+        "stone",
+        "cloth",
+        "glass",
+        "energy"
+      ]
+    },
+    "lighting": {
+      "principles": [
+        "single coherent key direction per scene",
+        "soft readable fills",
+        "contact for grounding",
+        "protect gameplay contrast"
+      ],
+      "hero_render_can_use_extra_rim_light": true
+    },
+    "semantic": {
+      "colors": {
+        "ally": "#3976C9",
+        "enemy": "#D34F50",
+        "positive": "#3F9C65",
+        "warning": "#D59A2B",
+        "danger": "#D44846",
+        "special": "#9564D8",
+        "disabled": "#7F8B98",
+        "ink_on_light": "#243044",
+        "ink_on_dark": "#FFFFFF",
+        "neutral_surface_light": "#F2E6CF",
+        "neutral_surface_dark": "#273950"
+      },
+      "note": "Example defaults only. Verify contrast, color-vision redundancy and gameplay semantics on actual screens."
+    },
+    "ui": {
+      "spacing_dp": {
+        "2xs": 4,
+        "xs": 8,
+        "sm": 12,
+        "md": 16,
+        "lg": 24,
+        "xl": 32,
+        "2xl": 48,
+        "3xl": 64
+      },
+      "radius_dp": {
+        "sm": 8,
+        "md": 12,
+        "lg": 18,
+        "xl": 24,
+        "pill": 999
+      },
+      "border_dp": {
+        "thin": 2,
+        "standard": 3,
+        "hero": 4
+      },
+      "raised_depth_dp": {
+        "sm": 3,
+        "md": 5,
+        "lg": 8
+      },
+      "type_dp": {
+        "caption": 12,
+        "body_sm": 14,
+        "body": 16,
+        "subtitle": 20,
+        "title": 24,
+        "hero": 32
+      },
+      "hit_target_min_dp": 48,
+      "motion_ms": {
+        "press_in": 100,
+        "release": 160,
+        "panel_enter": 260,
+        "reward_reveal": 560
+      },
+      "buttons": {
+        "min_height_dp": 48,
+        "recommended_height_dp": 56,
+        "states": [
+          "default",
+          "pressed",
+          "focused",
+          "selected",
+          "disabled",
+          "loading"
+        ]
+      },
+      "text_rules": [
+        "numeric data use tabular figures when possible",
+        "text remains readable at target scale",
+        "no color-only encoding",
+        "verify localization expansion"
+      ]
+    }
+  },
+  "themes": {
+    "royal_fantasy": {
+      "name_zh": "皇家奇幻战争",
+      "name_en": "Royal Fantasy Warfare",
+      "identity": "Humorous, sturdy, heroic miniature kingdom warfare; original royal insignia and architecture, not a replica of Clash Royale.",
+      "palette": {
+        "primary": "#4365A0",
+        "secondary": "#D7A857",
+        "accent": "#C76958",
+        "surface": "#5D6575",
+        "neutral": "#CEC5AF"
+      },
+      "support_palette": {
+        "stone": "#A4A59B",
+        "timber": "#956F4D",
+        "metal": "#8C99AA",
+        "cloth": "#D5C4A5",
+        "vegetation": "#83AD70",
+        "ink": "#26364E"
+      },
+      "dominant_forms": [
+        "broad rounded rectangles",
+        "large blocky body masses",
+        "oversized shields and weapons",
+        "thick crenellated tower volumes",
+        "compact low-center-of-gravity silhouettes"
+      ],
+      "character_dna": {
+        "archetypes": [
+          "sturdy royal guard",
+          "nimble ranger",
+          "eccentric alchemist",
+          "heavy siege engineer",
+          "friendly monster companion"
+        ],
+        "faces": [
+          "expressive heavy eyebrows",
+          "graphic noses and moustaches",
+          "simple readable mouths",
+          "large facial planes"
+        ],
+        "equipment": [
+          "large segmented pauldrons",
+          "thick tower shield",
+          "oversized mallet or crossbow",
+          "banner-shaped soft goods"
+        ],
+        "do_not_copy": [
+          "recognizable official troop characters",
+          "existing royal crown emblem",
+          "distinctive existing costume silhouettes",
+          "official troop portraits"
+        ]
+      },
+      "environment_dna": {
+        "architecture": [
+          "low wide stone bastion",
+          "round-edged gatehouse",
+          "stacked defensive turret",
+          "simple visible bridges",
+          "wood-and-stone courtyard"
+        ],
+        "layout": [
+          "clean functional playfield",
+          "legible route and chokepoint silhouettes",
+          "perimeter story dressing"
+        ],
+        "camera": "gameplay-dependent, not tied to Clash Royale two-lane arena"
+      },
+      "materials": [
+        "soft faceted stone blocks",
+        "broad-highlight warm metal",
+        "clean chunky timber",
+        "painted enamel",
+        "thick woven banners"
+      ],
+      "motifs": [
+        "original heraldic geometric crest",
+        "broad battlement outline",
+        "banner tail",
+        "simple shield silhouette"
+      ],
+      "ui_skin": [
+        "raised framed panels",
+        "large metal corner plates",
+        "warm timber or enameled surface",
+        "embossed original insignia",
+        "thick pressable buttons",
+        "clear resource ornaments"
+      ],
+      "motion": [
+        "firm anticipations",
+        "cartoon recoil and bounce",
+        "readable impact bursts",
+        "brief medal-like reward spin"
+      ],
+      "vfx": [
+        "bold fireball shapes",
+        "simple arc lightning",
+        "clean impact stars",
+        "limited dust puffs"
+      ],
+      "benchmark": {
+        "character_heavy": "原创王国重甲守卫",
+        "character_ranged": "原创王国巡林弩手",
+        "environment": "王国训练庭院与守门塔",
+        "building": "厚石防御瞭望塔",
+        "prop_functional": "攻城工具箱",
+        "prop_reward": "王国战利品匣",
+        "ui": "王国角色详情页、主操作面板、奖励弹窗",
+        "vfx_normal": "盾牌格挡",
+        "vfx_signature": "战旗冲击波"
+      },
+      "avoid": [
+        "realistic medieval dirt and weathering",
+        "fragile weapons and thin limbs",
+        "dense heraldic microdetails",
+        "copying actual Clash Royale towers, insignia or card frames",
+        "making this kit identical to the magical fairytale kit"
+      ],
+      "contrast_with_fairytale": {
+        "royal": "martial, architectural, heraldic, high physical weight",
+        "fairytale": "organic, whimsical, botanical, magical, soft motion"
+      }
+    },
+    "sci_fi": {
+      "palette": {
+        "primary": "#3E66B0",
+        "secondary": "#36B7C9",
+        "accent": "#F0B35D",
+        "surface": "#293D58",
+        "neutral": "#9CB6C2"
+      },
+      "dominant_forms": [
+        "rounded capsules",
+        "large segmented armor",
+        "bold ring elements"
+      ],
+      "materials": [
+        "satin enamel",
+        "brushed metal simplified",
+        "contained emissive glass"
+      ],
+      "motifs": [
+        "energy ring",
+        "modular latch",
+        "display panel"
+      ],
+      "ui_skin": [
+        "rounded armored frame",
+        "contained energy highlight",
+        "mechanical depth"
+      ]
+    },
+    "modern": {
+      "palette": {
+        "primary": "#477F98",
+        "secondary": "#E0AE51",
+        "accent": "#EA725B",
+        "surface": "#44515D",
+        "neutral": "#D4D6CF"
+      },
+      "dominant_forms": [
+        "stacked boxes",
+        "rounded industrial corners",
+        "exaggerated everyday props"
+      ],
+      "materials": [
+        "painted metal",
+        "rubber",
+        "soft plastic",
+        "clean concrete"
+      ],
+      "motifs": [
+        "bold pictogram",
+        "utility strap",
+        "soft corner panel"
+      ],
+      "ui_skin": [
+        "painted molded frame",
+        "physical key depth",
+        "friendly signage"
+      ]
+    },
+    "ancient": {
+      "palette": {
+        "primary": "#AB7C48",
+        "secondary": "#5C9182",
+        "accent": "#D8BB68",
+        "surface": "#69503D",
+        "neutral": "#D6BE92"
+      },
+      "dominant_forms": [
+        "thick columns",
+        "tapered stepped masses",
+        "oversized ornaments"
+      ],
+      "materials": [
+        "polished bronze simplified",
+        "large-grain sandstone",
+        "painted pottery"
+      ],
+      "motifs": [
+        "stylized sun disk",
+        "banded column",
+        "emblem seal"
+      ],
+      "ui_skin": [
+        "carved slab rim",
+        "bronze inset",
+        "embossed seal"
+      ]
+    },
+    "fairytale": {
+      "palette": {
+        "primary": "#936CC4",
+        "secondary": "#7AB78A",
+        "accent": "#E5A1A9",
+        "surface": "#645184",
+        "neutral": "#E9D8CD"
+      },
+      "dominant_forms": [
+        "organic bulbs",
+        "soft S-curves",
+        "exaggerated mushrooms and leaves"
+      ],
+      "materials": [
+        "soft painted wood",
+        "porcelain-like candy",
+        "large-volume foliage"
+      ],
+      "motifs": [
+        "leaf swirl",
+        "crystal blossom",
+        "storybook arch"
+      ],
+      "ui_skin": [
+        "soft carved rim",
+        "magic gem inset",
+        "springy response"
+      ]
+    }
+  },
+  "world_order": [
+    "royal_fantasy",
+    "sci_fi",
+    "modern",
+    "ancient",
+    "fairytale"
+  ],
+  "project_overrides": {
+    "type_dp": {
+      "hero": 40,
+      "page": 32,
+      "title": 24,
+      "body": 18,
+      "hint": 16,
+      "caption": 14,
+      "target": 36
+    },
+    "surfaces": {
+      "shell": "#192B42",
+      "frame": "#273950",
+      "reading": "#F2E6CF",
+      "reading_bright": "#FFF8E8",
+      "ink": "#243044",
+      "muted_ink": "#536078",
+      "ink_on_dark": "#FFFFFF"
+    },
+    "action": {
+      "face": "#F0C46B",
+      "edge": "#846029",
+      "ink": "#243044",
+      "focus_inner": "#192B42",
+      "focus_outer": "#FFE2A0"
+    },
+    "layout": {
+      "reference": [
+        1280,
+        800
+      ],
+      "safe_margin": 32,
+      "topbar": 80,
+      "footer": 56,
+      "breakpoint_compact": 1100,
+      "breakpoint_narrow": 780
+    },
+    "accessibility": {
+      "text_contrast_min": 4.5,
+      "focus_contrast_min": 3,
+      "target_min": 48,
+      "text_scale": [
+        1,
+        1.25,
+        1.5
+      ],
+      "reduced_motion": true
+    }
+  },
+  "mode_worlds": {
+    "castle": "royal_fantasy",
+    "fighter": "royal_fantasy",
+    "aliens": "sci_fi",
+    "rain": "sci_fi",
+    "racing": "modern",
+    "sprint": "modern",
+    "dojo": "ancient",
+    "moles": "ancient",
+    "balloons": "fairytale",
+    "bubbles": "fairytale"
+  },
+  "status_policy": {
+    "concept": "方向参考，非运行精灵",
+    "prototype": "可操作交互，演示状态",
+    "production_ready": "需通过技术检查与真实引擎验收"
+  }
+}

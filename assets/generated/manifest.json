@@ -1,0 +1,88 @@
+{
+  "status": "legacy-review",
+  "superseded_by": "docs/design-v2/DESIGN_SYSTEM.md",
+  "generator": "built-in image_gen",
+  "assets": [
+    {
+      "id": "balloons-background",
+      "mode": "balloons",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND for a balloon-popping game. Sunny cartoon carnival meadow. Huge spacious clean cyan sky fills central 75%, chunky sculpted fluffy clouds framing the side edges, rolling mint hills at the bottom, oversized stylized daisies and two cute colorful carnival stalls tucked into the bottom corners. Low horizon at bottom 15%. Open central sky for overlaying moving sprites. No balloons or characters baked into scenery. Full bleed, straight-on view, premium game environment illustration.",
+      "transparent": false,
+      "source": "Generated images are saved to C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509 as C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-49d9bd23-0f24-4435-ac85-da0690eba5b4.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-49d9bd23-0f24-4435-ac85-da0690eba5b4.png",
+      "path": "assets/generated/balloons-background-v2.png"
+    },
+    {
+      "id": "dojo-background",
+      "mode": "dojo",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND. A welcoming magical keyboard academy classroom, front view. Ivory arched windows and rounded bookshelves only at the left and right edge, floating small star ornaments high at corners, a warm sunny pale cream wall fills the middle 75%, mint wood floor along bottom 20%. NO keyboard, desks, characters or lettering in the central play area. Clear open space for a large lesson word and virtual keyboard. Match reference palette, stylization, clean shading and premium finish, but compose this distinct new environment.",
+      "transparent": false,
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-21951a30-4fca-4098-845f-cba5f27ec406.png",
+      "path": "assets/generated/dojo-background.png"
+    },
+    {
+      "id": "bubbles-background",
+      "mode": "bubbles",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND. An enchanting sunny underwater bubble garden. Soft cyan-turquoise water, stylized coral fans, seashells and sea grass framing ONLY bottom and side edges, gentle light rays. Clear pale aqua center 75%, no fish or large bubbles baked into the play area, no labels. Front view, open space for moving bubble sprites. Match reference palette, stylization and premium finish; distinct new environment.",
+      "transparent": false,
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-3ce005ff-39e3-46e9-a465-8760d8f27006.png",
+      "path": "assets/generated/bubbles-background.png"
+    },
+    {
+      "id": "rain-background",
+      "mode": "rain",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND. A whimsical floating-island sky observatory for a falling-star defense game. Lavender-blue twilight but bright child-friendly values, distant cute planets high in the corners, tiny fluffy clouds along the sides, rounded observatory towers and an ivory cloud platform confined to the bottom 12%. Huge open clean pastel sky center for falling star sprites. No stars or projectiles in the center. Match reference palette, stylization and premium finish; distinct new environment.",
+      "transparent": false,
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-8ffb1c1d-1671-44b8-8b1a-983def06dc6d.png",
+      "path": "assets/generated/rain-background.png"
+    },
+    {
+      "id": "sprint-background",
+      "mode": "sprint",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND. A cheerful cartoon sports academy speed-training stadium. Warm sunlight, colorful pennant bunting at far top corners, rounded grandstands on outer sides, an empty pale cream scoreboard-shaped wall WITHOUT any actual screen or text occupies the central 70%, mint running track visible along bottom 20%. Front view, open composition for giant timer and typing words. Match reference palette, stylization and premium finish; distinct new environment.",
+      "transparent": false,
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-8b80f3bd-d97b-471e-9b7e-c009a2962a62.png",
+      "path": "assets/generated/sprint-background.png"
+    },
+    {
+      "id": "castle-background",
+      "mode": "castle",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND. Top-down orthographic cartoon fantasy forest tower-defense battlefield. Rich mint/lime grass clearing with very low-detail open middle 70%. Four sandy paths from all four corners meet at the center. Cute chunky forest trees, mushroom clusters and rocks only on outer edges, small blue stream hugs far left border. No castle, towers, enemies, building pads or UI baked in. Clear readable map, sunny overhead light, game-map perspective with NO horizon. Match reference palette, stylization and premium finish; distinct new environment.",
+      "transparent": false,
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-a86ef044-8824-491e-a168-dce3e5693b84.png",
+      "path": "assets/generated/castle-background.png"
+    },
+    {
+      "id": "aliens-background",
+      "mode": "aliens",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND. Bright cartoon outer-space playground viewed straight-on. Pale indigo and lilac nebula, chunky colorful ringed planets confined to far corners, tiny distant stars near edges, a distant curved moon rim just at bottom 8%. Keep central 80% smooth and uncluttered, no spacecraft or characters or projectiles. Cheerful cosmic adventure, not dark or realistic. Match reference palette, stylization and premium finish; distinct new environment.",
+      "transparent": false,
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-0f4005eb-7e11-483d-997a-e26fa2fb7eed.png",
+      "path": "assets/generated/aliens-background.png"
+    },
+    {
+      "id": "moles-background",
+      "mode": "moles",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND. Top-down slightly angled cartoon garden clearing for a whack-a-mole game. Smooth soft lime grass lawn covers middle 80%, cheerful chunky flowers and rounded bushes along outer edges, small wooden fence and carrot patch at far top corners. NO holes, moles, tools or characters baked into lawn. NO horizon. Consistent shallow overhead perspective, empty playfield. Match reference palette, stylization and premium finish; distinct new environment.",
+      "transparent": false,
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-a217723a-c2bb-4c96-ad59-83a39a0ceea0.png",
+      "path": "assets/generated/moles-background.png"
+    },
+    {
+      "id": "racing-background",
+      "mode": "racing",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND. Top-down orthographic sunny cartoon raceway background, NO perspective vanishing point. Horizontal direction left to right. Two wide EMPTY parallel horizontal asphalt racing lanes centered at 55% and 79% image height, spanning full width. Grass and tiny toy grandstands decorate only outer top edge, colorful flowers at bottom margin. Open pale-blue top third for a typing target. No cars, drivers, words or logos. Smooth rounded racetrack aesthetic, bright cyan, mint and coral details. Match reference palette, stylization and premium finish; distinct new environment.",
+      "transparent": false,
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-40f5469d-7607-4287-aace-e394fb7c68f8.png",
+      "path": "assets/generated/racing-background.png"
+    },
+    {
+      "id": "fighter-background",
+      "mode": "fighter",
+      "prompt": "Premium American animated-cartoon GAME art, polished Western feature-animation visual development rendered as a crisp 2.5D game asset. Exaggerated chunky shapes, controlled soft outlines, appealing stylized proportions, clean cel-like light/shadow masses, rich saturated yet child-friendly coral/cyan/mint/golden palette, warm directional lighting, polished materials. NOT photorealistic, NOT watercolor, NOT flat primitive vector art, NOT anime. Cohesive playful world for children. No text, no letters, no logo, no watermark, no UI. Create a 1536x1024 landscape gameplay BACKGROUND. Side-view bright cartoon friendly sparring gym arena, polished family animation. A wide empty padded lavender training platform along lower half, ropes only at rear and far edges, rounded gym windows, cheerful pennants and chunky colorful seating in background. Clear central 70% for two animated fighters and word targets. No characters, punching bags, text, logos or numbers. Soft warm sunlight, mint, lilac and coral, playful athletic tone. Match reference palette, stylization and premium finish; distinct new environment.",
+      "transparent": false,
+      "source_path": "C:\\Users\\windssea\\.codex\\generated_images\\01a15294-8334-75c2-ab9d-fb510040e509\\exec-1d524345-d032-49e0-a6e7-268838303e61.png",
+      "path": "assets/generated/fighter-background.png"
+    }
+  ]
+}
