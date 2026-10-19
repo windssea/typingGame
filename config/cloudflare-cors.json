@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "https://typing.nanokid.win",
+          "https://typinggame-cl5.pages.dev",
+          "http://127.0.0.1:8765"
+        ],
+        "methods": ["GET", "HEAD"],
+        "headers": ["Range"]
+      },
+      "exposeHeaders": ["Content-Length", "Content-Encoding", "ETag"],
+      "maxAgeSeconds": 3600
+    }
+  ]
+}

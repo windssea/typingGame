@@ -16,7 +16,14 @@ foreach ($item in $manifest.objects) {
     & npx --yes wrangler r2 object put "$BucketName/$($item.key)" --file $item.file --content-type $item.content_type --content-encoding $item.content_encoding --cache-control $item.cache_control --remote
     if ($LASTEXITCODE -ne 0) { throw "R2 upload failed for $($item.key); Pages was not deployed." }
 }
-& npx --yes wrangler r2 bucket cors set $BucketName --file (Join-Path $root 'cors.json')
+$policyPath = Join-Path $PSScriptRoot '../config/cloudflare-cors.json'
+$corsPolicy = Get-Content -LiteralPath $policyPath -Raw | ConvertFrom-Json
+$packagePolicy = Get-Content -LiteralPath (Join-Path $root 'cors.json') -Raw | ConvertFrom-Json
+# Old release packages must not remove a custom domain added after their creation.
+$corsPolicy.rules[0].allowed.origins = @(@($corsPolicy.rules[0].allowed.origins) + @($packagePolicy.rules[0].allowed.origins) | Select-Object -Unique)
+$effectiveCorsPath = Join-Path $root 'cors.effective.json'
+$corsPolicy | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $effectiveCorsPath -Encoding utf8NoBOM
+& npx --yes wrangler r2 bucket cors set $BucketName --file $effectiveCorsPath
 if ($LASTEXITCODE -ne 0) { throw 'R2 CORS configuration failed; Pages was not deployed.' }
 & npx --yes wrangler pages deploy $manifest.pages_directory --project-name $manifest.project --branch main
 if ($LASTEXITCODE -ne 0) { throw 'Pages deployment failed. R2 assets remain versioned and can be reused.' }

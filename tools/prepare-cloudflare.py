@@ -63,7 +63,11 @@ if marker not in html:
 (pages/'index.html').write_text(html.replace(marker,loader+marker),encoding='utf-8')
 (pages/'_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n/index.html\n  Cache-Control: no-cache\n',encoding='utf-8')
 page_origin=args.page_origin or f'https://{args.project}.pages.dev'
-cors={'rules':[{'allowed':{'origins':[page_origin,'http://127.0.0.1:8765'],'methods':['GET','HEAD'],'headers':['Range']},'exposeHeaders':['Content-Length','Content-Encoding','ETag'],'maxAgeSeconds':3600}]}
+policy_path=Path(__file__).resolve().parents[1]/'config/cloudflare-cors.json'
+cors=json.loads(policy_path.read_text(encoding='utf-8'))
+origins=cors['rules'][0]['allowed']['origins']
+if page_origin not in origins:
+    origins.append(page_origin)
 (output/'cors.json').write_text(json.dumps(cors,indent=2),encoding='utf-8')
 manifest={'project':args.project,'page_origin':page_origin,'asset_base_url':base,'pages_directory':str(pages),'objects':objects}
 (output/'manifest.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')

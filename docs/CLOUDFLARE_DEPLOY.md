@@ -1,6 +1,6 @@
 # Cloudflare Pages + R2 发布
 
-线上入口：<https://typinggame-cl5.pages.dev>。Pages 项目名为 `typinggame`，实际分配域名为 `typinggame-cl5.pages.dev`。2026-10-19 已完成实际发布和公网浏览器启动验证。
+线上入口：<https://typing.nanokid.win>，备用地址：<https://typinggame-cl5.pages.dev>。Pages 项目名为 `typinggame`，实际分配域名为 `typinggame-cl5.pages.dev`。2026-10-19 已完成实际发布和公网浏览器启动验证。
 
 ## 资源分工
 
@@ -8,7 +8,19 @@ Pages 保存 HTML、Godot JavaScript、图标和音频 worklet。R2 的 `typingg
 
 原始 WASM 39,514,754 字节，gzip 后 10,054,758 字节；PCK 32,568,536 字节，gzip 后 32,313,589 字节。R2 对象分别设置 `application/wasm` / `application/octet-stream`、`Content-Encoding: gzip` 和一年 immutable 缓存。哈希以解压后的实际内容计算。
 
-页面中的 fetch 适配只将 `index.wasm` 与 `index.pck` 指向 R2，保留 Godot 本地虚拟文件名及同源 worklet 路径。R2 CORS 允许正式 Pages 域名与本机 8765 端口，GET/HEAD 请求；浏览器不会向 R2 发送凭据。
+页面中的 fetch 适配只将 `index.wasm` 与 `index.pck` 指向 R2，保留 Godot 本地虚拟文件名及同源 worklet 路径。R2 CORS 允许自定义域名 `https://typing.nanokid.win`、正式 Pages 域名与本机 8765 端口，GET/HEAD 请求；浏览器不会向 R2 发送凭据。
+
+## 自定义域名与 Failed to fetch
+
+2026-10-19 已修复 `typing.nanokid.win` 的启动失败：页面返回200，但R2未对该Origin返回 `Access-Control-Allow-Origin`，浏览器因此拒绝读取WASM/PCK。CNAME与Pages页面访问正常，无需改DNS。
+
+持久策略在 `config/cloudflare-cors.json`。打包器读入它并补充当前发布Origin；发布器将它与旧包的Origin合并，旧发布包也不会删掉新域名。仅配置精确Origin，不使用通配符。仅改CORS时无需重新上传游戏资源：
+
+```powershell
+npx --yes wrangler r2 bucket cors set typinggame-assets --file config/cloudflare-cors.json
+```
+
+已验证自定义域名和pages.dev的R2 HEAD响应均允许对应Origin，Range预检返回204；未允许的Origin不返回跨域许可。自定义域名实际浏览器已启动游戏，三个正确按键后F3成功释放技能。
 
 ## 后续更新
 
@@ -32,4 +44,4 @@ python tools/prepare-cloudflare.py --asset-base-url https://pub-2fecf2e531bd4f9c
 
 ## 存档边界
 
-R2 此处只用于发布文件。玩家存档仍保存在当前浏览器、当前站点的 IndexedDB，可在学习档案导出/导入 JSON，不包含跨设备云同步。从 localhost 切换到正式域名时，请先在旧站导出，再在新站导入。
+R2 此处只用于发布文件。玩家存档仍保存在当前浏览器、当前站点的 IndexedDB，可在学习档案导出/导入 JSON，不包含跨设备云同步。从 localhost 或 pages.dev 切换到自定义域名时，请先在旧站导出，再在新站导入；不同Origin的存档不会自动共享。

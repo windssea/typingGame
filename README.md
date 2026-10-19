@@ -2,7 +2,7 @@
 
 Godot 2D 打字学习与挑战游戏，当前版本 0.8。中文引导，英文键盘训练，面向实体键盘与桌面浏览器。
 
-**在线游玩：[打开键境](https://typinggame-cl5.pages.dev)**。Pages 已发布，WASM/PCK 由 R2 提供；存档保存在当前浏览器。
+**在线游玩：[打开键境](https://typing.nanokid.win)**（[备用地址](https://typinggame-cl5.pages.dev)）。Pages 已发布，WASM/PCK 由 R2 提供；存档保存在当前浏览器。
 
 **本机运行：** 运行 `tools/export-web.ps1` 与 `tools/serve-web.ps1`，访问 [Godot 网页可玩版](http://127.0.0.1:8765/build/web/index.html)。这是实际执行游戏规则的 Godot/Wasm 程序，支持十种玩法、真实输入、胜负结算和浏览器存档。完整入口与操作见 [可玩版说明](docs/PLAYABLE_WEB.md)。
 
