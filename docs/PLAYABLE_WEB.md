@@ -1,4 +1,4 @@
-# 指尖挑战 1.1 · 网页可玩版
+# 指尖挑战 1.2 · 网页可玩版
 
 线上地址：<https://typinggame-cl5.pages.dev>。更新方式见 [Cloudflare 发布](CLOUDFLARE_DEPLOY.md)，五档训练速度、三档挑战与动画说明见 [0.7 更新](MOTION_AND_DIFFICULTY.md)。
 

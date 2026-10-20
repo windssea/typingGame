@@ -3,7 +3,7 @@ extends RefCounted
 
 # Text colors stay darker than toy/art colors so small labels remain readable.
 const BACKGROUND := Color("f4f9fd")
-const SURFACE := Color("ffffff")
+const SURFACE := Color("e4f0f4")
 const BORDER := Color("d8e5f1")
 const TEXT := Color("2d405b")
 const MUTED := Color("596d85")
@@ -22,22 +22,19 @@ const PASTELS := [Color("e8f3ff"),Color("e5f7ef"),Color("fff1ce"),Color("fce9ef"
 
 static func game_panel(color := Color.WHITE, edge := BORDER, radius := 20, depth := 4) -> StyleBoxFlat:
 	var box := surface(color,edge,radius)
-	box.border_width_left = 2
-	box.border_width_right = 2
-	box.border_width_top = 2
-	box.border_width_bottom = depth
-	box.shadow_color = Color(.18,.35,.42,.09)
-	box.shadow_size = 6
-	box.shadow_offset = Vector2(0,3)
+	box.border_width_bottom = mini(depth,2)
+	box.shadow_color = Color(.18,.35,.42,.045)
+	box.shadow_size = 3
+	box.shadow_offset = Vector2(0,2)
 	return box
 
 static func game_button(primary := false, state := "normal") -> StyleBoxFlat:
-	var fill := Color("ffe7a8") if primary else Color("f7fffc")
-	var edge := Color("dfbc67") if primary else Color("a4c9c3")
-	var depth := 5
+	var fill := Color("ffdf91") if primary else Color("d8eaf6")
+	var edge := Color("e6bf67") if primary else Color("b7d2e5")
+	var depth := 2
 	if state=="hover":
-		fill = Color("fff0bb") if primary else Color("e8fff4")
-		edge = Color("c9993e") if primary else Color("63ac9b")
+		fill = Color("ffe9b0") if primary else Color("edf5ff")
+		edge = Color("cf9e44") if primary else Color("91afd6")
 	elif state=="pressed":
 		fill = Color("f8d888") if primary else Color("d6f1e5")
 		depth = 2
@@ -65,6 +62,25 @@ static func ui(font: Font) -> Theme:
 	result.default_font = font
 	result.default_font_size = 18
 	result.set_color("font_color","Label",TEXT)
+	result.set_font("font","Button",preload("res://assets/ui-heading.ttf"))
+	result.set_type_variation("PrimaryButton","Button")
+	for variant in ["Button","PrimaryButton"]:
+		var primary: bool = variant=="PrimaryButton"
+		for state in ["normal","hover","pressed","disabled"]:
+			var box := game_button(primary,state)
+			box.content_margin_left = 16
+			box.content_margin_right = 16
+			result.set_stylebox(state,variant,box)
+		var focus := surface(Color.TRANSPARENT,PRIMARY,16)
+		focus.set_border_width_all(3)
+		focus.expand_margin_left = 3
+		focus.expand_margin_right = 3
+		focus.expand_margin_top = 3
+		focus.expand_margin_bottom = 3
+		result.set_stylebox("focus",variant,focus)
+		for state in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
+			result.set_color(state,variant,ACTION_INK if primary else TEXT)
+		result.set_color("font_disabled_color",variant,MUTED)
 	for control in ["OptionButton","PopupMenu","TextEdit"]:
 		result.set_color("font_color",control,TEXT)
 		result.set_color("font_hover_color",control,PRIMARY)

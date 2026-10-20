@@ -18,7 +18,7 @@ func rebuild() -> void:
 		remove_child(child)
 		child.queue_free()
 	observed_phase = battle.phase
-	app.panel(Vector2.ZERO,Vector2(290,650),Color("ffffff"),self)
+	app.panel(Vector2.ZERO,Vector2(290,650),Color("daeee9"),self)
 	app.label("防线指挥所",Vector2(20,18),23,GameArena.GOLD,self)
 	live_label = app.label("",Vector2(20,58),18,GameArena.MINT,self)
 	if battle.phase == "build":

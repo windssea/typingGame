@@ -23,7 +23,7 @@ func text(value: String, at: Vector2, font_size: int, color := PlayTheme.TEXT) -
 	draw_string(FONT,at,value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,color)
 
 func _draw() -> void:
-	draw_style_box(PlayTheme.game_panel(Color("fffdf0"),Color("d9d6a9"),20,4),Rect2(0,0,1040,130))
+	draw_style_box(PlayTheme.game_panel(Color("e1edd0"),Color("d9d6a9"),20,4),Rect2(0,0,1040,130))
 	GameGlyph.draw(self,"training",Vector2(39,37),18,PlayTheme.TEAL)
 	text("刚学会" if not run.last_meaning.is_empty() else "练习进度",Vector2(70,43),23)
 	var target := run.recommended_target()

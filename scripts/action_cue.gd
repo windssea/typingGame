@@ -30,7 +30,7 @@ func text(value: String, at: Vector2, font_size: int, tint := PlayTheme.TEXT) ->
 func _draw() -> void:
 	if run==null:
 		return
-	draw_style_box(PlayTheme.game_panel(Color("fffef6"),Color("a6cbd4"),20,5),Rect2(0,0,1360,108))
+	draw_style_box(PlayTheme.game_panel(Color("e0f0e9"),Color("a6cbd4"),20,5),Rect2(0,0,1360,108))
 	var target := run.recommended_target()
 	if run is CastleRun and run.phase=="build":
 		text("建设阶段",Vector2(24,42),28)

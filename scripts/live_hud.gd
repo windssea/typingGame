@@ -12,8 +12,10 @@ var last_combo := 0
 var progress_tween: Tween
 var combo_tween: Tween
 var reduced_motion := false
+var refresh_count := 0
 
 func refresh(run: GameRun) -> void:
+	refresh_count += 1
 	var status := "体力"
 	var last := str(run.hp)
 	var fraction := float(run.kills)/18
@@ -67,19 +69,22 @@ func _exit_tree() -> void:
 			tween.kill()
 
 func _draw() -> void:
-	draw_style_box(PlayTheme.game_panel(Color("f7fffc"),Color("bfdcd7"),14,3),Rect2(0,63,780,39))
+	# A single quiet score strip; value contrast carries hierarchy, not four heavy frames.
+	var width := size.x
+	draw_style_box(PlayTheme.surface(Color("e1eff8"),Color.TRANSPARENT,16),Rect2(0,0,width,80))
+	var cell := width/4.0
 	for i in range(values.size()):
-		var x := i*198
+		var x := i*cell
 		var tint: Color = [PlayTheme.ORANGE,PlayTheme.TEAL,PlayTheme.PRIMARY,Color("a54e50")][i]
-		var fill: Color = [Color("fff8de"),Color("eefff6"),Color("eef7ff"),Color("fff1eb")][i]
-		if i==2:
-			fill = fill.lerp(Color("bdebd1"),combo_glow)
-		draw_style_box(PlayTheme.game_panel(fill,fill.darkened(.15),14,4),Rect2(x,0,186,58))
+		if i>0:
+			draw_line(Vector2(x,12),Vector2(x,46),PlayTheme.BORDER,1,true)
+		if i==2 and combo_glow>0:
+			draw_style_box(PlayTheme.surface(Color(.73,.92,.84,combo_glow),Color.TRANSPARENT,10),Rect2(x+4,4,cell-8,48))
 		var glyph: String = ["score","accuracy","combo","speed" if values[i][0]=="速度 WPM" else "health"][i]
-		GameGlyph.draw(self,glyph,Vector2(x+23,30),12,tint)
-		draw_string(FONT,Vector2(x+45,20),values[i][0],HORIZONTAL_ALIGNMENT_LEFT,-1,14,PlayTheme.MUTED)
-		draw_string(FONT,Vector2(x+45,48),values[i][1],HORIZONTAL_ALIGNMENT_LEFT,-1,28,tint)
-	draw_string(FONT,Vector2(16,81),note,HORIZONTAL_ALIGNMENT_LEFT,-1,14,PlayTheme.MUTED)
-	draw_line(Vector2(16,92),Vector2(764,92),Color("d8e9e6"),5,true)
+		GameGlyph.draw(self,glyph,Vector2(x+20,28),10,tint)
+		draw_string(FONT,Vector2(x+39,19),values[i][0],HORIZONTAL_ALIGNMENT_LEFT,-1,13,PlayTheme.MUTED)
+		draw_string(FONT,Vector2(x+39,45),values[i][1],HORIZONTAL_ALIGNMENT_LEFT,-1,26,tint)
+	draw_string(FONT,Vector2(14,66),note,HORIZONTAL_ALIGNMENT_LEFT,-1,14,PlayTheme.MUTED)
+	draw_line(Vector2(14,74),Vector2(width-14,74),Color("e5edf3"),3,true)
 	if shown_progress>0:
-		draw_line(Vector2(16,92),Vector2(16+748*shown_progress,92),PlayTheme.TEAL,5,true)
+		draw_line(Vector2(14,74),Vector2(14+(width-28)*shown_progress,74),PlayTheme.TEAL,3,true)

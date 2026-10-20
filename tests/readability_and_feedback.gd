@@ -26,7 +26,7 @@ func capture(name: String) -> void:
 		root.get_texture().get_image().save_png("res://build/v11-"+name+".png")
 
 func arena() -> GameArena:
-	for child in app.layer.get_children():
+	for child in app.layer.find_children("*","Control",true,false):
 		if child is GameArena:
 			return child
 	return null
@@ -82,7 +82,7 @@ func exercise() -> void:
 		await render()
 		var dock: ActionCue = app.layer.find_child("InputDock",true,false)
 		check(dock.size==Vector2(1360,108),"expanded fixed input dock: "+mode)
-		check(arena().get_global_rect().end.y<=dock.position.y-8,"playfield does not overlap input dock: "+mode)
+		check(arena().get_global_rect().end.y<=dock.global_position.y-8,"playfield does not overlap input dock: "+mode)
 		check(TypingPrompt.measure(run.recommended_target().word,834,46,32).font>=32,"large complete word in "+mode)
 		check(arena().backdrop!=null and arena().backdrop.material.shader==GameArena.BREEZE,"background motion is isolated from text and actor rendering: "+mode)
 		if mode in ["dojo","sprint"]:
@@ -98,7 +98,7 @@ func exercise() -> void:
 					check(not rects[i].intersects(rects[j]),"word plates avoid one another: "+mode)
 			if capture_enabled:
 				var first: Rect2 = rects[0]
-				var scaled := Rect2i((arena().position+first.position*arena().scale)*root.get_visible_rect().size/Vector2(1440,900),(first.size*arena().scale)*root.get_visible_rect().size/Vector2(1440,900))
+				var scaled := Rect2i(root.get_final_transform()*Rect2(arena().global_position+first.position*arena().scale,first.size*arena().scale))
 				scaled = scaled.grow(-9)
 				var before := root.get_texture().get_image().get_region(scaled).get_data()
 				arena().juice.burst(first.get_center(),Color("ff3355"),3,"confetti")

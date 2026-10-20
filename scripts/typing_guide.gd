@@ -50,7 +50,7 @@ func box(rect: Rect2, color: Color, border := PlayTheme.BORDER, radius := 12) ->
 	draw_style_box(PlayTheme.game_panel(color,border,radius,3),rect)
 
 func _draw() -> void:
-	box(Rect2(0,0,300,580),Color("fafff8"),Color("bed5ca"),24)
+	box(Rect2(0,0,300,580),Color("daeee9"),Color.TRANSPARENT,24)
 	box(Rect2(12,12,276,155),Color("fff4d9"),Color.TRANSPARENT,16)
 	text("我的指法小教练",Vector2(20,35),22,PlayTheme.ORANGE)
 	var data := mapping(current)

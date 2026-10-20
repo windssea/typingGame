@@ -176,7 +176,7 @@ func _draw() -> void:
 		if not feature.is_empty():
 			var badge: Vector2 = target.position+Vector2(0,52 if run.mode=="aliens" else 63)
 			var color: Color = MINT if feature=="supply" else CORAL if feature=="scout" else PlayTheme.ORANGE
-			panel(Rect2(badge-Vector2(54,18),Vector2(108,25)),Color(1,1,1,0.94),10)
+			panel(Rect2(badge-Vector2(54,18),Vector2(108,25)),Color(.81,.93,.95,.95),10)
 			write({"supply":"补给 +8 盾","scout":"快速侦察舰","bonus":"奖励 +40 分"}[feature],badge,14,color,true)
 	draw_target_labels()
 
@@ -291,7 +291,7 @@ func draw_skill_field() -> void:
 	elif run.mode=="racing" and run.skill_time>3:
 		var point := Vector2(120+visual_rival*770,510)
 		draw_arc(point,65,0,TAU,40,Color(0.4,0.8,1,run.skill_time-3),3,true)
-		panel(Rect2(point+Vector2(-66,50),Vector2(132,29)),Color.WHITE,10)
+		panel(Rect2(point+Vector2(-66,50),Vector2(132,29)),Color("deedf5"),10)
 		write("干扰成功 -8%",point+Vector2(0,70),15,BLUE,true)
 
 func sprite_pose(id: String, center: Vector2, bounds: Vector2, angle: float, stretch: Vector2) -> void:
@@ -300,7 +300,7 @@ func sprite_pose(id: String, center: Vector2, bounds: Vector2, angle: float, str
 	draw_set_transform(world_offset)
 
 func banner(title: String, subtitle: String) -> void:
-	panel(Rect2(20,18,570,48),Color(1,1,1,0.94),16)
+	panel(Rect2(20,18,570,48),Color(.81,.93,.95,.95),16)
 	draw_circle(Vector2(40,42),5,MINT)
 	write(title,Vector2(54,49),21,INK)
 	write(subtitle,Vector2(227,48),14,PlayTheme.MUTED)
@@ -374,7 +374,7 @@ func draw_generated_game() -> void:
 			draw_arc(Vector2(520,518),84+(0 if reduced_motion else pulse*30),PI,TAU,48,Color(0.45,0.9,1,1-pulse),4,true)
 		if charge_flash>0:
 			draw_circle(Vector2(520,471),8+charge_flash*45,Color(0.8,0.95,1,charge_flash*2))
-		panel(Rect2(26,499,215,64),Color(1,1,1,0.95),12)
+		panel(Rect2(26,499,215,64),Color(.81,.93,.95,.95),12)
 		write("护盾 %d / 60" % run.shield,Vector2(40,525),17,BLUE)
 		panel(Rect2(40,540,185,9),Color("d3e6f3"),4)
 		panel(Rect2(40,540,185*run.shield/60.0,9),BLUE,4)
@@ -392,11 +392,11 @@ func draw_generated_game() -> void:
 		if not motion_sprite(state,nitro_age if state=="boost" else pose_clock,player,Vector2(205,205),Color.WHITE,-suspension*.035,Vector2(1+suspension*.045,1-suspension*.04)):
 			sprite_pose("car_mint",player,Vector2(136,88),0,Vector2.ONE)
 		sprite_pose("car_coral",rival,Vector2(136,88),0.0 if reduced_motion else sin(clock*13)*0.012,Vector2.ONE)
-		panel(Rect2(player-Vector2(52,71),Vector2(104,29)),Color.WHITE,9)
+		panel(Rect2(player-Vector2(52,71),Vector2(104,29)),Color("deedf5"),9)
 		write("你  %d%%" % roundi(run.distance*100),player-Vector2(33,50),17,MINT)
-		panel(Rect2(rival-Vector2(52,71),Vector2(104,29)),Color.WHITE,9)
+		panel(Rect2(rival-Vector2(52,71),Vector2(104,29)),Color("deedf5"),9)
 		write("陪练车" if run.context=="training" else "对手",rival-Vector2(29,50),17,CORAL)
-		panel(Rect2(330,204,380,44),Color(1,1,1,0.95),12)
+		panel(Rect2(330,204,380,44),Color(.81,.93,.95,.95),12)
 		write("三连击 · 氮气加速" if run.boost>0 and run.combo>=3 else "连续输入为赛车充能",Vector2(520,234),22,GOLD,true)
 	elif run.mode == "fighter":
 		var punch := 0.0 if reduced_motion else sin(clampf(strike/0.5,0,1)*PI)
@@ -409,14 +409,14 @@ func draw_generated_game() -> void:
 		for side in range(2):
 			var x := 50+side*560
 			var health: int = run.hp if side==0 else run.enemy_hp
-			panel(Rect2(x,105,380,65),Color(1,1,1,0.94),12)
+			panel(Rect2(x,105,380,65),Color(.81,.93,.95,.95),12)
 			panel(Rect2(x+15,119,350,10),Color("deddee"),5)
 			var delayed := visual_player_hp if side==0 else visual_enemy_hp
 			panel(Rect2(x+15,119,350*delayed/100.0,10),PlayTheme.YELLOW,5)
 			panel(Rect2(x+15,119,350*health/100.0,10),MINT if side==0 else CORAL,5)
 			write(("你" if side==0 else "对手")+" · 体力 %d" % health,Vector2(x+15,154),17,INK)
 		if run.combo>1:
-			panel(Rect2(220,198,250,44),Color.WHITE,12)
+			panel(Rect2(220,198,250,44),Color("deedf5"),12)
 			write("%d HIT COMBO" % run.combo,Vector2(345,230),25,GOLD,true)
 
 func balloons() -> void:

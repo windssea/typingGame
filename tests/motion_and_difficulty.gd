@@ -106,7 +106,7 @@ func exercise() -> void:
 	app.start_game("fighter","challenge")
 	check(app.run.challenge_rank=="expert" and app.run.difficulty==1.75 and app.run.goal==42,"selected difficulty reaches the actual game")
 	var arena: ArcadeArena
-	for child in app.layer.get_children():
+	for child in app.layer.find_children("*","Control",true,false):
 		if child is ArcadeArena:
 			arena=child
 	app.run.type_character(app.run.targets[0].word)

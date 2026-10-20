@@ -21,7 +21,7 @@ func capture(name: String) -> void:
 		root.get_texture().get_image().save_png("res://build/v08-"+name+".png")
 
 func arena() -> ArcadeArena:
-	for child in app.layer.get_children():
+	for child in app.layer.find_children("*","Control",true,false):
 		if child is ArcadeArena:
 			return child
 	return null

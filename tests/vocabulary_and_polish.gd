@@ -101,7 +101,7 @@ func exercise() -> void:
 		var before: int = app.run.correct
 		await complete_word()
 		check(app.run.correct>before and app.run.attempts==app.run.correct,"real input advances "+mode.id)
-		for child in app.layer.get_children():
+		for child in app.layer.find_children("*","Control",true,false):
 			if child is GameArena:
 				child._process(.12)
 				check(child.key_pulse>0,"per-letter feedback reaches arena: "+mode.id)
@@ -117,13 +117,13 @@ func exercise() -> void:
 				app.run.spawn_target()
 			for i in range(20):
 				app.run.step(1.0/60)
-				for child in app.layer.get_children():
+				for child in app.layer.find_children("*","Control",true,false):
 					if child is GameArena:
 						child._process(1.0/60)
 			app.run.paused = true
 			await capture(mode.id+"-ready")
 		var clock_before := 0.0
-		for child in app.layer.get_children():
+		for child in app.layer.find_children("*","Control",true,false):
 			if child is GameArena:
 				clock_before = child.clock
 				child._process(.5)

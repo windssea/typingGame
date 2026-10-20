@@ -90,7 +90,7 @@ func draw_target_labels() -> void:
 		var edge := Color("bb6256") if active and error_pulse>0 else PlayTheme.PRIMARY if active else Color("afc9d4")
 		if active:
 			draw_style_box(PlayTheme.surface(Color(.24,.58,.82,.18),Color.TRANSPARENT,16),rect.grow(5))
-		draw_style_box(PlayTheme.game_panel(Color("f3fcff") if active else Color("fffef9"),edge,12,4),rect)
+		draw_style_box(PlayTheme.game_panel(Color("dcedfa") if active else Color("f5e4ba"),edge,12,4),rect)
 		TypingPrompt.paint(self,target.word,target.typed,rect,label_layouts[target.id],active,active and error_pulse>0)
 		if target.has("health"):
 			var fraction: float = clampf(float(target.health)/target.max_health,0,1)
@@ -382,7 +382,7 @@ func training_word(target: Dictionary, at: Vector2, preferred_size: int, max_wid
 func draw_dojo() -> void:
 	var press := 0.0 if reduced_motion else key_pulse/0.22
 	art.draw_sprite(self,"key",Vector2(354,236+press*10),Vector2(140+press*9,140-press*9))
-	panel(Rect2(454,115,452,226),Color(1,1,1,0.94),32,PlayTheme.YELLOW)
+	panel(Rect2(470,140,420,174),Color("f6df9f"),28,Color("e6c579"))
 	if run.targets.is_empty():
 		return
 	var target: Dictionary = run.targets[0]
@@ -409,20 +409,20 @@ func draw_dojo() -> void:
 			var active := key == physical_key
 			if active and not reduced_motion:
 				rect.position.y += press*4
-			panel(rect, PlayTheme.YELLOW if active else Color("ffffff"),9,PlayTheme.PRIMARY if active else Color("ccddec"))
+			panel(rect, PlayTheme.YELLOW if active else Color("dceef1"),9,PlayTheme.PRIMARY if active else Color("ccddec"))
 			write(key.to_upper(),rect.position+Vector2(24,28),18,INK if active else Color("405a77"),true)
 			if key in "fj":
 				draw_line(rect.position+Vector2(18,34),rect.position+Vector2(30,34),INK if active else GOLD,2)
 	for side in range(2):
 		var active: bool = finger_hint.shift and ((side == 0 and finger_hint.finger >= 4) or (side == 1 and finger_hint.finger < 4))
 		var x := 295 if side==0 else 1045
-		panel(Rect2(x,554,90,40),PlayTheme.YELLOW if active else Color("ffffff"),9)
+		panel(Rect2(x,554,90,40),PlayTheme.YELLOW if active else Color("dceef1"),9)
 		write("Shift",Vector2(x+45,581),17,INK if active else Color("405a77"),true)
-	panel(Rect2(570,607,260,30),PlayTheme.YELLOW if next == " " else Color("ffffff"),9)
+	panel(Rect2(570,607,260,30),PlayTheme.YELLOW if next == " " else Color("dceef1"),9)
 	write("SPACE",Vector2(700,628),15,INK if next == " " else Color("405a77"),true)
 
 func draw_bubbles() -> void:
-	panel(Rect2(420,533,520,65),Color(1,1,1,0.94),16)
+	panel(Rect2(420,533,520,65),Color(.8,.94,.9,.92),16)
 	for i in range(20):
 		var p := Vector2(70+fmod(i*173,1230),150+fmod(i*97,440))
 		draw_circle(p,3+(i%5),Color(0.5,0.8,0.8,0.08))
@@ -457,7 +457,7 @@ func draw_bubbles() -> void:
 	write("%d / 18  个泡泡已点亮" % run.kills,Vector2(680,575),25,GOLD,true)
 
 func draw_sprint() -> void:
-	panel(Rect2(275,25,810,595),Color(1,1,1,0.9),30)
+	panel(Rect2(275,25,810,595),Color(.81,.92,.95,.9),30)
 	art.draw_sprite(self,"stopwatch",Vector2(410,141),Vector2(100,105))
 	art.draw_sprite(self,"trophy",Vector2(947,142),Vector2(100,105))
 	write("极 速 60 秒",Vector2(680,64),24,MINT,true)

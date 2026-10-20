@@ -5,8 +5,17 @@ signal impact(kind: String, point: Vector2, power: int)
 
 const MODES := ["balloons", "aliens", "moles", "racing", "fighter"]
 var goal := 24
-var shield := 40
-var distance := 0.0
+var shield := 40:
+	set(value):
+		if shield!=value:
+			shield = value
+			hud_changed.emit()
+var distance := 0.0:
+	set(value):
+		var changed := int(distance*200)!=int(value*200)
+		distance = value
+		if changed:
+			hud_changed.emit()
 var rival := 0.0
 var boost := 0.0
 var enemy_hp := 100

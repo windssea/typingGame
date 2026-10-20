@@ -27,7 +27,7 @@ func _process(delta: float) -> void:
 		value.run.merge({"vocabulary_topic":run.lesson.get("vocabulary_topic","basic"),"pool_size":run.lesson.words.size(),"last_word":run.last_word,"last_meaning":run.last_meaning})
 		var recommended := run.recommended_target()
 		value.run.recommended = recommended.get("id",-1)
-		for arena in app.layer.get_children():
+		for arena in app.layer.find_children("*","Control",true,false):
 			if arena is GameArena:
 				value.run.merge({"particles":arena.juice.particles.size(),"motion_clock":arena.clock,"reduced_motion":arena.reduced_motion})
 		for target in run.targets:

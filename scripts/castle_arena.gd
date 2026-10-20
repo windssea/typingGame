@@ -451,7 +451,7 @@ func draw_effect(fx: Dictionary) -> void:
 		write("已打断",dest-Vector2(0,55+t*20),22,MINT,true)
 
 func draw_top_status() -> void:
-	panel(Rect2(16,14,1008,44),Color(1,1,1,0.95),14,Color("c8dcb8"))
+	panel(Rect2(16,14,1008,44),Color(.81,.93,.95,.95),14,Color("c8dcb8"))
 	var text_value := battle.banner if banner_time>0 or battle.phase=="build" else "誓光林地 / 守住六波进攻"
 	write(text_value,Vector2(34,43),19,GOLD)
 	write("准备阶段 · 点击基座建塔" if battle.phase=="build" else "敌军  %02d / %02d" % [battle.spawned,CastleRun.WAVE_COUNTS[battle.wave-1]],Vector2(740,42),16,MINT)

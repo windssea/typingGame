@@ -71,13 +71,13 @@ func exercise() -> void:
 		check(app.guide_open and app.run.paused and app.run.elapsed==elapsed,"guide pauses timer and blocks game input")
 		app.close_game_guide()
 		check(not app.run.paused and app.overlay==null,"guide resumes cleanly")
-		for arena in app.layer.get_children():
+		for arena in app.layer.find_children("*","Control",true,false):
 			if arena is ArcadeArena:
 				arena._process(0.16)
 		app.run.paused = true
 		await capture(mode)
 		app.run.paused = false
-		for arena in app.layer.get_children():
+		for arena in app.layer.find_children("*","Control",true,false):
 			if arena is ArcadeArena:
 				arena._process(0.8)
 				check(arena.bursts.is_empty() and arena.trauma==0 and arena.strike==0,"impact feedback returns to rest without blocking input")

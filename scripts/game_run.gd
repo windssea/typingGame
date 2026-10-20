@@ -2,6 +2,7 @@ class_name GameRun
 extends RefCounted
 
 signal spell(origin: Vector2, target: Vector2, lightning: bool)
+signal hud_changed
 signal ended
 signal key_feedback(character: String, accepted: bool, point: Vector2)
 
@@ -9,19 +10,52 @@ var mode: String
 var lesson: Dictionary
 var targets: Array[Dictionary] = []
 var rng := RandomNumberGenerator.new()
-var elapsed := 0.0
+var elapsed := 0.0:
+	set(value):
+		var tick := ceili(elapsed)!=ceili(value)
+		elapsed = value
+		if tick:
+			hud_changed.emit()
 var spawn_clock := 0.5
-var hp := 100
-var score := 0
-var kills := 0
-var combo := 0
+var hp := 100:
+	set(value):
+		if hp!=value:
+			hp = value
+			hud_changed.emit()
+var score := 0:
+	set(value):
+		if score!=value:
+			score = value
+			hud_changed.emit()
+var kills := 0:
+	set(value):
+		if kills!=value:
+			kills = value
+			hud_changed.emit()
+var combo := 0:
+	set(value):
+		if combo!=value:
+			combo = value
+			hud_changed.emit()
 var best_combo := 0
-var correct := 0
-var attempts := 0
+var correct := 0:
+	set(value):
+		if correct!=value:
+			correct = value
+			hud_changed.emit()
+var attempts := 0:
+	set(value):
+		if attempts!=value:
+			attempts = value
+			hud_changed.emit()
 var key_stats: Dictionary = {}
 var locked := -1
 var next_id := 0
-var wave := 1
+var wave := 1:
+	set(value):
+		if wave!=value:
+			wave = value
+			hud_changed.emit()
 var spawned := 0
 var done := false
 var won := false

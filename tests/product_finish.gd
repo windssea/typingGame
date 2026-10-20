@@ -71,7 +71,7 @@ func exercise() -> void:
 	for mode in GameContent.modes():
 		app.start_game(mode.id)
 		if mode.id in ["dojo","bubbles","rain","sprint"]:
-			for child in app.layer.get_children():
+			for child in app.layer.find_children("*","Control",true,false):
 				if child is GameArena:
 					check(child.art.sprites.size()==6,"foundation game has real production props: "+mode.id)
 		for node in app.layer.find_children("*","Button",true,false):
@@ -94,13 +94,13 @@ func exercise() -> void:
 		app.run.type_character(expected)
 		check(app.run.last_input_ok and app.run.correct==1,"next correct key clears error immediately: "+mode.id)
 		if app.run is CastleRun:
-			for child in app.layer.get_children():
+			for child in app.layer.find_children("*","Control",true,false):
 				if child is CastleArena:
 					check(child.creature_clips.size()==3,"wave three pre-loads wolf, guard and boss native motion")
 			app.run.paused = true
 			await capture("castle-native-creatures")
 			app.run.wave = 6
-			for child in app.layer.get_children():
+			for child in app.layer.find_children("*","Control",true,false):
 				if child is CastleArena:
 					child.prepare_creatures()
 					check(child.creature_clips.size()==5,"final wave has all five creature motion sets")
