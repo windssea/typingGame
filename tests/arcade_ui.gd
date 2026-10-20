@@ -80,7 +80,7 @@ func exercise() -> void:
 		for arena in app.layer.find_children("*","Control",true,false):
 			if arena is ArcadeArena:
 				arena._process(0.8)
-				check(arena.bursts.is_empty() and arena.trauma==0 and arena.strike==0,"impact feedback returns to rest without blocking input")
+				check(arena.bursts.is_empty() and arena.feel.trauma==0 and arena.strike==0,"impact feedback returns to rest without blocking input")
 		while not app.run.done:
 			var target: Dictionary = app.run.recommended_target()
 			for character in str(target.word).substr(target.typed):

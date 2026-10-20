@@ -10,6 +10,7 @@ var tile_age: Dictionary = {}
 var beacon_flash := 0.0
 var last_travel := 0.0
 var moving := false
+var landing_age := 1.0
 var bridge: BridgeRun
 
 func _ready() -> void:
@@ -46,7 +47,11 @@ func on_key_feedback(character: String, accepted: bool, point: Vector2) -> void:
 	if accepted:
 		error_pulse = 0.0
 		var destination := Vector2(START+(run.kills+1)*STEP,DECK_Y)
-		juice.jet(destination,Vector2.UP,PlayTheme.SKY,1)
+		var target := run.recommended_target()
+		if target.get("typed",0)>=str(target.get("word","")).length():
+			juice.jet(destination,Vector2.UP,PlayTheme.SKY,1)
+		else:
+			juice.trail(destination,Vector2(0,-45),PlayTheme.SKY,3)
 	queue_redraw()
 
 func _process(delta: float) -> void:
@@ -55,6 +60,10 @@ func _process(delta: float) -> void:
 	clock += delta
 	step_feedback(delta)
 	moving = absf(bridge.travel-last_travel)>.0001
+	landing_age += delta
+	if floori(bridge.travel)>floori(last_travel):
+		landing_age = 0.0
+		juice.burst(Vector2(START+bridge.travel*STEP,DECK_Y),PlayTheme.YELLOW,1,"soil")
 	last_travel = bridge.travel
 	beacon_flash = maxf(0,beacon_flash-delta)
 	backdrop.material.set_shader_parameter("restored",float(run.kills)/18)
@@ -125,7 +134,10 @@ func draw_runner() -> void:
 	var frame := coach_motion.texture(state,coach_age if state=="cheer" else clock,reduced_motion)
 	if frame!=null:
 		draw_ellipse_shadow(Vector2(foot.x,DECK_Y+5),Vector2(38,7))
-		draw_texture_rect(frame,Rect2(foot-Vector2(145,246),Vector2(290,290)),false)
+		var squash := 0.0 if reduced_motion else GameFeel.kick(landing_age,.24)
+		draw_set_transform(foot,0,Vector2(1+squash*.10,1-squash*.09))
+		draw_texture_rect(frame,Rect2(Vector2(-145,-246),Vector2(290,290)),false)
+		draw_set_transform(Vector2.ZERO)
 
 func draw_comets() -> void:
 	if reduced_motion:

@@ -2,7 +2,6 @@ class_name ArcadeArena
 extends GameArena
 
 var bursts: Array[Dictionary] = []
-var trauma := 0.0
 var strike := 0.0
 var last_impact := ""
 var blue_attack_age := -1.0
@@ -23,6 +22,7 @@ var visual_distance := 0.0
 var visual_rival := 0.0
 var visual_enemy_hp := 100.0
 var visual_player_hp := 100.0
+var approach := 0.0
 var pop_reactions: Array[Dictionary] = []
 const MOLE_HOLE = preload("res://assets/mole-hole-v11.svg")
 const MOLE_RIM = preload("res://assets/mole-rim-v11.svg")
@@ -46,6 +46,7 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 	if kind=="skill":
 		shield_pulse = 0.65
 		var location := Vector2(350,410) if run.mode=="fighter" else Vector2(120+run.rival*770,510) if run.mode=="racing" else Vector2(520,480)
+		record_impact(location,3)
 		juice.burst(location,Color("8ae3eb"),2,"spark")
 		return
 	if kind in ["moles","aliens"]:
@@ -64,8 +65,6 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 		juice.burst(Vector2(520,100),PlayTheme.YELLOW,1,"confetti")
 	if kind=="aliens" and power%3==0:
 		shield_pulse = 0.65
-	if kind!="miss":
-		impact_freeze = 0.045 if kind in ["moles","fighter"] else 0.025
 	if run.mode=="fighter":
 		point = Vector2(420,410) if kind in ["miss","block"] else Vector2(635,410)
 		if kind in ["miss","block"]:
@@ -74,8 +73,9 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 			blue_attack_age = 0.0
 	elif kind=="racing":
 		point = Vector2(120+visual_distance*770,356)
-	var tier := 3 if power>0 and power%5==0 else 2 if kind in ["fighter","moles"] else 1
-	record_impact(point,tier)
+	var tier := GameFeel.tier(power if kind==run.mode else 0,kind in ["fighter","moles","miss","block"])
+	impact_freeze = 0.0 if reduced_motion or tier==1 else .04 if tier==2 else .065
+	record_impact(point,tier,CORAL if kind=="miss" else BLUE if kind=="block" else PlayTheme.YELLOW)
 	bursts.append({"kind":kind,"point":point,"power":power,"life":0.7})
 	if bursts.size()>18:
 		bursts.pop_front()
@@ -85,23 +85,24 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 		juice.jet(point,Vector2.RIGHT if kind=="fighter" else Vector2.LEFT if kind=="racing" else Vector2.UP,color,tier)
 	strike = 0.5
 	last_impact = kind
-	if kind in ["fighter", "aliens", "miss"]:
-		trauma = minf(1,trauma+(0.65 if power>0 and power%5==0 else 0.45))
 
 func _process(delta: float) -> void:
 	if run != null and not run.paused:
 		clock += delta
 		step_feedback(delta)
 		var follow := 1-exp(-delta*12)
+		if run.mode=="fighter":
+			var target := run.recommended_target()
+			var preparation := float(target.get("typed",0))/maxi(1,str(target.get("word","")).length())
+			approach = 0.0 if reduced_motion else lerpf(approach,preparation*80,follow)
 		visual_distance = lerpf(visual_distance,run.distance,follow)
 		visual_rival = lerpf(visual_rival,run.rival,follow)
 		visual_enemy_hp = lerpf(visual_enemy_hp,run.enemy_hp,1-exp(-delta*4))
 		visual_player_hp = lerpf(visual_player_hp,run.hp,1-exp(-delta*4))
 		# Freeze only the character pose for an impact beat; input, timers and FX continue.
+		var visual_delta := delta if reduced_motion else GameFeel.pose_step(delta,impact_freeze)
 		impact_freeze = maxf(0,impact_freeze-delta)
-		var visual_delta := delta if impact_freeze<=0 or reduced_motion else 0.0
-		if impact_freeze<=0 or reduced_motion:
-			pose_clock += delta
+		pose_clock += visual_delta
 		shield_pulse = maxf(0,shield_pulse-delta)
 		charge_flash = maxf(0,charge_flash-delta)
 		checkpoint_age = maxf(0,checkpoint_age-delta)
@@ -133,7 +134,6 @@ func _process(delta: float) -> void:
 				juice.trail(p,Vector2(-120,15),Color("d9e3f2"),7)
 				if run.boost>0 and run.combo>=3:
 					juice.trail(p,Vector2(-220,0),Color("67e5ff"),11)
-		trauma = maxf(0,trauma-delta*2.5)
 		strike = maxf(0,strike-visual_delta)
 		for burst in bursts.duplicate():
 			burst.life -= delta
@@ -148,7 +148,7 @@ func _draw() -> void:
 	draw_scene_background()
 	prepare_prompts()
 	draw_atmosphere()
-	world_offset = Vector2.ZERO if reduced_motion else Vector2(sin(clock*45),cos(clock*38))*trauma*trauma*7
+	world_offset = feel.offset()
 	draw_set_transform(world_offset)
 	if not art.sprites.is_empty():
 		draw_generated_game()
@@ -236,7 +236,7 @@ func draw_anticipation() -> void:
 		# A visible tether leads from the typed letters to the balloon being inflated.
 		SoftStroke.arc(self,p,52+fraction*8,PI*.7,PI*2.3,Color(.3,.7,.9,.25),2.0)
 	elif run.mode=="moles":
-		if fraction>0:
+		if fraction>0 and not reaction_echoes.any(func(e): return e.point.distance_to(p)<65 and e.age<.22):
 			var ready := p+Vector2(73,-80-fraction*14)
 			sprite_pose("mallet",ready,Vector2(90,90),-.65-fraction*.4,Vector2.ONE)
 	elif run.mode=="fighter" and fraction>0:
@@ -339,7 +339,7 @@ func draw_generated_game() -> void:
 				if not reacting:
 					draw_mole(motion.texture("idle",pose_clock+target.id*.41,reduced_motion),p,emergence)
 	for remnant in pop_reactions:
-		var phase: float = remnant.age/.28
+		var phase: float = 1-pow(1-clampf(remnant.age/.28,0,1),3)
 		var point: Vector2 = remnant.point+Vector2(phase*12,-phase*35)
 		draw_set_transform(point+world_offset,phase*.3,Vector2(1+phase*.3,1-phase*.8))
 		art.draw_sprite(self,remnant.sprite,Vector2.ZERO,Vector2(117,155),Color(1,1,1,1-phase))
@@ -398,9 +398,9 @@ func draw_generated_game() -> void:
 			panel(Rect2(330,204,380,44),Color(.81,.93,.95,.95),12)
 			write("氮气加速！" if run.boost>0 and run.combo>=3 else "输入，让赛车前进",Vector2(520,234),22,GOLD,true)
 	elif run.mode == "fighter":
-		var punch := 0.0 if reduced_motion else sin(clampf(strike/0.5,0,1)*PI)
-		var left := Vector2(350,440)+Vector2(punch*(0 if last_impact=="block" else -32 if last_impact=="miss" else 72),-punch*6)
-		var right := Vector2(690,440)+Vector2(punch*(-72 if last_impact in ["miss","block"] else 36),-punch*3)
+		var punch := 0.0 if reduced_motion else GameFeel.kick(.5-strike,.34)
+		var left := Vector2(350,440)+Vector2((-punch*12 if last_impact=="miss" else 0.0 if last_impact=="block" else approach+punch*(200-approach)),-punch*6)
+		var right := Vector2(690,440)+Vector2(punch*(-200 if last_impact in ["miss","block"] else 12),-punch*3)
 		draw_ellipse_shadow(Vector2(350,560),Vector2(67,16))
 		draw_ellipse_shadow(Vector2(690,560),Vector2(67,16))
 		draw_texture_rect(BoxingMotion.texture(0,pose_clock,blue_attack_age,reduced_motion,boxing_clips),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
@@ -561,7 +561,7 @@ func fighter() -> void:
 		draw_line(Vector2(80,y),Vector2(950,y),Color("ffffff"),4,true)
 	for x in [80,950]:
 		draw_line(Vector2(x,325),Vector2(x,555),CORAL,12,true)
-	var punch := 0.0 if reduced_motion else sin(clampf(strike/0.5,0,1)*PI)
+	var punch := 0.0 if reduced_motion else GameFeel.kick(.5-strike,.34)
 	if last_impact == "miss":
 		boxer(Vector2(355-punch*20,445),PlayTheme.SKY,1,0)
 		boxer(Vector2(690-punch*120,445),CORAL,-1,punch)
@@ -604,11 +604,13 @@ func draw_burst(burst: Dictionary) -> void:
 				draw_line(trail_at-Vector2(35,12+i*3),trail_at+Vector2(4,-8+i*3),Color(0.45,0.86,1,(1-t)*0.6),3,true)
 		if burst.kind=="fighter":
 			art.draw_sprite(self,"impact",p,Vector2(160,130)*(1-t),Color(1,1,1,1-t))
-	var caption := "格挡！" if burst.kind=="block" else "漏过" if burst.kind=="miss" else ("重击！" if burst.kind=="fighter" else "推进！" if burst.kind=="racing" else "+ 命中")
+	if burst.kind not in ["block","miss"] and (burst.power<=0 or burst.power%5!=0):
+		return
+	var caption := "格挡！" if burst.kind=="block" else "漏过" if burst.kind=="miss" else "%d 连击" % burst.power
 	var caption_at := p+Vector2(0,-15-(0 if reduced_motion else t*42))
 	if burst.kind=="aliens":
 		caption_at = p+Vector2(0,100-t*12)
 	elif burst.kind=="moles":
 		caption_at = p+Vector2(79,-5-t*22)
-	panel(Rect2(caption_at-Vector2(54,25),Vector2(108,35)),Color(1,1,1,(1-t)*0.92),12)
+	panel(Rect2(caption_at-Vector2(54,25),Vector2(108,35)),Color(.85,.95,.91,(1-t)*0.92),12)
 	write(caption,caption_at,23,Color(PlayTheme.ORANGE if burst.kind!="miss" else Color("b13b4e"),1-t),true)

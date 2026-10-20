@@ -12,6 +12,7 @@ var clock := 0.0
 var effects: Array[Dictionary] = []
 var art := GeneratedArt.new()
 var juice := GameJuice.new()
+var feel := GameFeel.new()
 var key_pulse := 0.0
 var error_pulse := 0.0
 var input_point := Vector2.ZERO
@@ -103,12 +104,15 @@ func draw_target_labels() -> void:
 			draw_line(rect.position+Vector2(10,rect.size.y-4),rect.end-Vector2(10,4),Color("d9e7eb"),3,true)
 			draw_line(rect.position+Vector2(10,rect.size.y-4),rect.position+Vector2(10+(rect.size.x-20)*fraction,rect.size.y-4),PlayTheme.CORAL if fraction<.25 else MINT,3,true)
 
-func record_impact(point: Vector2, tier := 1) -> void:
+func record_impact(point: Vector2, tier := 1, tint := PlayTheme.YELLOW) -> void:
+	feel.reduced_motion = reduced_motion
+	feel.hit(point,tier,tint)
 	impact_point = point
 	impact_tier = tier
 	impact_age = 0
 
 func draw_impact() -> void:
+	feel.draw(self,juice.protected_regions)
 	if impact_age>.28 or reduced_motion or impact_tier<2:
 		return
 	var phase := impact_age/.28
@@ -121,6 +125,7 @@ func on_key_feedback(character: String, accepted: bool, point: Vector2) -> void:
 	recent_key = character
 	input_point = point
 	if accepted:
+		error_pulse = 0.0
 		key_pulse = 0.22
 		key_beats.append({"point":point,"life":0.32})
 		if key_beats.size()>6:
@@ -129,6 +134,8 @@ func on_key_feedback(character: String, accepted: bool, point: Vector2) -> void:
 		error_pulse = 0.24
 
 func step_feedback(delta: float) -> void:
+	feel.reduced_motion = reduced_motion
+	feel.step(delta)
 	impact_age += delta
 	key_pulse = maxf(0,key_pulse-delta)
 	error_pulse = maxf(0,error_pulse-delta)

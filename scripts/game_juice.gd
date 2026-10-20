@@ -14,15 +14,15 @@ func _init() -> void:
 
 func burst(point: Vector2, color: Color, tier := 1, kind := "spark") -> void:
 	serial += 1
-	var count := 4 if reduced_motion else 18+tier*10
+	var count: int = 2 if reduced_motion else [8,16,28][clampi(tier,1,3)-1]
 	for i in range(count):
 		if particles.size()>=LIMIT:
 			particles.pop_front()
 		var direction := Vector2.from_angle(rng.randf_range(0,TAU))
-		var life := rng.randf_range(0.35,0.8)+tier*0.06
+		var life := .18 if reduced_motion else rng.randf_range(0.25,0.5)+tier*0.06
 		var tint: Color = [Color("ffbf68"),Color("78cafa"),Color("f58d9d"),Color("a3dfaf")][i%4] if kind=="confetti" else color
 		var gravity: float = {"confetti":180.0,"soil":280.0,"petal":95.0,"droplet":240.0,"ember":-55.0,"snow":45.0}.get(kind,35.0)
-		particles.append({"p":point,"v":direction*rng.randf_range(45,130+tier*65),"life":life,"total":life,"color":tint if i%3 else Color.WHITE,"radius":rng.randf_range(2,5+tier),"angle":rng.randf_range(0,TAU),"spin":rng.randf_range(-7,7),"kind":kind,"gravity":gravity})
+		particles.append({"p":point,"v":Vector2.ZERO if reduced_motion else direction*rng.randf_range(45,130+tier*65),"life":life,"total":life,"color":tint if i%3 else Color.WHITE,"radius":rng.randf_range(2,5+tier),"angle":rng.randf_range(0,TAU),"spin":0.0 if reduced_motion else rng.randf_range(-7,7),"kind":kind,"gravity":0.0 if reduced_motion else gravity})
 	if not reduced_motion and tier>=2:
 		if particles.size()>=LIMIT:
 			particles.pop_front()

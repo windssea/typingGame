@@ -50,6 +50,6 @@ func on_effect(kind: String,_origin: Vector2,_destination: Vector2,_amount: int)
 	cursor += 1
 	player.stream = streams[kind]
 	player.volume_db = {"punch":-13.0,"mallet":-15.0,"pop":-16.0,"laser":-17.0,"engine":-19.0,"skill":-13.0,"block":-14.0,"damage":-15.0,"warning":-18.0}.get(kind,-18.0)
-	player.pitch_scale = 1.0+sin(cursor*2.399)*.035
+	player.pitch_scale = 1.0+sin(cursor*2.399)*.025+(minf(battle.combo,10)*.012 if kind in ["punch","mallet","pop","laser","build"] else 0.0)
 	if DisplayServer.get_name()!="headless":
 		player.play()

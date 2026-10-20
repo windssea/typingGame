@@ -89,7 +89,7 @@ func exercise() -> void:
 	check(juice.particles.is_empty(),"all transient particles expire")
 	juice.reduced_motion=true
 	juice.burst(Vector2.ZERO,Color.GOLD,3)
-	check(juice.particles.size()==4,"reduced motion reduces particles")
+	check(juice.particles.size()<=4 and juice.particles.all(func(p): return p.v==Vector2.ZERO),"reduced motion reduces particles")
 	for side in range(2):
 		check(BoxingMotion.texture(side,0,-1,false)!=BoxingMotion.texture(side,0.3,-1,false),"idle advances native frames for side "+str(side))
 		check(BoxingMotion.texture(side,0,-1,true)==BoxingMotion.texture(side,1,0.3,true),"reduced motion freezes animation for side "+str(side))

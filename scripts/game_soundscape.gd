@@ -80,7 +80,7 @@ func cue(kind: String, volume := -18.0) -> void:
 
 func bind_run(value: GameRun) -> void:
 	run = value
-	run.key_feedback.connect(func(_character,accepted,_point): cue("key" if accepted else "error",-26 if accepted else -14))
+	run.key_feedback.connect(func(_character,accepted,_point): cue("key" if accepted else "error",-26 if accepted else -22))
 	run.spell.connect(func(_a,_b,_lightning):
 		if run.combo>0 and run.combo%5==0:
 			cue("combo",-14))

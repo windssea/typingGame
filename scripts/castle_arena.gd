@@ -4,7 +4,6 @@ extends GameArena
 signal pad_selected(index: int)
 var battle: CastleRun
 var banner_time := 3.0
-var shake := 0.0
 var terrain: Node2D
 var enemy_motion := ArcadeMotion.new()
 var enemy_reactions: Dictionary = {}
@@ -41,8 +40,6 @@ func receive_effect(kind: String, origin: Vector2, destination: Vector2, amount:
 	var duration := 0.8
 	if kind in ["boss","wave","rage","interrupt"]:
 		banner_time = 3.0
-	if kind in ["damage","quake"]:
-		shake = 0.26
 	if kind == "defeat":
 		duration = 1.2
 		if not reduced_motion:
@@ -54,12 +51,12 @@ func receive_effect(kind: String, origin: Vector2, destination: Vector2, amount:
 					break
 	if kind in ["fire","ember","ice","storm","defeat","build","damage","quake","interrupt"]:
 		var tint: Color = {"ice":Color("74dcff"),"storm":Color("b192ff"),"damage":Color("ed8b71"),"defeat":Color("ffd261")}.get(kind,Color("ffb34d"))
-		var tier := 3 if kind in ["quake","defeat"] else 2 if kind in ["storm","interrupt"] else 1
+		var tier := 3 if kind=="quake" or (kind=="defeat" and amount>=90) else 2 if kind in ["defeat","storm","interrupt","damage"] else 1
 		juice.burst(destination,tint,tier,{"defeat":"confetti","fire":"ember","ember":"ember","ice":"snow"}.get(kind,"spark"))
 		if kind in ["fire","ice","storm","interrupt"]:
 			juice.jet(destination,(destination-origin).normalized(),tint,tier)
-		if kind in ["defeat","interrupt","storm","quake"]:
-			record_impact(destination-Vector2(0,16),tier)
+		if kind in ["defeat","interrupt","storm","quake","damage"]:
+			record_impact(destination-Vector2(0,16),tier,PlayTheme.CORAL if kind in ["damage","quake"] else PlayTheme.YELLOW)
 	effects.append({"kind":kind,"from":origin,"to":destination,"amount":amount,"life":duration,"duration":duration})
 	if effects.size() > 90:
 		effects.pop_front()
@@ -95,7 +92,6 @@ func _process(delta: float) -> void:
 				enemy_reactions.erase(id)
 		juice.step(delta)
 		banner_time = maxf(0,banner_time-delta)
-		shake = maxf(0,shake-delta)
 		for effect in effects.duplicate():
 			effect.life -= delta
 			if effect.life <= 0:
@@ -113,10 +109,7 @@ func _gui_input(event: InputEvent) -> void:
 func _draw() -> void:
 	if battle == null:
 		return
-	if shake > 0 and not reduced_motion:
-		world_offset = Vector2(sin(clock*90)*shake*10,cos(clock*73)*shake*7)
-	else:
-		world_offset = Vector2.ZERO
+	world_offset = feel.offset()
 	var prompts: Array[Dictionary] = []
 	var actors: Array[Rect2] = [Rect2(CastleRun.KEEP-Vector2(110,145),Vector2(220,205))]
 	var blocked: Array[Rect2] = [Rect2(16,14,1008,44)]
