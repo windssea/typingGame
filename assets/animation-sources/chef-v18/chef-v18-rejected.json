@@ -1,0 +1,43 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "tool_call_id": "call-4dbce6a0-97d2-4de6-995f-e78f30fe0212-4",
+  "model": null,
+  "status": "succeeded",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-v18\\grok-raw.mp4",
+  "source_image": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\chef-v18\\seed.png",
+  "submitted_once": true,
+  "requested": {
+    "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\chef-v18\\seed.png",
+    "aspect_ratio": "1:1",
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "fps": null,
+    "audio_disabled": false
+  },
+  "actual": {
+    "width": 960,
+    "height": 960,
+    "display_aspect_ratio": "1:1",
+    "video_codec": "h264",
+    "video_fps": 24,
+    "avg_frame_rate": "24/1",
+    "frame_count": 193,
+    "video_duration_seconds": 8.041667,
+    "format_duration_seconds": 8.041667,
+    "audio_codec": "aac",
+    "audio_channels": 2,
+    "audio_sample_rate": 48000,
+    "audio_duration_seconds": 8.0,
+    "size_bytes": 3846624,
+    "sha256": "3B4D6F7E90220C9378C47CD01BD678C7469973286D11C747B4429D2CEF86DA47"
+  },
+  "limitations": [
+    "image_to_video accepts duration 6 or 10 only and has no pinned first_frame parameter, so it was not used.",
+    "reference_to_video schema supports first_frame, duration 1-15, aspect_ratio, and resolution_name 480p or 720p. It has no fps argument and no audio-disable argument.",
+    "The call blocked until completion and returned path, filename, and session_folder only. No Imagine request id and no model name were returned, so there was no separate request to poll. tool_call_id is the local Grok Build call id, not an Imagine request id.",
+    "resolution_name 720p was requested. Probed picture size is 960x960, 24 fps, 193 frames, video duration 8.041667 seconds. An AAC stereo track is present. grok-raw.mp4 is a byte copy of the tool output and was not re-encoded, interpolated, or frame-duplicated."
+  ],
+  "qa_status": "rejected",
+  "qa_reason": "flying food clipped at source frame edge"
+}

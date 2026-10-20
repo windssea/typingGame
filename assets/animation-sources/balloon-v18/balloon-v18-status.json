@@ -1,0 +1,39 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "model": null,
+  "status": "succeeded",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\balloon-v18\\grok-raw.mp4",
+  "requested": {
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "aspect_ratio": "1:1",
+    "fps": null,
+    "audio": "no disable parameter in schema",
+    "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\balloon-v18\\seed.png"
+  },
+  "actual": {
+    "width": 960,
+    "height": 960,
+    "video_codec": "h264",
+    "video_fps": "24/1",
+    "nb_frames": 193,
+    "video_duration_seconds": 8.041667,
+    "format_duration_seconds": 8.041667,
+    "audio": {
+      "codec": "aac",
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_seconds": 8.0
+    },
+    "extra_stream": "mjpeg 960x960 attached to the same file",
+    "size_bytes": 3003215
+  },
+  "limitations": [
+    "image_to_video accepts duration 6 or 10 only and has no pinned-frame, fps, or audio parameter. reference_to_video was used because its schema supports a pinned first_frame and duration 1-15. One submission.",
+    "No fps argument exists. Probed video is 24/1. The file was byte-copied with no re-encode, interpolation, or frame duplication.",
+    "No audio-disable argument exists. The raw file includes AAC stereo. Voices were not requested.",
+    "resolution_name 720p was requested. Probed picture size is 960x960. Source seed is 720x720 and stays 1:1.",
+    "The built-in tool returned a local path only. It did not return a request ID or model name, and the call blocked until the file existed, so there was no separate pollable request."
+  ]
+}

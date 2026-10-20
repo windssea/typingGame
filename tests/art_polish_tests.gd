@@ -72,7 +72,7 @@ func exercise() -> void:
 		check(battle_arena.art.sprites.has(id) and not battle_arena.art.sprites[id] is AtlasTexture,"polished prop uses an independent cutout, not a bleeding old atlas region: "+id)
 	check(battle_arena.backdrop.texture.resource_path==GeneratedArt.background_path("castle"),"battlefield and castle are separate live layers")
 	check(battle_arena.spell_origin(CastleRun.KEEP)==CastleRun.KEEP-Vector2(0,60),"player projectile starts at the castle building")
-	check(battle_arena.spell_origin(CastleRun.PADS[0])==CastleRun.PADS[0]-Vector2(0,112),"tower projectile starts at the actual tower head")
+	check(battle_arena.spell_origin(CastleRun.PADS[0])==CastleRun.PADS[0]-Vector2(0,78),"tower projectile starts at the resized tower head")
 	app.run.paused=false;battle_arena._process(1)
 	await capture("castle-build")
 	app.run.paused=false;app.run.wave=5;await press(KEY_N);app.run.spawn_clock=1000

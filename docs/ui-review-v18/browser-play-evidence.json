@@ -1,0 +1,130 @@
+{
+  "url": "https://typing.nanokid.win/?qa=1&qa_profile=1&release=v18",
+  "mouse_navigation": [
+    "home to challenges",
+    "training navigation",
+    "bottom settings",
+    "bottom restaurant entry",
+    "bottom submarine entry"
+  ],
+  "fullscreen_enter_observed": 1,
+  "restaurant": {
+    "correct": 16,
+    "attempts": 16,
+    "delivered": 1,
+    "score": 48,
+    "rank": "expert"
+  },
+  "submarine": {
+    "attempts": 9,
+    "context": "challenge",
+    "core": 100,
+    "correct": 9,
+    "difficulty": 1,
+    "done": false,
+    "elapsed": 4.01127262914862,
+    "goal": 18,
+    "hp": 100,
+    "kills": 3,
+    "last_meaning": "奶牛",
+    "last_word": "cow",
+    "mode": "submarine",
+    "motion_clock": 4.00267262914862,
+    "particles": 23,
+    "paused": false,
+    "pool_size": 17,
+    "projectiles": 0,
+    "rank": "normal",
+    "recommended": 2,
+    "reduced_motion": false,
+    "score": 125,
+    "skill_charge": 0,
+    "skill_time": 3.7887,
+    "skill_uses": 1,
+    "targets": [
+      {
+        "health": 1,
+        "id": 2,
+        "intent": "",
+        "intent_left": 0,
+        "kind": "enemy",
+        "pending": false,
+        "position": [
+          1031.18200683594,
+          510
+        ],
+        "remaining": 29.2,
+        "stage": 0,
+        "typed": 0,
+        "word": "fish"
+      }
+    ],
+    "units": 0,
+    "vocabulary_topic": "animals",
+    "won": false
+  },
+  "royal": {
+    "attempts": 6,
+    "context": "challenge",
+    "core": 90,
+    "correct": 6,
+    "difficulty": 1,
+    "done": false,
+    "elapsed": 4.3388888888889,
+    "goal": 18,
+    "hp": 100,
+    "kills": 1,
+    "last_meaning": "母鸡",
+    "last_word": "hen",
+    "mode": "royal",
+    "motion_clock": 4.3388888888889,
+    "particles": 20,
+    "paused": true,
+    "pool_size": 17,
+    "projectiles": 1,
+    "rank": "normal",
+    "recommended": 2,
+    "reduced_motion": false,
+    "score": 35,
+    "skill_charge": 1,
+    "skill_time": 0,
+    "skill_uses": 0,
+    "targets": [
+      {
+        "health": 1,
+        "id": 1,
+        "intent": "",
+        "intent_left": 0,
+        "kind": "enemy",
+        "pending": true,
+        "position": [
+          965.986938476562,
+          445
+        ],
+        "remaining": 27.4,
+        "stage": 0,
+        "typed": 3,
+        "word": "hen"
+      },
+      {
+        "health": 1,
+        "id": 2,
+        "intent": "",
+        "intent_left": 0,
+        "kind": "enemy",
+        "pending": false,
+        "position": [
+          1098.48193359375,
+          235
+        ],
+        "remaining": 27.4,
+        "stage": 0,
+        "typed": 0,
+        "word": "bat"
+      }
+    ],
+    "units": 0,
+    "vocabulary_topic": "animals",
+    "won": false
+  }
+}

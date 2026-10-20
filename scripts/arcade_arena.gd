@@ -24,6 +24,7 @@ var visual_enemy_hp := 100.0
 var visual_player_hp := 100.0
 var approach := 0.0
 var pop_reactions: Array[Dictionary] = []
+var pop_motion := ArcadeMotion.new()
 const MOLE_HOLE = preload("res://assets/mole-hole-v11.svg")
 const MOLE_RIM = preload("res://assets/mole-rim-v11.svg")
 const CORAL := Color("e96b70")
@@ -36,6 +37,7 @@ func _ready() -> void:
 	art.setup(run.mode)
 	setup_backdrop(art.background)
 	motion.setup(run.mode)
+	if run.mode=="balloons": pop_motion.setup("balloon_pop")
 	if run.mode=="fighter":
 		boxing_clips = BoxingMotion.load_clips()
 	juice.reduced_motion = reduced_motion
@@ -56,6 +58,8 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 	if kind=="racing":
 		nitro_age = 0.0
 	elif kind=="balloons" and not reduced_motion:
+		juice.burst(point,PlayTheme.CORAL,3,"petal")
+		juice.burst(point,PlayTheme.YELLOW,2,"confetti")
 		pop_reactions.append({"point":point,"age":0.0,"sprite":["balloon_coral","balloon_blue","balloon_gold"][clampi(roundi((point.x-200)/320),0,2)]})
 		if pop_reactions.size()>8:
 			pop_reactions.pop_front()
@@ -117,7 +121,7 @@ func _process(delta: float) -> void:
 				reaction_echoes.erase(echo)
 		for remnant in pop_reactions.duplicate():
 			remnant.age += delta
-			if remnant.age>=.28:
+			if remnant.age>=1.0:
 				pop_reactions.erase(remnant)
 		juice.step(delta)
 		if blue_attack_age>=0:
@@ -171,18 +175,7 @@ func _draw() -> void:
 	draw_impact()
 	world_offset = Vector2.ZERO
 	draw_set_transform(Vector2.ZERO)
-	# Words stay still and above feedback; readability takes priority over particles.
-	for target in run.targets:
-		var feature: String = target.get("feature","")
-		var intent: String = target.get("intent","")
-		var note: String = {"supply":"补给 +8 盾","scout":"侦察舰","bonus":"奖励 +40 分"}.get(feature,"")
-		if run.mode=="aliens" and intent in ["windup","dive"]:
-			note = "俯冲！" if intent=="dive" else "锁定中"
-		if not note.is_empty():
-			var badge: Vector2 = target.position+Vector2(0,52 if run.mode=="aliens" else 63)
-			var color: Color = CORAL if intent in ["windup","dive"] else MINT if feature=="supply" else PlayTheme.ORANGE
-			panel(Rect2(badge-Vector2(68,20),Vector2(136,29)),Color("d9ece7"),10)
-			write(note,badge,18,color,true)
+	# Words remain above all action feedback.
 	draw_target_labels()
 
 func prepare_prompts() -> void:
@@ -223,60 +216,18 @@ func prepare_prompts() -> void:
 	layout_labels(prompts,actors,blocked)
 
 func draw_enemy_intentions() -> void:
+	# Only imminent actions receive a short, local cue. No rings or tracking arrows.
 	for target in run.targets:
-		var intent: String = target.get("intent", "")
-		if run.mode=="aliens" and intent in ["windup","dive"]:
-			var p: Vector2 = target.position
-			var charge := clampf(1-float(target.remaining)/maxf(.01,EnemyTactics.warning_window(target.word,target.duration)),0,1)
-			# The warning lives under the UFO, away from the word above it.
-			draw_arc(p+Vector2(0,20),55,-PI/2,-PI/2+TAU*maxf(.04,charge),48,CORAL,3,true)
-			for i in range(3):
-				var y := p.y+78+i*17
-				if y<455: draw_polyline(PackedVector2Array([Vector2(p.x-9,y),Vector2(p.x,y+6),Vector2(p.x+9,y)]),Color(.85,.35,.3,.4+charge*.4),2,true)
-		elif run.mode=="fighter":
-			if intent=="windup":
-				var charge := 1-clampf(float(target.remaining)/maxf(.01,EnemyTactics.warning_window(target.word,target.duration)),0,1)
-				draw_arc(Vector2(716,395),60,-PI*.7,-PI*.7+PI*1.4*maxf(.04,charge),48,CORAL,4,true)
-				draw_circle(Vector2(785,279),23,Color("fff0bd"))
-				draw_circle(Vector2(785,279),20,CORAL)
-				write("!",Vector2(785,291),34,Color("fff0bd"),true)
-			elif intent=="exposed":
-				for i in range(3):
-					var p := Vector2(650+i*29,304)
-					draw_circle(p,4,PlayTheme.YELLOW)
+		if target.get("intent","")=="windup" and run.mode=="fighter":
+			write("!",Vector2(785,310),42,CORAL,true)
 
 func draw_anticipation() -> void:
 	var target := run.recommended_target()
-	if target.is_empty():
-		return
+	if target.is_empty(): return
 	var fraction := float(target.typed)/maxi(1,str(target.word).length())
-	var p: Vector2 = target.position
-	if run.mode=="aliens":
-		# Charge accumulates per letter at the cannon, then the completed word fires.
-		var gun := Vector2(520,475)
-		draw_arc(gun,22,-PI/2,-PI/2+TAU*maxf(.003,fraction),36,PlayTheme.SKY,4,true)
-		if fraction>0 and not reduced_motion:
-			var direction := gun.direction_to(p)
-			for i in range(4):
-				var dot := gun+direction*(26+i*13)
-				draw_circle(dot,2,Color(.4,.8,1,.2+fraction*.5))
-	elif run.mode=="balloons" and fraction>0:
-		# A visible tether leads from the typed letters to the balloon being inflated.
-		SoftStroke.arc(self,p,52+fraction*8,PI*.7,PI*2.3,Color(.3,.7,.9,.25),2.0)
-	elif run.mode=="moles":
-		if fraction>0 and not reaction_echoes.any(func(e): return e.point.distance_to(p)<65 and e.age<.22):
-			var ready := p+Vector2(73,-80-fraction*14)
-			sprite_pose("mallet",ready,Vector2(90,90),-.65-fraction*.4,Vector2.ONE)
-	elif run.mode=="fighter" and fraction>0:
-		var guard := Vector2(437,414)
-		draw_arc(guard,31,-PI*.7,PI*.7,32,Color(.45,.75,1,.3+fraction*.3),3,true)
-		if not reduced_motion:
-			for i in range(3):
-				draw_line(guard+Vector2(-45-i*12,26+i*7),guard+Vector2(-25-i*12,19+i*7),Color(.3,.6,.9,fraction*.5),2,true)
-	elif run.mode=="racing":
-		var dash := Vector2(450,265)
-		for i in range(10):
-			panel(Rect2(dash+Vector2(i*15,0),Vector2(10,9)),PlayTheme.MINT if i<floori(fraction*10) else Color("d9e8ee"),3)
+	if run.mode=="moles" and fraction>0:
+		if not reaction_echoes.any(func(e): return e.point.distance_to(target.position)<65 and e.age<.22):
+			sprite_pose("mallet",target.position+Vector2(73,-80-fraction*14),Vector2(90,90),-.65-fraction*.4,Vector2.ONE)
 
 func draw_mole(texture: Texture2D, point: Vector2, emergence: float, tint := Color.WHITE) -> void:
 	if texture==null:
@@ -361,18 +312,15 @@ func draw_generated_game() -> void:
 			"aliens":
 				if not motion_sprite("idle",pose_clock+target.id*0.37,p+Vector2(0,bob),Vector2(190,190)):
 					sprite_pose("ufo",p+Vector2(0,bob),Vector2(125,90),0,Vector2.ONE)
-				draw_circle(p+Vector2(0,27),18+sin(clock*7)*4,Color(0.5,0.8,1,0.13))
 			"moles":
 				var emergence: float = 1.0 if reduced_motion else minf(clampf((target.duration-target.remaining)/0.24,0.12,1),clampf(target.remaining/0.25,0.12,1))
 				var reacting := reaction_echoes.any(func(e): return e.point.distance_to(p)<65 and e.age<0.65)
 				if not reacting:
 					draw_mole(motion.texture("idle",pose_clock+target.id*.41,reduced_motion),p,emergence)
 	for remnant in pop_reactions:
-		var phase: float = 1-pow(1-clampf(remnant.age/.28,0,1),3)
-		var point: Vector2 = remnant.point+Vector2(phase*12,-phase*35)
-		draw_set_transform(point+world_offset,phase*.3,Vector2(1+phase*.3,1-phase*.8))
-		art.draw_sprite(self,remnant.sprite,Vector2.ZERO,Vector2(117,155),Color(1,1,1,1-phase))
-		draw_set_transform(world_offset)
+		var frame := pop_motion.texture("idle",remnant.age,reduced_motion)
+		if frame!=null:
+			draw_texture_rect(frame,Rect2(remnant.point-Vector2(155,145),Vector2(310,310)),false)
 	var drawn_points: Array[Vector2] = []
 	for index in range(reaction_echoes.size()-1,-1,-1):
 		var echo: Dictionary = reaction_echoes[index]
@@ -423,9 +371,7 @@ func draw_generated_game() -> void:
 		write("你  %d%%" % roundi(run.distance*100),player-Vector2(33,50),17,MINT)
 		panel(Rect2(rival-Vector2(52,71),Vector2(104,29)),Color("deedf5"),9)
 		write("陪练车" if run.context=="training" else "对手",rival-Vector2(29,50),17,CORAL)
-		if run.correct==0 or (run.boost>0 and run.combo>=3):
-			panel(Rect2(330,204,380,44),Color(.81,.93,.95,.95),12)
-			write("氮气加速！" if run.boost>0 and run.combo>=3 else "输入，让赛车前进",Vector2(520,234),22,GOLD,true)
+
 	elif run.mode == "fighter":
 		var punch := 0.0 if reduced_motion else GameFeel.kick(.5-strike,.34)
 		var left := Vector2(350,440)+Vector2((-punch*12 if last_impact=="miss" else 0.0 if last_impact=="block" else approach+punch*(200-approach)),-punch*6)
@@ -439,12 +385,12 @@ func draw_generated_game() -> void:
 		for side in range(2):
 			var x := 50+side*560
 			var health: int = run.hp if side==0 else run.enemy_hp
-			panel(Rect2(x,105,380,65),Color(.81,.93,.95,.95),12)
+			panel(Rect2(x,105,380,39),Color(.10,.22,.35,.80),10)
 			panel(Rect2(x+15,119,350,10),Color("deddee"),5)
 			var delayed := visual_player_hp if side==0 else visual_enemy_hp
 			panel(Rect2(x+15,119,350*delayed/100.0,10),PlayTheme.YELLOW,5)
 			panel(Rect2(x+15,119,350*health/100.0,10),MINT if side==0 else CORAL,5)
-			write(("你" if side==0 else "对手")+" · 体力 %d" % health,Vector2(x+15,154),17,INK)
+			write(("你" if side==0 else "对手")+" · 体力 %d" % health,Vector2(x+15,140),15,Color("f2f8ef"))
 		if run.combo>1 or (strike>0 and run.last_tactic=="counter"):
 			panel(Rect2(220,198,250,44),Color("deedf5"),12)
 			write("破招！双倍重拳" if strike>0 and run.last_tactic=="counter" else "%d HIT COMBO" % run.combo,Vector2(345,230),25,GOLD,true)

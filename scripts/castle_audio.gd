@@ -28,6 +28,9 @@ func _ready() -> void:
 		players.append(player)
 	if battle is CastleRun:
 		battle.effect.connect(on_effect)
+	elif battle is AdventureRun:
+		battle.action.connect(func(kind,point):
+			on_effect({"hit":"punch","core":"damage","serve":"combo","cook":"fire","chop":"mallet","launch":"laser","deploy":"build","miss":"damage","skill":"skill"}.get(kind,"build"),point,point,1))
 	elif battle is ArcadeRun:
 		battle.impact.connect(func(kind,point,power):
 			var sound: String = {"balloons":"pop","aliens":"laser","moles":"mallet","racing":"engine","fighter":"punch","miss":"damage","block":"block","skill":"skill"}.get(kind,"fire")

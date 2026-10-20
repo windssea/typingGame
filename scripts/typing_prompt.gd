@@ -61,7 +61,9 @@ static func place(preferred_center: Vector2, extent: Vector2, bounds: Rect2, occ
 	var best := Rect2(base,extent)
 	var best_score := INF
 	var offsets: Array[Vector2] = [previous,Vector2.ZERO]
-	for dy in [0.0,-extent.y-12,extent.y+12,-2*(extent.y+12),2*(extent.y+12),-3*(extent.y+12),3*(extent.y+12)]:
+	# Small clearances must be considered before moving a whole label height.
+	# A two-pixel actor overlap should not detach its word by a hundred pixels.
+	for dy in [0.0,-12.0,12.0,-24.0,24.0,-40.0,40.0,-extent.y-12,extent.y+12,-2*(extent.y+12),2*(extent.y+12),-3*(extent.y+12),3*(extent.y+12)]:
 		for dx in [0.0,-extent.x-14,extent.x+14,-extent.x*.5,extent.x*.5]:
 			offsets.append(Vector2(dx,dy))
 	for shift in offsets:

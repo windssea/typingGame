@@ -105,8 +105,6 @@ func battle_controls() -> void:
 	target_label = UiLayout.text(content,"",26,PlayTheme.TEXT)
 	target_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	UiLayout.space(content,0,true)
-	UiLayout.text(content,"五连击，召唤雷电",24,PlayTheme.TEAL)
-	UiLayout.text(content,"完成输入，为塔充能",20,PlayTheme.MUTED)
 
 func update_live() -> void:
 	update_pending = false

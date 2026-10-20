@@ -1,0 +1,72 @@
+[
+  {
+    "job": "knight-v18",
+    "runtime": "knight-v18",
+    "native": {
+      "width": 960,
+      "height": 960,
+      "fps": "24",
+      "duration": 8.041667,
+      "frames": "193",
+      "audio_tracks": 1
+    },
+    "frames": 48,
+    "source_sha256": "02a35004a8b1b7728e42da84ec4831d28f8eacc62bb93e63dce910fcaeb18c27"
+  },
+  {
+    "job": "sub-v18",
+    "runtime": "sub-v18",
+    "native": {
+      "width": 960,
+      "height": 960,
+      "fps": "24",
+      "duration": 8.041667,
+      "frames": "193",
+      "audio_tracks": 1
+    },
+    "frames": 48,
+    "source_sha256": "ef8300d48db7b4625e7494ab66a8508ad9e88b662538ed3bfa4dd350eeff413f"
+  },
+  {
+    "job": "robot-v18",
+    "runtime": "robot-v18",
+    "native": {
+      "width": 720,
+      "height": 720,
+      "fps": "24",
+      "duration": 8.041667,
+      "frames": "193",
+      "audio_tracks": 1
+    },
+    "frames": 36,
+    "source_sha256": "70f57f23105273b0e72b58e5506ea51d13be7da9889023e82e9bc3c28d7c341b"
+  },
+  {
+    "job": "chef-v18c",
+    "runtime": "chef-stir-v18",
+    "native": {
+      "width": 720,
+      "height": 720,
+      "fps": "24",
+      "duration": 8.041667,
+      "frames": "193",
+      "audio_tracks": 1
+    },
+    "frames": 48,
+    "source_sha256": "ef766beb18fa824f6503afca7e55accf94f1987b98017235fcf05d572d827287"
+  },
+  {
+    "job": "balloon-v18",
+    "runtime": "balloon-pop-v18",
+    "native": {
+      "width": 960,
+      "height": 960,
+      "fps": "24",
+      "duration": 8.041667,
+      "frames": "193",
+      "audio_tracks": 1
+    },
+    "frames": 24,
+    "source_sha256": "65dcf10508f474453f5837971a6b01c6b98918ca6338c7214cee477a7f88e358"
+  }
+]

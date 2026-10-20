@@ -34,6 +34,7 @@ var ui_tweens: Dictionary = {}
 var live_hud: LiveHud
 var vocabulary_topic := "mixed"
 var soundscape: GameSoundscape
+var fullscreen_transition_until := 0
 func _ready() -> void:
 	# Public rebrand keeps the existing engine/save namespace for all old profiles.
 	DisplayServer.window_set_title("指尖挑战 · 每一次输入，都有回应")
@@ -223,6 +224,7 @@ func navigation(active: String) -> void:
 	UiLayout.text(progress,"Lv. %02d  ·  %d XP" % [1+int(store.data.xp/100),store.data.xp],19)
 	UiLayout.text(progress,"已掌握 %d / 10 节" % store.data.completed.size(),16,MINT)
 	button("存档与设置",Vector2.ZERO,Vector2(194,48),show_profile,false,stack).name = "ProfileUtility"
+	button("全屏  F11",Vector2.ZERO,Vector2(194,44),toggle_fullscreen,false,stack).name = "FullscreenUtility"
 	sound_button = button("F2 声音开" if store.data.settings.get("sound",true) else "F2 声音关",Vector2.ZERO,Vector2(194,44),toggle_sound,false,stack)
 
 
@@ -240,6 +242,7 @@ func show_home() -> void:
 	brand.add_theme_constant_override("outline_size",6)
 	UiLayout.space(header,0,true)
 	button("存档与设置",Vector2.ZERO,Vector2(172,48),show_profile,false,header).name = "ProfileUtility"
+	button("全屏  F11",Vector2.ZERO,Vector2(128,48),toggle_fullscreen,false,header).name="FullscreenUtility"
 	sound_button = button("F2 声音开" if store.data.settings.get("sound",true) else "F2 声音关",Vector2.ZERO,Vector2(140,48),toggle_sound,false,header)
 	var welcome := UiLayout.column(stack,4)
 	var title := UiLayout.text(welcome,"小手就位，冒险开打！",42)
@@ -298,6 +301,9 @@ func add_badge(mode: String, at: Vector2, dimensions: Vector2, parent: Control =
 	return badge
 
 func mission_goal(mode: String, purpose: String) -> String:
+	if mode=="royal": return "输入派兵 · 双路推进 · 击破敌方城堡"
+	if mode=="submarine": return "输入发射鱼雷 · 收集补给 · F3 声呐冻结"
+	if mode=="restaurant": return "备料 → 翻锅 → 出餐 · F3 安抚客人"
 	if mode=="dojo":
 		return "修好星桥 · 点亮三座星灯"
 	if mode=="castle":
@@ -373,7 +379,7 @@ func show_training_games() -> void:
 	UiLayout.text(content,"选择训练任务",34)
 	UiLayout.text(content,lessons[lesson_index].name,22,MINT)
 	speed_controls(Vector2.ZERO,content)
-	var order := ["moles","balloons","aliens","racing","fighter","dojo","bubbles","rain","sprint","castle"]
+	var order := ["moles","balloons","aliens","racing","fighter","dojo","bubbles","rain","sprint","castle","royal","submarine","restaurant"]
 	order.erase(recommended_mode())
 	order.push_front(recommended_mode())
 	var modes := GameContent.modes()
@@ -567,8 +573,8 @@ func show_game_guide() -> void:
 	UiLayout.text(copy,"指法与规则",30,GOLD)
 	var goal := UiLayout.text(copy,mission_goal(run.mode,run.context),21,MINT)
 	goal.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var action_rules := "敲下金色按键，修好脚下的桥。\n每六步点亮一座星灯。\n按错保留进度，重试即可。" if run is BridgeRun else "输入高亮词牌上的完整文字。\nTab 换目标，退格撤回一字。"+("\n命中三次后，F3 释放技能。" if run is ArcadeRun else "")
-	var tactics: String = {"fighter":"蓄力时完成单词，打出双倍重拳。\nF3 格挡反击，抓住下一次破绽。", "aliens":"红圈亮起即将俯冲，输入击落。\n补给舰恢复护盾，俯冲拦截有奖励。", "castle":"输入萨满符文打断治疗。\n爆破兵点火时，输入符文拆弹。"}.get(run.mode, "")
+	var action_rules := "敲下金色按键，修好脚下的桥。\n每六步点亮一座星灯。\n按错保留进度，重试即可。" if run is BridgeRun else "输入高亮词牌上的完整文字。\nTab 换目标，退格撤回一字。"+("\n完成三次命中后，F3 释放技能。" if run is ArcadeRun or run is AdventureRun else "")
+	var tactics: String = {"fighter":"蓄力时完成单词，打出双倍重拳。\nF3 格挡反击，抓住下一次破绽。", "aliens":"俯冲时优先输入，拦截有额外奖励。\n补给舰恢复护盾。", "castle":"输入萨满符文打断治疗。\n爆破兵点火时，输入符文拆弹。"}.get(run.mode, "")
 	if not tactics.is_empty(): action_rules += "\n\n"+tactics
 	var rules := UiLayout.text(copy,action_rules+"\n\nF2 开关声音 · Esc 暂停",20)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -771,7 +777,7 @@ func start_game(mode: String, purpose := "training") -> void:
 	page = "game"
 	session_context = purpose
 	clear_ui()
-	run = BridgeRun.new() if mode=="dojo" else CastleRun.new() if mode == "castle" else (ArcadeRun.new() if mode in ArcadeRun.MODES else GameRun.new())
+	run = BridgeRun.new() if mode=="dojo" else CastleRun.new() if mode == "castle" else AdventureRun.new() if mode in AdventureRun.MODES else (ArcadeRun.new() if mode in ArcadeRun.MODES else GameRun.new())
 	run.context = purpose
 	run.challenge_rank = SessionOptions.RANK_IDS[challenge_index] if purpose=="challenge" else "normal"
 	run.setup(mode,Vocabulary.lesson(lessons[lesson_index],vocabulary_topic),pace if purpose=="training" else SessionOptions.RANK_SPEEDS[challenge_index])
@@ -798,13 +804,14 @@ func start_game(mode: String, purpose := "training") -> void:
 	shell.header.move_child(live_hud,1)
 	var guide_button := button("F1 指法",Vector2.ZERO,Vector2(88,48),show_game_guide,false,shell.actions)
 	guide_button.focus_mode = Control.FOCUS_NONE
+	button("全屏",Vector2.ZERO,Vector2(64,48),toggle_fullscreen,false,shell.actions).focus_mode = Control.FOCUS_NONE
 	castle_audio = CastleAudio.new()
 	castle_audio.battle = run
 	castle_audio.enabled = store.data.settings.get("sound",true)
 	layer.add_child(castle_audio)
 	pause_button = button("暂停 Esc",Vector2.ZERO,Vector2(116,48),toggle_pause,false,shell.actions)
 	pause_button.focus_mode = Control.FOCUS_NONE
-	var arena: GameArena = CastleArena.new() if mode == "castle" else (ArcadeArena.new() if run is ArcadeRun else GameArena.new())
+	var arena: GameArena = CastleArena.new() if mode == "castle" else AdventureArena.new() if run is AdventureRun else (ArcadeArena.new() if run is ArcadeRun else GameArena.new())
 	arena.size = Vector2(1040,650) if mode=="castle" or run is ArcadeRun else Vector2(1360,650)
 	arena.run = run
 	arena.reduced_motion = store.data.settings.reduced_motion
@@ -825,6 +832,24 @@ func start_game(mode: String, purpose := "training") -> void:
 		castle_panel.battle = run
 		shell.sidebar.add_child(castle_panel)
 		arena.pad_selected.connect(func(_index): castle_panel.rebuild())
+		run.phase_changed.connect(func():
+			var combat: bool=run.phase!="build"
+			shell.sidebar.visible=not combat
+			shell.field.custom_minimum_size.x=1360 if combat else 1040
+			arena.position.x=160 if combat else 0
+			if combat and not arena.backdrop_external:
+				arena.backdrop.reparent(shell.field)
+				shell.field.move_child(arena.backdrop,0)
+				arena.backdrop.show_behind_parent=false
+				arena.backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+				arena.backdrop_external=true
+			elif not combat and arena.backdrop_external:
+				arena.backdrop.reparent(arena)
+				arena.backdrop.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+				arena.backdrop.position=Vector2.ZERO
+				arena.backdrop.size=arena.size
+				arena.backdrop.show_behind_parent=true
+				arena.backdrop_external=false)
 	var cue := ActionCue.new()
 	cue.reduced_motion = store.data.settings.reduced_motion
 	cue.name = "InputDock"
@@ -866,6 +891,10 @@ func start_bridge_stage() -> void:
 
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed or event.echo:
+		return
+	if event.keycode==KEY_F11:
+		toggle_fullscreen()
+		get_viewport().set_input_as_handled()
 		return
 	if event.keycode==KEY_F2 and page!="game" and not is_instance_valid(overlay):
 		toggle_sound()
@@ -910,6 +939,10 @@ func _input(event: InputEvent) -> void:
 			run.activate_skill()
 			get_viewport().set_input_as_handled()
 			return
+		if event.keycode==KEY_F3 and run is AdventureRun and not guide_open and not is_instance_valid(overlay):
+			run.activate_skill()
+			get_viewport().set_input_as_handled()
+			return
 		if guide_open:
 			if event.keycode == KEY_ESCAPE:
 				close_game_guide()
@@ -930,6 +963,13 @@ func _input(event: InputEvent) -> void:
 		elif event.unicode >= 32 and event.unicode <= 126 and not event.ctrl_pressed and not event.alt_pressed and not event.meta_pressed:
 			run.type_character(String.chr(event.unicode))
 		get_viewport().set_input_as_handled()
+
+func toggle_fullscreen() -> void:
+	fullscreen_transition_until=Time.get_ticks_msec()+700
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("(()=>{const focusGame=()=>document.getElementById('canvas')?.focus({preventScroll:true}); if(document.fullscreenElement){document.exitFullscreen().then(focusGame)}else{document.documentElement.requestFullscreen().then(focusGame).catch(focusGame)}})()",true)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED if DisplayServer.window_get_mode()==DisplayServer.WINDOW_MODE_FULLSCREEN else DisplayServer.WINDOW_MODE_FULLSCREEN)
 
 func toggle_sound() -> void:
 	var enabled: bool = not store.data.settings.get("sound",true)
@@ -1006,7 +1046,7 @@ func castle_build_key(key: int) -> bool:
 	return true
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and run != null and not run.paused and not run.done:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and Time.get_ticks_msec()>fullscreen_transition_until and run != null and not run.paused and not run.done:
 		toggle_pause()
 
 func _process(delta: float) -> void:

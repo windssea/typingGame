@@ -21,6 +21,7 @@ static func load_texture(path: String) -> Texture2D:
 	return load(path)
 
 static func background_path(mode: String) -> String:
+	if mode in ["royal","submarine","restaurant","sprint"]: return "res://assets/generated/v18/"+mode+"-background.png"
 	if mode=="castle": return "res://assets/generated/v17/castle-field.png"
 	var filename := "balloons-background-v2" if mode == "balloons" else mode+"-background"
 	if mode=="dojo":
@@ -29,6 +30,13 @@ static func background_path(mode: String) -> String:
 
 func setup(mode: String) -> void:
 	background = load_texture(background_path(mode))
+	if mode in AdventureRun.MODES:
+		for id in ["knight","goblin","sub","chef"]:
+			sprites[id] = load_texture("res://assets/generated/v18/"+id+".png")
+		if mode=="restaurant":
+			for prefix in ["food","customer"]:
+				for i in range(3): sprites[prefix+str(i)]=load_texture("res://assets/generated/v18/"+prefix+str(i)+".png")
+		return
 	var family := "castle" if mode == "castle" else ("arcade" if mode in ArcadeRun.MODES else "learning")
 	var atlas_path := "res://assets/generated/"+family+"-sprites.png"
 	if family=="learning":
@@ -49,6 +57,7 @@ func setup(mode: String) -> void:
 	if mode=="castle":
 		for id in POLISHED:
 			sprites[id] = GeneratedArt.load_texture("res://assets/generated/v17/"+POLISHED[id]+".png")
+	if mode=="rain": sprites.cannon=load_texture("res://assets/generated/v18/cannon.png")
 
 func draw_sprite(canvas: CanvasItem, id: String, center: Vector2, bounds: Vector2, tint := Color.WHITE) -> void:
 	if not sprites.has(id):

@@ -7,3 +7,4 @@ build/*
 !build/.gdignore
 assets/*-source.ttf
 *.tmp
+/assets/animations/chef-v18/

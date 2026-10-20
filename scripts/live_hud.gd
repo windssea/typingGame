@@ -22,8 +22,11 @@ func refresh(run: GameRun) -> void:
 	note = "%d / 18" % run.kills
 	if run is CastleRun:
 		status = "城防"
-		note = "第 %d / 6 波 · %s" % [run.wave,"建设时间" if run.phase=="build" else "守护城堡"]
+		note = "第 %d / 6 波 · %d 金币 · 能量 %d" % [run.wave,run.gold,run.energy]
 		fraction = float(run.wave-1)/6
+	elif run is AdventureRun:
+		note = "敌方城堡 %d%%" % (100*run.core/run.core_max) if run.mode=="royal" else "%d / %d 份餐点" % [run.kills,run.goal] if run.mode=="restaurant" else "%d / %d 份补给" % [run.kills,run.goal]
+		fraction = 1.0-float(run.core)/run.core_max if run.mode=="royal" else float(run.kills)/run.goal
 	elif run is ArcadeRun:
 		note = "%d / %d" % [run.kills,run.goal]
 		if run.context=="training" and run.goal==18:

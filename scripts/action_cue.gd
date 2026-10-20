@@ -16,7 +16,7 @@ func explain_build(title: String, detail: String) -> void:
 	queue_redraw()
 
 func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_filter = Control.MOUSE_FILTER_PASS
 	run.key_feedback.connect(func(_key,accepted,_point): key_pulse = .18 if accepted else .26; queue_redraw())
 
 func _process(delta: float) -> void:
@@ -26,7 +26,7 @@ func _process(delta: float) -> void:
 		key_pulse = maxf(0,key_pulse-delta)
 		queue_redraw()
 	var target := run.recommended_target()
-	var value := str([target.get("id",-1),target.get("typed",0),run.kills,run.combo,run.feedback,run.last_input_ok,run.paused,run.skill_charge if run is ArcadeRun else 0,ceili(run.skill_time) if run is ArcadeRun else 0])
+	var value := str([target.get("id",-1),target.get("typed",0),run.kills,run.combo,run.feedback,run.last_input_ok,run.paused,run.skill_charge if run is ArcadeRun or run is AdventureRun else 0,ceili(run.skill_time) if run is ArcadeRun or run is AdventureRun else 0])
 	if cache!=value:
 		cache = value
 		queue_redraw()
@@ -53,9 +53,10 @@ func _draw() -> void:
 	var press := 0.0 if reduced_motion else minf(1,key_pulse/.18)*3
 	var key_rect := Rect2(12,9+press,124,86)
 	draw_style_box(PlayTheme.game_panel(Color("fff0bd") if run.last_input_ok else Color("ffddd1"),Color("c39038") if run.last_input_ok else Color("c86e61"),13,5-int(press)),key_rect)
-	var key_font := 36 if next==" " else 76
+	var key_font := 36 if next==" " else 64
 	var key_width := TypingPrompt.FONT.get_string_size(key_label,HORIZONTAL_ALIGNMENT_LEFT,-1,key_font).x
-	draw_string(TypingPrompt.FONT,Vector2(74-key_width/2,84+press),key_label,HORIZONTAL_ALIGNMENT_LEFT,-1,key_font,PlayTheme.TEXT)
+	var baseline := key_rect.position.y+(key_rect.size.y-TypingPrompt.FONT.get_height(key_font))*.5+TypingPrompt.FONT.get_ascent(key_font)
+	draw_string(TypingPrompt.FONT,Vector2(74-key_width/2,baseline),key_label,HORIZONTAL_ALIGNMENT_LEFT,-1,key_font,PlayTheme.TEXT)
 	text(TypingGuide.NAMES[data.finger],Vector2(162,46),24)
 	text(data.shift_hand+" Shift + " + data.key.to_upper() if data.shift else "回到 "+TypingGuide.HOMES[data.finger],Vector2(162,81),20,PlayTheme.TEAL)
 	var meaning := Vocabulary.meaning(run.lesson,word)
@@ -67,7 +68,7 @@ func _draw() -> void:
 		shaped.add_string(meaning,FONT,24)
 		shaped.width = 450
 		shaped.draw(get_canvas_item(),Vector2(500,30),PlayTheme.TEAL)
-	if run is ArcadeRun:
+	if run is ArcadeRun or run is AdventureRun:
 		draw_line(Vector2(980,16),Vector2(980,92),Color("dfebf2"),1)
 		var ready: bool = run.skill_charge>=3 and run.skill_time<=0
 		draw_style_box(PlayTheme.game_panel(Color("ffedb8") if ready else Color("edf5f7"),Color("dfbd6a") if ready else Color("c3d5db"),8,3),Rect2(1000,20,46,34))
@@ -77,5 +78,11 @@ func _draw() -> void:
 			var tint := PlayTheme.TEAL if i<run.skill_charge else Color("d9e5ed")
 			var at := Vector2(1013+i*22,77)
 			draw_colored_polygon(PackedVector2Array([at-Vector2(0,6),at+Vector2(5,0),at+Vector2(0,6),at-Vector2(5,0)]),tint)
-		var skill_note := "格挡就绪" if run.mode=="fighter" and run.guard_ready else "就绪" if ready else "%ds" % ceili(run.skill_time) if run.skill_time>0 else "%d / 3" % run.skill_charge
+		var skill_note := "格挡就绪" if run is ArcadeRun and run.mode=="fighter" and run.guard_ready else "就绪" if ready else "%ds" % ceili(run.skill_time) if run.skill_time>0 else "%d / 3" % run.skill_charge
 		text(skill_note,Vector2(1093,82),18,PlayTheme.TEAL if ready else PlayTheme.MUTED)
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index==MOUSE_BUTTON_LEFT and event.position.x>=980:
+		if run is ArcadeRun or run is AdventureRun:
+			run.activate_skill()
+			accept_event()

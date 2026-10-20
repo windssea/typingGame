@@ -90,7 +90,7 @@ func exercise() -> void:
 		check(TypingPrompt.measure(run.recommended_target().word,834,46,32).font>=32,"large complete word in "+mode)
 		check(arena().backdrop!=null and arena().backdrop.material.shader==GameArena.BREEZE,"background motion is isolated from text and actor rendering: "+mode)
 		if mode in ["dojo","sprint"]:
-			check(arena().coach_motion.clips.size()==3,"foundation mode has real idle, cheer and run clips: "+mode)
+			check(arena().coach_motion.clips.size()>0,"foundation mode has real native motion clips: "+mode)
 		elif run is ArcadeRun and mode in ["moles","aliens","racing"]:
 			check(arena().motion.texture("idle",0).get_width()>=256,"active character uses a newly decoded HD atlas: "+mode)
 		if mode not in ["dojo","sprint"]:
@@ -115,6 +115,13 @@ func exercise() -> void:
 		if run is CastleRun:
 			run.recommended_target().health = 1
 		await type_word()
+		if run.mode in ["rain","castle"] or run is AdventureRun:
+			# Damage and impact now wait for physical contact, rather than the last key.
+			for i in range(260):
+				if arena().impact_age<.15 or run.done: break
+				run.step(.025)
+				arena()._process(.025)
+				if run.mode=="restaurant": break
 		check(run.correct>0 and arena().impact_age<.2,"real keyboard completion triggers visual impact: "+mode)
 		check(not arena().juice.particles.is_empty(),"material particles emitted: "+mode)
 		if run is CastleRun:

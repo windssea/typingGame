@@ -23,7 +23,8 @@ func sample() -> void:
 				var t: Dictionary=app.run.spawn_enemy(kind);t.health=10000;t.max_health=10000
 		elif definition.id=="rain":
 			for i in range(5): app.run.spawn_target()
-		for i in range(120):
+		# At a 144 Hz desktop, 120 frames are shorter than the monitor's update window.
+		for i in range(240):
 			app.run.paused=false
 			if is_instance_valid(app.overlay): app.close_modal()
 			await process_frame
@@ -44,7 +45,8 @@ func sample() -> void:
 		var record: Dictionary={"mode":definition.id,"fps":150.0/((Time.get_ticks_usec()-start)/1000000.0),"frame_p50_ms":percentile(frames,.5),"frame_p95_ms":percentile(frames,.95),"engine_process_p95_ms":percentile(cpu,.95),"draw_calls_p95":percentile(draws,.95),"texture_mib":Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)/1048576.0,"particles":arena.juice.particles.size()}
 		report.modes.append(record);print(JSON.stringify(record))
 	var suffix: String="after" if "--after" in OS.get_cmdline_user_args() else "before"
-	FileAccess.open("res://build/v17-performance-"+suffix+".json",FileAccess.WRITE).store_string(JSON.stringify(report,"  "))
+	var version: String="v18" if "--v18" in OS.get_cmdline_user_args() else "v17"
+	FileAccess.open("res://build/"+version+"-performance-"+suffix+".json",FileAccess.WRITE).store_string(JSON.stringify(report,"  "))
 	app.queue_free();await process_frame
 	if FileAccess.file_exists(save_path): DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
 	quit()

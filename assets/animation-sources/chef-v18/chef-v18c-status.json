@@ -1,0 +1,48 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "tool_call_id": "call-6faaa969-460b-4ac3-bcc1-390d35771700-5",
+  "model": null,
+  "status": "completed",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-v18c\\grok-raw.mp4",
+  "sha256": "EF766BEB18FA824F6503AFCA7E55ACCF94F1987B98017235FCF05D572D827287",
+  "bytes": 2287539,
+  "source": {
+    "image": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\chef-v18\\seed.png",
+    "width": 208,
+    "height": 208,
+    "aspect_ratio": "1:1"
+  },
+  "requested": {
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "aspect_ratio": "1:1",
+    "first_frame": "seed.png pinned",
+    "last_frame": "same seed.png pinned",
+    "fps": null,
+    "audio_disabled": false
+  },
+  "actual": {
+    "width": 720,
+    "height": 720,
+    "video_codec": "h264",
+    "frame_rate": "24/1",
+    "nb_frames": 193,
+    "video_duration_seconds": 8.041667,
+    "container_duration_seconds": 8.041667,
+    "audio": {
+      "codec": "aac",
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_seconds": 8.0
+    },
+    "extra_stream": "mjpeg 720x720 attached picture"
+  },
+  "limitations": [
+    "image_to_video accepts duration 6 or 10 only. Duration 8 was requested on reference_to_video, which accepts 1-15 seconds and a pinned first_frame.",
+    "The built-in call blocked until the file existed. The result fields were type, path, filename, and session_folder. No Imagine request id and no model name were returned, so there was no separate handle to poll.",
+    "No fps argument exists. ffprobe measured 24/1. The mp4 was copied byte-for-byte and was not re-encoded, interpolated, or frame-duplicated.",
+    "No audio-disable argument exists. Voices were omitted. The raw file still contains an AAC stereo track and was saved unaltered.",
+    "Container duration is 8.041667 seconds (193 frames at 24 fps), not exactly 8.000. Output size is 720x720 from the 208x208 source."
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "tool_call_id": "call-91b3d0b7-a35c-4788-b7bd-30d3e665204e-4",
+  "model": null,
+  "status": "completed",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\sub-v18\\grok-raw.mp4",
+  "source": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\sub-v18\\seed.png",
+  "source_size": "720x720",
+  "requested": {
+    "aspect_ratio": "1:1",
+    "resolution_name": "720p",
+    "duration_seconds": 8,
+    "first_frame": "pinned seed.png",
+    "fps": null,
+    "audio": null
+  },
+  "actual": {
+    "width": 960,
+    "height": 960,
+    "video_codec": "h264",
+    "fps": 24,
+    "frame_rate": "24/1",
+    "nb_frames": 193,
+    "video_duration_seconds": 8.041667,
+    "audio": "aac stereo 48000 Hz, duration 8.000000 s",
+    "size_bytes": 3818902,
+    "sha256": "EF8300D48DB7B4625E7494AB66A8508AD9E88B662538ED3BFA4DD350EEFF413F"
+  },
+  "limitations": [
+    "image_to_video duration is only 6 or 10 seconds, so reference_to_video was used because its schema accepts duration 1-15 and a pinned first_frame.",
+    "Submitted once. The built-in call blocked until the file existed. The tool result had no Imagine request ID and no model name, so the same call could not be polled by a separate ID.",
+    "Schema has no fps argument and no audio-disable argument. Output is native 24 fps. An AAC track is present. The file was byte-copied and not re-encoded, interpolated, or frame-duplicated.",
+    "Requested resolution_name 720p. Probed frame size is 960x960, aspect 1:1. Source was 720x720."
+  ]
+}

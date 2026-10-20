@@ -11,6 +11,7 @@ var wide_stage := false
 
 func _init() -> void:
 	name = "GameShell"
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for edge in ["left","right"]:
 		add_theme_constant_override("margin_"+edge,40)
 	add_theme_constant_override("margin_top",24)
@@ -31,6 +32,7 @@ func _ready() -> void:
 	var body := UiLayout.row(stack,20)
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	field = Control.new()
+	field.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	field.name = "PlayfieldSlot"
 	field.custom_minimum_size = Vector2(1360 if wide_stage else 1040,650)
 	field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -41,5 +43,6 @@ func _ready() -> void:
 	sidebar.visible = not wide_stage
 	UiLayout.space(stack,10)
 	dock = Control.new()
+	dock.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dock.custom_minimum_size.y = 108
 	stack.add_child(dock)

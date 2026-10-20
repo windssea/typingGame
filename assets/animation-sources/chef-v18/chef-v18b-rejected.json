@@ -1,0 +1,44 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "tool_call_id": "call-e57de586-1558-4152-86bf-c5626b98231f-6",
+  "model": null,
+  "status": "completed",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-v18b\\grok-raw.mp4",
+  "source_image": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\chef-v18\\seed.png",
+  "source_pixels": "720x720",
+  "requested": {
+    "aspect_ratio": "1:1",
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "first_frame_pinned": true,
+    "audio": "no schema field; voices omitted"
+  },
+  "actual": {
+    "width": 960,
+    "height": 960,
+    "video_codec": "h264",
+    "frame_rate": "24/1",
+    "avg_frame_rate": "24/1",
+    "video_duration_seconds": 8.041667,
+    "video_frames": 193,
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "audio_duration_seconds": 8.0,
+    "attached_mjpeg": "960x960",
+    "container_duration_seconds": 8.041667,
+    "bytes": 3402705,
+    "sha256": "BD4EDA9BA488A2A3D6788CFD27108584AAF0C0D2C9EAFED9561623681B7C6D76"
+  },
+  "limitations": [
+    "image_to_video accepts duration 6 or 10 only, so the 8 second request used reference_to_video with first_frame pinned to seed.png.",
+    "Schema has no fps argument. Measured rate is 24/1. File was copied byte-for-byte with no frame interpolation.",
+    "Schema has no audio-disable argument. No voices were sent. The file still contains an AAC stereo track.",
+    "resolution_name 720p was accepted. Measured picture size is 960x960, square like the 720x720 source.",
+    "The tool returned no Imagine request id and no model name. It blocked on this single call until completion (about 55s) and was not resubmitted.",
+    "An extra MJPEG stream is attached. It is not the motion track."
+  ],
+  "qa_status": "rejected",
+  "qa_reason": "skin shifts to green after about two seconds"
+}

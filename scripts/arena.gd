@@ -23,6 +23,10 @@ var sprint_steps := 0.0
 var sprint_running := false
 var world_offset := Vector2.ZERO
 var cannon_x := 680.0
+var cannon_angle := 0.0
+var cannon_barrel: AtlasTexture
+var cannon_base: AtlasTexture
+var emission_clock := 0.0
 var label_rects: Dictionary = {}
 var label_layouts: Dictionary = {}
 var label_offsets: Dictionary = {}
@@ -41,6 +45,7 @@ func setup_backdrop(texture: Texture2D) -> void:
 	backdrop.name = "LivingBackdrop"
 	backdrop.texture = texture
 	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	backdrop.size = size
 	backdrop.show_behind_parent = true
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -56,6 +61,7 @@ func draw_scene_background() -> void:
 		if not backdrop_external:
 			backdrop.size = size
 		backdrop.material.set_shader_parameter("clock",clock)
+	WorldAtmosphere.paint(self,run.mode,clock,size,reduced_motion)
 
 func layout_labels(candidates: Array[Dictionary], actors: Array[Rect2], blocked: Array[Rect2] = []) -> void:
 	var selected: int = run.recommended_target().get("id",-1)
@@ -67,9 +73,9 @@ func layout_labels(candidates: Array[Dictionary], actors: Array[Rect2], blocked:
 	for entry in candidates:
 		var target: Dictionary = entry.target
 		var active: bool = target.id==selected
-		var layout := TypingPrompt.measure(target.word,minf(480,size.x-32),52 if active else 38,32)
+		var layout := TypingPrompt.measure(target.word,minf(480,size.x-32),52 if active else 42,32)
 		var extent: Vector2 = layout.size
-		var center: Vector2 = entry.center-Vector2(0,maxf(0,extent.y-58)*.5)
+		var center: Vector2 = entry.center
 		var rect := TypingPrompt.place(center,extent,Rect2(12,12,size.x-24,size.y-28),occupied,actors,label_offsets.get(target.id,Vector2.ZERO))
 		label_offsets[target.id] = rect.position-(center-extent*.5)
 		label_rects[target.id] = rect
@@ -89,13 +95,9 @@ func draw_target_labels() -> void:
 		var target: Dictionary = entry.target
 		var active: bool = target.id==selected
 		var rect: Rect2 = label_rects[target.id]
-		var source: Vector2 = entry.source
-		if not rect.grow(6).has_point(source):
-			SoftStroke.line(self,source,source.clamp(rect.position,rect.end),Color(.2,.5,.7,.55) if active else Color(.35,.5,.6,.25),2.0 if active else 1.5)
 		var edge := Color("bb6256") if active and error_pulse>0 else PlayTheme.PRIMARY if active else Color("afc9d4")
-		if active:
-			draw_style_box(PlayTheme.surface(Color(.24,.58,.82,.18),Color.TRANSPARENT,16),rect.grow(5))
-		draw_style_box(PlayTheme.game_panel(Color("fff0bd") if active else Color("e3edf2"),Color("cf9e44") if active and error_pulse<=0 else edge,14,4),rect)
+		# A quiet, close-fitting label. Association comes from placement, never a leader line.
+		draw_style_box(PlayTheme.surface(Color("fff1c9") if active else Color(.88,.95,.98,.90),edge if active else Color.TRANSPARENT,10),rect)
 		TypingPrompt.paint(self,target.word,target.typed,rect,label_layouts[target.id],active,active and error_pulse>0)
 		if target.has("health"):
 			var fraction: float = clampf(float(target.health)/target.max_health,0,1)
@@ -144,27 +146,31 @@ func step_feedback(delta: float) -> void:
 	displayed_wpm = lerpf(displayed_wpm,run.wpm(),1-exp(-delta*7))
 	if run.mode=="rain":
 		var target := run.recommended_target()
-		var goal: float = float(target.position.x)-24 if not target.is_empty() else 656.0
-		cannon_x = goal if reduced_motion else lerpf(cannon_x,goal,1-exp(-delta*10))
+		var goal: float = (Vector2(target.position)-Vector2(680,558)).angle()+PI/2 if not target.is_empty() else 0.0
+		cannon_angle = goal if reduced_motion else lerp_angle(cannon_angle,goal,1-exp(-delta*14))
+		cannon_x = 680
 	for beat in key_beats.duplicate():
 		beat.life -= delta
 		if beat.life<=0:
 			key_beats.erase(beat)
 
 func draw_key_beats() -> void:
-	if reduced_motion:
-		return
-	for beat in key_beats:
-		var phase: float = 1-beat.life/0.32
-		draw_arc(beat.point,18+phase*24,0,TAU,32,Color(0.25,0.65,0.88,(1-phase)*0.4),2,true)
+	pass
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	if run != null:
 		art.setup(run.mode)
+		if run.mode=="rain":
+			cannon_barrel=AtlasTexture.new()
+			cannon_barrel.atlas=art.sprites.cannon
+			cannon_barrel.region=Rect2(0,0,448,300)
+			cannon_base=AtlasTexture.new()
+			cannon_base.atlas=art.sprites.cannon
+			cannon_base.region=Rect2(0,300,448,148)
 		if run.mode in ["dojo","sprint"]:
-			coach_motion.setup("coach")
+			coach_motion.setup("robot" if run.mode=="sprint" else "coach")
 		setup_backdrop(art.background)
 		clip_contents = true
 		juice.reduced_motion = reduced_motion
@@ -179,6 +185,7 @@ func _ready() -> void:
 		run.spell.connect(func(_a,_b,_l):
 			if coach_age<0:
 				coach_age = 0.0)
+		run.projectile_launched.connect(func(_shot): key_pulse=.22)
 
 func _process(delta: float) -> void:
 	if run == null or not run.paused:
@@ -194,6 +201,15 @@ func _process(delta: float) -> void:
 			sprint_steps = float(run.correct) if reduced_motion else move_toward(sprint_steps,float(run.correct),delta*maxf(6,(run.correct-sprint_steps)*12))
 			sprint_running = absf(sprint_steps-previous)>.0001
 		juice.step(delta)
+		emission_clock+=delta
+		if emission_clock>=.035 and run!=null:
+			emission_clock=0.0
+			for target in run.targets:
+				if run.mode=="rain":
+					var direction: Vector2=target.get("velocity",Vector2.DOWN).normalized()
+					juice.trail(target.position-direction*20,-direction*42,Color("77d9ff"),6)
+			for shot in run.projectiles:
+				juice.trail(shot.position,(shot.previous-shot.position).normalized()*65,Color("a7edff") if shot.kind in ["ice","torpedo","interceptor"] else Color("ffb56e"),4)
 		for effect in effects.duplicate():
 			effect.life -= delta
 			if effect.life <= 0:
@@ -252,14 +268,15 @@ func _draw() -> void:
 		write("防 线", Vector2(680, 620), 16, GOLD, true)
 		# A small interceptor visibly tracks the recommended threat.
 		var recoil := 0.0 if reduced_motion else sin(clampf(impact_age/.24,0,1)*PI)*9
-		var ship := Vector2(cannon_x,572+recoil)
+		var ship := Vector2(680,558+recoil)
 		draw_ellipse_shadow(ship+Vector2(0,14),Vector2(31,6))
-		if art.sprites.has("cannon"):
-			art.draw_sprite(self,"cannon",ship,Vector2(92,92))
+		if cannon_base!=null:
+			draw_texture_rect(cannon_base,Rect2(ship+Vector2(-58,0),Vector2(116,38)),false)
+			draw_set_transform(ship,cannon_angle)
+			draw_texture_rect(cannon_barrel,Rect2(-58,-78,116,78),false)
+			draw_set_transform(Vector2.ZERO)
 		else:
 			draw_colored_polygon(PackedVector2Array([ship+Vector2(-25,10),ship+Vector2(0,-21),ship+Vector2(25,10),ship]),PlayTheme.PRIMARY)
-		if key_pulse>0:
-			draw_line(ship+Vector2(24,-30),input_point,Color(0.38,0.8,1,key_pulse*2),4,true)
 	var prompts: Array[Dictionary] = []
 	var actors: Array[Rect2] = []
 	for target in run.targets:
@@ -269,16 +286,20 @@ func _draw() -> void:
 		if run.mode == "castle":
 			monster(pos, target.kind, selected)
 		else:
+			var velocity: Vector2=target.get("velocity",Vector2.DOWN)
+			var tail := pos-velocity.normalized()*96
 			if not reduced_motion:
-				for j in range(5):
-					draw_circle(pos-Vector2(sin(clock*4+target.id+j)*4,18+j*12),9-j,Color(0.4,0.74,1,0.2-j*0.025))
-			art.draw_sprite(self,"comet",pos,Vector2(64,68))
+				draw_line(tail,pos,Color(.2,.75,1,.14),22,true)
+				draw_line(tail.lerp(pos,.3),pos,Color(.45,.9,1,.4),10,true)
+				draw_line(tail.lerp(pos,.6),pos,Color(.8,.96,1,.8),4,true)
+			draw_set_transform(pos,velocity.angle()-PI/4)
+			art.draw_sprite(self,"comet",Vector2.ZERO,Vector2(64,68))
+			draw_set_transform(Vector2.ZERO)
 			if art.sprites.is_empty():
 				draw_circle(pos,13,PlayTheme.SKY)
-			draw_arc(pos, 19, 0, TAU, 24, GOLD if selected else MINT, 1.5, true)
-		prompts.append({"target":target,"center":pos-Vector2(0,72),"source":pos-Vector2(0,20)})
+		if not target.get("pending",false): prompts.append({"target":target,"center":pos-Vector2(0,76),"source":pos-Vector2(0,20)})
 		actors.append(Rect2(pos-Vector2(28,30),Vector2(56,62)))
-	if not reduced_motion:
+	if not reduced_motion and run.mode!="rain":
 		for effect in effects:
 			var t: float = 1.0 - effect.life / 0.55
 			if effect.lightning:
@@ -295,10 +316,31 @@ func _draw() -> void:
 				draw_circle(p, 3, Color("fff0c1"))
 			draw_arc(effect.to, 10 + t * 32, 0, TAU, 24, Color(0.92, 0.76, 0.47, 1 - t), 2, true)
 	layout_labels(prompts,actors)
+	draw_flights()
 	juice.draw(self)
 	draw_impact()
 	draw_key_beats()
 	draw_target_labels()
+
+func draw_flights() -> void:
+	for shot in run.projectiles:
+		var p: Vector2=shot.position
+		var tint := Color("9feaff") if shot.kind in ["ice","torpedo","interceptor"] else Color("ffb25b")
+		var trail: Array=shot.trail
+		if trail.size()>1 and not reduced_motion:
+			for i in range(1,trail.size()):
+				var alpha := 1-float(i)/trail.size()
+				draw_line(trail[i],trail[i-1],Color(tint,alpha*.18),9*alpha+1,true)
+				draw_line(trail[i],trail[i-1],Color(tint,alpha*.8),3*alpha+1,true)
+		var angle: float=(p-Vector2(shot.previous)).angle()+(PI if shot.kind in ["fire","ember","ice"] else 0.0)
+		draw_set_transform(p,angle)
+		if shot.kind in ["fire","ember","ice"]:
+			art.draw_sprite(self,"iceball" if shot.kind=="ice" else "fireball",Vector2.ZERO,Vector2(64,42))
+		else:
+			draw_style_box(PlayTheme.surface(Color("fff3cf"),Color("4cb2d4"),5),Rect2(-15,-5,30,10))
+			draw_colored_polygon(PackedVector2Array([Vector2(-9,-5),Vector2(-17,-11),Vector2(-17,0)]),PlayTheme.TEAL)
+			draw_circle(Vector2(-20,0),4,tint)
+		draw_set_transform(world_offset)
 
 func draw_land(center: Vector2, scale_value: float) -> void:
 	for i in range(3):
@@ -471,22 +513,21 @@ func sprint_runner_x() -> float:
 	return 150+fposmod(sprint_steps,40)/40.0*1060
 
 func draw_sprint() -> void:
-	# The painted stadium board is the actual display, rather than a second giant panel.
 	var remaining := maxf(0,60-run.elapsed)
-	write("%02d" % ceili(remaining),Vector2(680,203),54,INK,true)
-	SoftStroke.line(self,Vector2(355,438),Vector2(1005,438),Color("d7c89f"),5)
-	SoftStroke.line(self,Vector2(355,438),Vector2(355+650*remaining/60,438),PlayTheme.TEAL,5)
+	panel(Rect2(550,42,260,78),Color("214e69"),22)
+	var seconds := ceili(remaining)
+	write("%02d:%02d" % [seconds/60,seconds%60],Vector2(680,98),52,Color("fff4d7"),true)
+	SoftStroke.line(self,Vector2(575,114),Vector2(785,114),Color("47788b"),4)
+	SoftStroke.line(self,Vector2(575,114),Vector2(575+210*remaining/60,114),PlayTheme.YELLOW,4)
 	if not run.targets.is_empty():
 		var target: Dictionary = run.targets[0]
-		var layout:=TypingPrompt.measure(target.word,810,112 if str(target.word).length()==1 else 82,36)
-		var rect:=Rect2(Vector2(680,342)-layout.size*.5,layout.size)
+		var layout := TypingPrompt.measure(target.word,960,132 if str(target.word).length()==1 else 104,42)
+		var rect := Rect2(Vector2(680,285)-layout.size*.5,layout.size)
 		TypingPrompt.paint(self,target.word,target.typed,rect,layout,true,error_pulse>0)
-	var progress:=fposmod(sprint_steps,40)
-	var runner:=Vector2(sprint_runner_x(),579)
-	var opacity:=1.0 if sprint_steps<36 else minf(1,minf(progress/2.0,(40-progress)/2.0))
-	var state: String="run" if sprint_running else "cheer" if coach_age>=0 else "idle"
-	var frame:=coach_motion.texture(state,coach_age if state=="cheer" else clock,reduced_motion)
+	var runner := Vector2(sprint_runner_x(),568)
+	var running_seconds := clock if sprint_running else 0.0
+	var frame := coach_motion.texture("run" if coach_motion.clips.has("run") and sprint_running else "idle",running_seconds,reduced_motion)
 	draw_ellipse_shadow(runner+Vector2(0,13),Vector2(37,8))
 	if frame!=null:
-		draw_texture_rect(frame,Rect2(runner-Vector2(110,176),Vector2(220,220)),false,Color(1,1,1,opacity))
+		draw_texture_rect(frame,Rect2(runner-Vector2(110,176),Vector2(220,220)),false)
 	art.draw_sprite(self,"trophy",Vector2(1220,542),Vector2(72,90))

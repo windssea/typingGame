@@ -39,7 +39,7 @@ func exercise() -> void:
 	app.show_training_games()
 	await process_frame
 	var scroll: ScrollContainer = app.layer.find_child("GameCollection",true,false)
-	check(scroll.get_child(0).get_child_count()==10,"all ten games available from lesson selector")
+	check(scroll.get_child(0).get_child_count()==GameContent.modes().size(),"all training games available from lesson selector")
 	scroll.scroll_vertical = 1000
 	await capture("collection-bottom")
 	check(scroll.scroll_vertical>0,"collection can scroll to all new games")
@@ -94,7 +94,7 @@ func exercise() -> void:
 	app.show_challenges()
 	await capture("challenges-v03")
 	var challenge_scroll: ScrollContainer = app.layer.find_child("GameCollection",true,false)
-	check(challenge_scroll.get_child(0).get_child_count()==8,"eight distinct games in challenge hub")
+	check(challenge_scroll.get_child(0).get_child_count()==GameContent.modes().size()-2,"all competitive games in challenge hub")
 	app.queue_free()
 	await process_frame
 	await create_timer(.1).timeout

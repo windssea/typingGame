@@ -3,6 +3,11 @@ extends RefCounted
 
 # Only the current arena's clips are loaded. The simulation owns hits and timing.
 const LIBRARY := {
+	"knight":{"idle":"knight-v18"},
+	"sub":{"idle":"sub-v18"},
+	"chef":{"idle":"chef-stir-v18"},
+	"robot":{"idle":"robot-v18"},
+	"balloon_pop":{"idle":"balloon-pop-v18"},
 	"coach":{"idle":"coach-idle-hd-v11","cheer":"coach-cheer-hd-v11","run":"coach-run-hd-v11"},
 	"moles":{"idle":"mole-idle-hd-v11","hit":"mole-hit-hd-v11"},
 	"aliens":{"idle":"ufo-idle-hd-v11","hit":"ufo-hit-hd-v11"},
@@ -23,7 +28,8 @@ func setup(mode: String, idle_only := false) -> void:
 			continue
 		var path := "res://assets/animations/"+str(LIBRARY[mode][state])+"/idle.tres"
 		if ResourceLoader.exists(path):
-			clips[state] = load(path)
+			var resource := load(path)
+			if resource!=null: clips[state] = resource
 
 func duration(state: String) -> float:
 	if not clips.has(state):

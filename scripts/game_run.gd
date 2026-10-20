@@ -5,10 +5,13 @@ signal spell(origin: Vector2, target: Vector2, lightning: bool)
 signal hud_changed
 signal ended
 signal key_feedback(character: String, accepted: bool, point: Vector2)
+signal projectile_launched(shot: Dictionary)
+signal projectile_impact(shot: Dictionary, point: Vector2)
 
 var mode: String
 var lesson: Dictionary
 var targets: Array[Dictionary] = []
+var projectiles: Array[Dictionary] = []
 var rng := RandomNumberGenerator.new()
 var elapsed := 0.0:
 	set(value):
@@ -104,9 +107,10 @@ func recommended_target() -> Dictionary:
 	var target := target_by_id(locked)
 	if not target.is_empty():
 		return target
-	if targets.is_empty():
+	var available := targets.filter(func(t): return not t.get("pending",false))
+	if available.is_empty():
 		return {}
-	var ordered := targets.duplicate()
+	var ordered := available
 	ordered.sort_custom(higher_priority)
 	return ordered[0]
 
@@ -148,7 +152,7 @@ func spawn_target() -> void:
 	var word := next_word()
 	var position := CENTER
 	if mode == "rain":
-		position = Vector2(150 + (next_id % 5) * 260, 82)
+		position = Vector2([240,480,700,940,1120][next_id%5],70)
 	if mode == "dojo":
 		position = CENTER
 	elif mode == "sprint":
@@ -171,6 +175,8 @@ func spawn_target() -> void:
 	if mode=="rain":
 		speed = minf(speed,493.0/((10.0+word.length()*1.2)/difficulty))
 	targets.append({"id":next_id,"word":word,"typed":0,"position":position,"speed":speed,"kind":kind})
+	if mode=="rain":
+		targets[-1].velocity = Vector2([-.38,.30,.48,-.26,.34][next_id%5],1).normalized()*speed
 	next_id += 1
 	spawned += 1
 
@@ -194,7 +200,7 @@ func step(delta: float) -> void:
 		spawn_target()
 		spawn_clock = 3.8 / difficulty
 	for target in targets.duplicate():
-		target.position.y += target.speed * delta
+		target.position += target.get("velocity",Vector2(0,target.speed))*delta
 		var reached: bool = target.position.y > 575
 		if reached:
 			hp = maxi(0, hp - (20+5*SessionOptions.rank_index(challenge_rank) if context=="challenge" else 20))
@@ -206,6 +212,31 @@ func step(delta: float) -> void:
 			if hp == 0:
 				finish(false)
 				return
+	step_projectiles(delta)
+
+func launch_projectile(target: Dictionary, origin: Vector2, kind: String, amount := 1, speed := 1000.0) -> void:
+	var shot := {"target":target.id,"position":origin,"previous":origin,"origin":origin,"kind":kind,"amount":amount,"speed":speed,"age":0.0,"trail":[]}
+	projectiles.append(shot)
+	projectile_launched.emit(shot)
+
+func step_projectiles(delta: float) -> void:
+	for shot in projectiles.duplicate():
+		var target := target_by_id(shot.target)
+		if target.is_empty():
+			projectiles.erase(shot)
+			continue
+		shot.previous = shot.position
+		shot.age += delta
+		shot.trail.push_front(shot.position)
+		if shot.trail.size()>14: shot.trail.pop_back()
+		shot.position = shot.position.move_toward(target.position,shot.speed*delta)
+		if shot.position.distance_to(target.position)<1:
+			projectiles.erase(shot)
+			projectile_impact.emit(shot,target.position)
+			resolve_projectile(shot,target)
+
+func resolve_projectile(_shot: Dictionary, target: Dictionary) -> void:
+	defeat(target,false)
 
 func priority(target: Dictionary) -> float:
 	if mode == "rain":
@@ -217,7 +248,7 @@ func type_character(character: String) -> bool:
 		return false
 	var target := target_by_id(locked)
 	if target.is_empty():
-		var candidates := targets.filter(func(t): return t.word.begins_with(character))
+		var candidates := targets.filter(func(t): return not t.get("pending",false) and t.word.begins_with(character))
 		candidates.sort_custom(higher_priority)
 		if not candidates.is_empty():
 			target = candidates[0]
@@ -254,6 +285,12 @@ func allows_typing() -> bool:
 	return true
 
 func on_word_completed(target: Dictionary) -> void:
+	if mode=="rain":
+		target.pending = true
+		locked = -1
+		var base := Vector2(680,558)
+		launch_projectile(target,base+base.direction_to(target.position)*70,"interceptor",1,1150)
+		return
 	defeat(target, false)
 	if mode in ["dojo", "bubbles"]:
 		if kills >= 18:

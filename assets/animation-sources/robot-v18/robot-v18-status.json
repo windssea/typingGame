@@ -1,0 +1,45 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "tool_call_id": "call-3e492e99-d63f-4bab-b5ad-e5a20000f105-18",
+  "model": null,
+  "status": "completed",
+  "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\robot-v18\\grok-raw.mp4",
+  "source_image": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\robot-v18\\seed.png",
+  "source_pixels": "720x720",
+  "submitted_once": true,
+  "sha256": "70F57F23105273B0E72B58E5506EA51D13BE7DA9889023E82E9BC3C28D7C341B",
+  "bytes": 3164812,
+  "requested": {
+    "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\robot-v18\\seed.png",
+    "last_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\robot-v18\\seed.png",
+    "aspect_ratio": "1:1",
+    "duration_seconds": 8,
+    "resolution_name": "720p",
+    "fps": null,
+    "audio_disabled": false
+  },
+  "actual": {
+    "width": 720,
+    "height": 720,
+    "video_codec": "h264",
+    "r_frame_rate": "24/1",
+    "avg_frame_rate": "24/1",
+    "nb_frames": 193,
+    "video_duration_seconds": 8.041667,
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "audio_duration_seconds": 8.0,
+    "size_bytes": 3164812
+  },
+  "limitations": [
+    "image_to_video only accepts duration 6 or 10 and has no pinned-frame, fps, or audio parameter. One reference_to_video call was used because its schema accepts a pinned first_frame and duration 8.",
+    "The same 720x720 seed was also pinned as last_frame so the run-in-place cycle can close on the reference pose.",
+    "The call blocked until completion (43130 ms) and returned a file path. It exposed no Imagine request ID and no poll handle. tool_call_id is the local harness id for that single call.",
+    "No fps argument exists. Measured rate is 24 fps (193 frames). Frames were copied raw; none were interpolated or duplicated.",
+    "No audio-disable argument exists. The raw file includes AAC stereo 48 kHz plus an attached MJPEG poster.",
+    "resolution_name 720p with aspect_ratio 1:1 on a 720x720 source produced 720x720. Container duration is 8.041667 s.",
+    "Container tags name Lavc62.34.102 libx264 and Lavf62.18.100, which are muxer tags, not a generation model."
+  ]
+}

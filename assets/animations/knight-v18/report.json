@@ -1,0 +1,83 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\knight-v18\\grok-raw.mp4",
+  "native": {
+    "width": 960,
+    "height": 960,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/knight-v18/idle-atlas.png",
+    "cell": 256,
+    "columns": 8,
+    "rows": 6,
+    "frames": 48,
+    "fps": "24",
+    "interval": [
+      0.5,
+      2.5
+    ],
+    "decoded_rgba_bytes": 12582912
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #ff00ff",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "short native-frame clip; transitions may retain generated pose drift; reduced motion uses frame zero",
+  "status": "integrated-reviewed-at-game-scale",
+  "static_crop": "140:100:800:820",
+  "animation": "idle",
+  "loop": true,
+  "chroma_key": "ff00ff",
+  "cell_safety_inset_px": 8,
+  "generation": {
+    "tool": "reference_to_video",
+    "request_id": null,
+    "tool_call_id": "call-10736e57-27bc-451f-b2c2-33dae6888f17-6",
+    "model": null,
+    "status": "success",
+    "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\knight-v18\\grok-raw.mp4",
+    "sha256": "02A35004A8B1B7728E42DA84EC4831D28F8EACC62BB93E63DCE910FCAEB18C27",
+    "bytes": 5809569,
+    "requested": {
+      "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\knight-v18\\seed.png",
+      "source_size": "720x720",
+      "aspect_ratio": "1:1",
+      "duration_seconds": 8,
+      "resolution_name": "720p",
+      "prompt": "motion.txt verbatim"
+    },
+    "actual": {
+      "container": "mp4",
+      "video_codec": "h264",
+      "width": 960,
+      "height": 960,
+      "fps": "24/1",
+      "avg_frame_rate": "24/1",
+      "frame_count": 193,
+      "video_duration_seconds": 8.041667,
+      "audio": {
+        "codec": "aac",
+        "sample_rate": 48000,
+        "channels": 2,
+        "duration_seconds": 8.0
+      },
+      "attached_mjpeg_stream": "960x960"
+    },
+    "limitations": [
+      "image_to_video duration schema allows only 6 or 10 seconds, so one reference_to_video call was used. Its schema supports a pinned first_frame and integer duration 1-15.",
+      "No Imagine request id or model name was returned. The client tool blocked until the file existed (about 43s) and returned only the saved path. tool_call_id is the local tool call, not an API request id.",
+      "No fps parameter exists. The file is natively 24/1. It was copied byte-for-byte and was not re-encoded, interpolated, or frame-duplicated.",
+      "resolution_name 720p was accepted. The saved frame is 960x960, not the 720x720 source.",
+      "No audio-disable parameter exists. The raw file includes an AAC stereo track.",
+      "An extra MJPEG stream is embedded in the file returned by the tool."
+    ]
+  },
+  "source_sha256": "02a35004a8b1b7728e42da84ec4831d28f8eacc62bb93e63dce910fcaeb18c27",
+  "seed_sha256": "a4a392ead6a1f06364cab900757b299b58ca9c17eed8cc4722ad0ce98c045a2e"
+}

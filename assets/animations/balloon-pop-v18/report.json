@@ -1,0 +1,79 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\balloon-v18\\grok-raw.mp4",
+  "native": {
+    "width": 960,
+    "height": 960,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/balloon-pop-v18/idle-atlas.png",
+    "cell": 256,
+    "columns": 8,
+    "rows": 3,
+    "frames": 24,
+    "fps": "24",
+    "interval": [
+      3.166666667,
+      4.166666666999999
+    ],
+    "decoded_rgba_bytes": 6291456
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #ff00ff",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "short native-frame clip; transitions may retain generated pose drift; reduced motion uses frame zero",
+  "status": "integrated-reviewed-at-game-scale",
+  "static_crop": null,
+  "animation": "idle",
+  "loop": false,
+  "chroma_key": "ff00ff",
+  "cell_safety_inset_px": 8,
+  "generation": {
+    "tool": "reference_to_video",
+    "request_id": null,
+    "model": null,
+    "status": "succeeded",
+    "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\balloon-v18\\grok-raw.mp4",
+    "requested": {
+      "duration_seconds": 8,
+      "resolution_name": "720p",
+      "aspect_ratio": "1:1",
+      "fps": null,
+      "audio": "no disable parameter in schema",
+      "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\balloon-v18\\seed.png"
+    },
+    "actual": {
+      "width": 960,
+      "height": 960,
+      "video_codec": "h264",
+      "video_fps": "24/1",
+      "nb_frames": 193,
+      "video_duration_seconds": 8.041667,
+      "format_duration_seconds": 8.041667,
+      "audio": {
+        "codec": "aac",
+        "sample_rate": 48000,
+        "channels": 2,
+        "duration_seconds": 8.0
+      },
+      "extra_stream": "mjpeg 960x960 attached to the same file",
+      "size_bytes": 3003215
+    },
+    "limitations": [
+      "image_to_video accepts duration 6 or 10 only and has no pinned-frame, fps, or audio parameter. reference_to_video was used because its schema supports a pinned first_frame and duration 1-15. One submission.",
+      "No fps argument exists. Probed video is 24/1. The file was byte-copied with no re-encode, interpolation, or frame duplication.",
+      "No audio-disable argument exists. The raw file includes AAC stereo. Voices were not requested.",
+      "resolution_name 720p was requested. Probed picture size is 960x960. Source seed is 720x720 and stays 1:1.",
+      "The built-in tool returned a local path only. It did not return a request ID or model name, and the call blocked until the file existed, so there was no separate pollable request."
+    ]
+  },
+  "source_sha256": "65dcf10508f474453f5837971a6b01c6b98918ca6338c7214cee477a7f88e358",
+  "seed_sha256": "6cbd320cf34135db5687fe32b83515e46600197b613aebb3408007add72c5cbf"
+}

@@ -20,7 +20,7 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	draw_rect(Rect2(0,0,1440,900),Color("edf8f8"))
 	if lobby!=null:
-		draw_texture_rect(lobby,Rect2(0,0,1440,900),false)
+		WorldAtmosphere.cover(self,lobby,Rect2(0,0,1440,900))
 	else:
 		draw_circle(Vector2(160,750),430,Color("dcf0d4"))
 		draw_circle(Vector2(1330,730),420,Color("dceef9"))

@@ -18,6 +18,7 @@ config/name="键境 · Keybound"
 config/description="从基础指法到单词挑战，让每一次打字成为冒险。"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/show_image=false
 
 [autoload]
 
@@ -30,6 +31,7 @@ window/size/viewport_height=900
 window/size/window_width_override=1280
 window/size/window_height_override=800
 window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
 
 [editor_plugins]
 

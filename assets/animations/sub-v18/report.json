@@ -1,0 +1,76 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\sub-v18\\grok-raw.mp4",
+  "native": {
+    "width": 960,
+    "height": 960,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/sub-v18/idle-atlas.png",
+    "cell": 256,
+    "columns": 8,
+    "rows": 6,
+    "frames": 48,
+    "fps": "24",
+    "interval": [
+      0.5,
+      2.5
+    ],
+    "decoded_rgba_bytes": 12582912
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #ff00ff",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "short native-frame clip; transitions may retain generated pose drift; reduced motion uses frame zero",
+  "status": "integrated-reviewed-at-game-scale",
+  "static_crop": "80:80:800:800",
+  "animation": "idle",
+  "loop": true,
+  "chroma_key": "ff00ff",
+  "cell_safety_inset_px": 8,
+  "generation": {
+    "tool": "reference_to_video",
+    "request_id": null,
+    "tool_call_id": "call-91b3d0b7-a35c-4788-b7bd-30d3e665204e-4",
+    "model": null,
+    "status": "completed",
+    "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\sub-v18\\grok-raw.mp4",
+    "source": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\sub-v18\\seed.png",
+    "source_size": "720x720",
+    "requested": {
+      "aspect_ratio": "1:1",
+      "resolution_name": "720p",
+      "duration_seconds": 8,
+      "first_frame": "pinned seed.png",
+      "fps": null,
+      "audio": null
+    },
+    "actual": {
+      "width": 960,
+      "height": 960,
+      "video_codec": "h264",
+      "fps": 24,
+      "frame_rate": "24/1",
+      "nb_frames": 193,
+      "video_duration_seconds": 8.041667,
+      "audio": "aac stereo 48000 Hz, duration 8.000000 s",
+      "size_bytes": 3818902,
+      "sha256": "EF8300D48DB7B4625E7494AB66A8508AD9E88B662538ED3BFA4DD350EEFF413F"
+    },
+    "limitations": [
+      "image_to_video duration is only 6 or 10 seconds, so reference_to_video was used because its schema accepts duration 1-15 and a pinned first_frame.",
+      "Submitted once. The built-in call blocked until the file existed. The tool result had no Imagine request ID and no model name, so the same call could not be polled by a separate ID.",
+      "Schema has no fps argument and no audio-disable argument. Output is native 24 fps. An AAC track is present. The file was byte-copied and not re-encoded, interpolated, or frame-duplicated.",
+      "Requested resolution_name 720p. Probed frame size is 960x960, aspect 1:1. Source was 720x720."
+    ]
+  },
+  "source_sha256": "ef8300d48db7b4625e7494ab66a8508ad9e88b662538ed3bfa4dd350eeff413f",
+  "seed_sha256": "72f3e538c6238545f754fa6b285db7a0cce8824fb6f5f911e791150f76910b33"
+}

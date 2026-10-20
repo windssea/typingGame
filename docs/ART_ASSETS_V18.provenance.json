@@ -1,0 +1,90 @@
+{
+  "tool": "built-in image_gen",
+  "style": "original American animated cartoon, sapphire/gold/teal",
+  "assets": [
+    {
+      "name": "royal",
+      "source_sha256": "003d0816dcaa1586f1cf7d4518c96619e95e3fc7c494a2d1a8fd70add0a0833e",
+      "size": [
+        1672,
+        940
+      ],
+      "alpha": [
+        255,
+        255
+      ]
+    },
+    {
+      "name": "submarine",
+      "source_sha256": "538f4e0a8f268add34a0764a85630130535ef055e366ff06e21300fa5a2da1bf",
+      "size": [
+        1672,
+        941
+      ],
+      "alpha": [
+        255,
+        255
+      ]
+    },
+    {
+      "name": "restaurant",
+      "source_sha256": "1f81de2d960adb92aa764e78bdf2b8b75f033ce6436c6f2e0769447bf99ad932",
+      "size": [
+        1672,
+        941
+      ],
+      "alpha": [
+        255,
+        255
+      ]
+    },
+    {
+      "name": "actors",
+      "source_sha256": "8faefc2f1bd545b9fd6d7d35446850402fb51ec310b03f199f6f29966d3e6ca6",
+      "size": [
+        1536,
+        1024
+      ],
+      "alpha": [
+        0,
+        254
+      ]
+    },
+    {
+      "name": "sprint",
+      "source_sha256": "d6e92ecc0a4e869e312099ceebd740696e41098d626cea3e01cc4681c5491303",
+      "size": [
+        1672,
+        941
+      ],
+      "alpha": [
+        255,
+        255
+      ]
+    },
+    {
+      "name": "cafe",
+      "source_sha256": "1b4aa60241f0c83f811ddf96cd3129e7a545d537f6204a9e1d9d1db5cf53f845",
+      "size": [
+        1536,
+        1024
+      ],
+      "alpha": [
+        0,
+        254
+      ]
+    },
+    {
+      "name": "cloud",
+      "source_sha256": "ea3d9b4fb403d2dca896bc572055e63e0416a23291e3a74daffdb546be3333af",
+      "size": [
+        2172,
+        724
+      ],
+      "alpha": [
+        0,
+        255
+      ]
+    }
+  ]
+}

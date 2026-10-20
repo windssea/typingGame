@@ -23,7 +23,7 @@ func _process(delta: float) -> void:
 	if app.run!=null:
 		var run: GameRun = app.run
 		value.run = {"mode":run.mode,"context":run.context,"hp":run.hp,"kills":run.kills,"score":run.score,"correct":run.correct,"attempts":run.attempts,"elapsed":run.elapsed,"done":run.done,"won":run.won,"paused":run.paused,"targets":[]}
-		value.run.merge({"difficulty":run.difficulty,"rank":run.challenge_rank})
+		value.run.merge({"difficulty":run.difficulty,"rank":run.challenge_rank,"projectiles":run.projectiles.size()})
 		value.run.merge({"vocabulary_topic":run.lesson.get("vocabulary_topic","basic"),"pool_size":run.lesson.words.size(),"last_word":run.last_word,"last_meaning":run.last_meaning})
 		var recommended := run.recommended_target()
 		value.run.recommended = recommended.get("id",-1)
@@ -31,11 +31,13 @@ func _process(delta: float) -> void:
 			if arena is GameArena:
 				value.run.merge({"particles":arena.juice.particles.size(),"motion_clock":arena.clock,"reduced_motion":arena.reduced_motion})
 		for target in run.targets:
-			value.run.targets.append({"id":target.id,"word":target.word,"typed":target.typed,"position":[target.position.x,target.position.y],"health":target.get("health",1),"kind":str(target.kind),"intent":target.get("intent",""),"intent_left":target.get("intent_left",0),"remaining":target.get("remaining",0)})
+			value.run.targets.append({"id":target.id,"word":target.word,"typed":target.typed,"position":[target.position.x,target.position.y],"health":target.get("health",1),"kind":str(target.kind),"intent":target.get("intent",""),"intent_left":target.get("intent_left",0),"remaining":target.get("remaining",0),"pending":target.get("pending",false),"stage":target.get("stage",0)})
 		if run is CastleRun:
 			value.run.merge({"phase":run.phase,"gold":run.gold,"wave":run.wave,"towers":run.towers.size(),"words_completed":run.words_completed,"interrupts":run.interrupts})
 		if run is BridgeRun:
 			value.run.merge({"travel":run.travel,"lit_beacons":int(run.kills/6),"goal":18})
+		if run is AdventureRun:
+			value.run.merge({"core":run.core,"goal":run.goal,"skill_charge":run.skill_charge,"skill_time":run.skill_time,"skill_uses":run.skill_uses,"units":run.units.size()})
 		if run is ArcadeRun:
 			value.run.merge({"distance":run.distance,"rival":run.rival,"shield":run.shield,"enemy_hp":run.enemy_hp})
 			value.run.merge({"skill_charge":run.skill_charge,"skill_time":run.skill_time,"skill_uses":run.skill_uses,"goal":run.goal,"counters":run.counters,"guard_ready":run.guard_ready})

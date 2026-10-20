@@ -18,6 +18,7 @@ func type_word(run: CastleRun,target: Dictionary) -> void:
 	var word: String = str(target.word).substr(target.typed)
 	for character in word:
 		run.type_character(character)
+	run.step_projectiles(2.0)
 
 func _initialize() -> void:
 	var run := game()
@@ -98,6 +99,7 @@ func _initialize() -> void:
 	run.step(0.01)
 	check(run.targets.has(boss),"boss at keep remains a siege threat until killed")
 	run.damage_enemy(boss,999,"fire",CastleRun.KEEP)
+	run.step_projectiles(2.0)
 	check(run.bosses_defeated==1 and not run.targets.has(boss),"boss defeat recorded")
 
 	run=game()
@@ -131,6 +133,7 @@ func _initialize() -> void:
 		check(target.health==85,"tower requires typing charge: "+kind)
 		run.energy=1
 		run.update_towers(0.1)
+		run.step_projectiles(2.0)
 		check(target.health<85 and run.energy==0,"tower attack consumes one charge: "+kind)
 		if kind=="ice":
 			check(target.slow>0,"ice applies slow")

@@ -54,9 +54,13 @@ func exercise() -> void:
 			app.run.paused=false
 			var key:=InputEventKey.new();key.pressed=true;key.unicode=character.unicode_at(0)
 			Input.parse_input_event(key);await process_frame
+		if definition.id in ["rain","castle"]:
+			for i in range(180):
+				if not arena.feel.events.is_empty(): break
+				app.run.step(.025);arena._process(.025)
 		check(app.run.correct>0 and not arena.feel.events.is_empty(),"actual completion triggers feedback: "+definition.id)
 		var before: int=app.run.correct
-		if app.run.targets.is_empty():
+		if app.run.recommended_target().is_empty():
 			if app.run is CastleRun: app.run.spawn_enemy("goblin")
 			else: app.run.spawn_target()
 		if arena is ArcadeArena: arena.impact_freeze=.065

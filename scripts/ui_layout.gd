@@ -4,6 +4,7 @@ extends RefCounted
 # Reference-space spacing; the viewport scales the entire 1440 × 900 composition.
 static func margin(parent: Control, inset := 24) -> MarginContainer:
 	var node := MarginContainer.new()
+	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for edge in ["left","right","top","bottom"]:
 		node.add_theme_constant_override("margin_"+edge,inset)
 	parent.add_child(node)
@@ -11,12 +12,14 @@ static func margin(parent: Control, inset := 24) -> MarginContainer:
 
 static func column(parent: Control, gap := 16) -> VBoxContainer:
 	var node := VBoxContainer.new()
+	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	node.add_theme_constant_override("separation",gap)
 	parent.add_child(node)
 	return node
 
 static func row(parent: Control, gap := 16) -> HBoxContainer:
 	var node := HBoxContainer.new()
+	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	node.add_theme_constant_override("separation",gap)
 	parent.add_child(node)
 	return node
@@ -43,6 +46,7 @@ static func text(parent: Control, value: String, font_size := 18, tint := PlayTh
 
 static func card(parent: Control, tint := PlayTheme.SURFACE) -> PanelContainer:
 	var node := PanelContainer.new()
+	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	node.add_theme_stylebox_override("panel",PlayTheme.surface(tint))
 	parent.add_child(node)
 	return node

@@ -1,0 +1,28 @@
+{
+  "version": "1.8",
+  "date": "2026-10-20",
+  "url": "https://typing.nanokid.win/",
+  "pages_preview": "https://83fed170.typinggame-cl5.pages.dev",
+  "asset_base_url": "https://pub-2fecf2e531bd4f9c8e3af7e52c6caf06.r2.dev",
+  "assets": [
+    {
+      "key": "keybound/engine-fc74679e3b97f7687894.wasm",
+      "content_type": "application/wasm",
+      "content_encoding": "gzip",
+      "cache_control": "public, max-age=31536000, immutable",
+      "raw_bytes": 39514754,
+      "upload_bytes": 10054758,
+      "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+    },
+    {
+      "key": "keybound/game-1467a0f5ba239bb35286.pck",
+      "content_type": "application/octet-stream",
+      "content_encoding": "gzip",
+      "cache_control": "public, max-age=31536000, immutable",
+      "raw_bytes": 125762096,
+      "upload_bytes": 124999839,
+      "sha256": "1467a0f5ba239bb35286d62c1672eaa4c38c05cac0aa6e953e5f803ed5124365"
+    }
+  ],
+  "validation": "18 suites passed; final focused UI/contact tests passed; public browser input verified"
+}

@@ -241,6 +241,7 @@ func advance(dt: float) -> void:
 			if done:
 				return
 	update_towers(dt)
+	step_projectiles(dt)
 	if targets.is_empty() and spawned >= WAVE_COUNTS[wave-1]:
 		if wave == 6:
 			finish(true)
@@ -320,6 +321,26 @@ func on_word_completed(target: Dictionary) -> void:
 func damage_enemy(target: Dictionary, amount: int, kind: String, source: Vector2) -> void:
 	if not targets.has(target):
 		return
+	if kind in ["fire","ember","ice"]:
+		target.reserved = target.get("reserved",0)+amount
+		launch_projectile(target,source-Vector2(0,60 if source==KEEP else 78),kind,amount,820 if kind=="ice" else 1000)
+		projectiles[-1].splash = kind=="fire" and source!=KEEP
+		effect.emit("launch_"+kind,source,target.position,amount)
+		return
+	apply_damage(target,amount,kind,source)
+
+func resolve_projectile(shot: Dictionary, target: Dictionary) -> void:
+	target.reserved = maxi(0,target.get("reserved",0)-int(shot.amount))
+	if shot.kind=="ice": target.slow = 4.0
+	var point: Vector2=target.position
+	apply_damage(target,shot.amount,shot.kind,shot.position)
+	if shot.get("splash",false):
+		for other in targets.duplicate():
+			if other.id!=target.id and other.position.distance_to(point)<95:
+				apply_damage(other,int(shot.amount*.5),"ember",point)
+
+func apply_damage(target: Dictionary, amount: int, kind: String, source: Vector2) -> void:
+	if not targets.has(target): return
 	target.health -= amount
 	target.flash = 0.22
 	effect.emit(kind,source,target.position,amount)
@@ -348,7 +369,7 @@ func update_towers(dt: float) -> void:
 		var def: Dictionary = TOWERS[tower.kind]
 		var origin: Vector2 = PADS[tower.pad]
 		var reach: float = def.range + (tower.level-1)*22
-		var available := targets.filter(func(t): return t.position.distance_to(origin) <= reach)
+		var available := targets.filter(func(t): return t.position.distance_to(origin) <= reach and t.health>t.get("reserved",0) and (t.typed==0 or targets.size()==1))
 		available.sort_custom(func(a,b): return priority(a)<priority(b))
 		if available.is_empty():
 			continue
@@ -357,14 +378,8 @@ func update_towers(dt: float) -> void:
 		var target: Dictionary = available[0]
 		var amount: int = int(def.damage) + (tower.level-1)*10
 		damage_enemy(target,amount,tower.kind,origin)
-		if tower.kind == "ice" and targets.has(target):
-			target.slow = 3.0 + tower.level
-		elif tower.kind == "storm" and available.size() > 1:
+		if tower.kind == "storm" and available.size() > 1:
 			damage_enemy(available[1],amount,"storm",target.position)
-		elif tower.kind == "fire":
-			for other in available.slice(1):
-				if other.position.distance_to(target.position) < 95:
-					damage_enemy(other,int(amount*0.5),"ember",target.position)
 
 func finish(success: bool) -> void:
 	phase = "finished"

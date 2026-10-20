@@ -136,7 +136,11 @@ func exercise() -> void:
 			if app.run.done: break
 			app.run.paused=false
 			var target: Dictionary=app.run.recommended_target()
+			if target.is_empty():
+				app.run.step(.5)
+				continue
 			for character in str(target.word).substr(target.typed): app.run.type_character(character)
+			if app.run is AdventureRun: app.run.step(.5)
 		check(app.run.done and app.run.won,"bounded completion reaches the actual training result")
 		await review("win"+suffix,picture)
 		app.start_game("fighter","challenge")
