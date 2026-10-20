@@ -7,6 +7,13 @@ var run: GameRun
 var cache := ""
 var key_pulse := 0.0
 var reduced_motion := false
+var build_title := "选一处基座，布置防线"
+var build_hint := "完成输入，为防御塔充能"
+
+func explain_build(title: String, detail: String) -> void:
+	build_title = title
+	build_hint = detail
+	queue_redraw()
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -33,29 +40,33 @@ func _draw() -> void:
 	draw_style_box(PlayTheme.game_panel(Color("e0f0e9"),Color("a6cbd4"),20,5),Rect2(0,0,1360,108))
 	var target := run.recommended_target()
 	if run is CastleRun and run.phase=="build":
-		text("建设阶段",Vector2(24,42),28)
-		text("Q 火焰塔 · W 寒冰塔 · E 雷电塔 · N 开始这一波",Vector2(24,79),22,PlayTheme.TEAL)
+		text(build_title,Vector2(24,46),28)
+		text(build_hint,Vector2(24,83),24,PlayTheme.TEAL)
 		return
 	if target.is_empty():
 		text("等待目标",Vector2(24,65),30)
 		return
 	var word: String = target.word
 	var next := word.substr(target.typed,1)
+	var data := TypingGuide.mapping(next)
 	var key_label := "空格" if next==" " else next
-	var shift: bool = TypingGuide.mapping(next).shift
 	var press := 0.0 if reduced_motion else minf(1,key_pulse/.18)*3
-	var key_rect := Rect2(12,9+press,110,86)
+	var key_rect := Rect2(12,9+press,124,86)
 	draw_style_box(PlayTheme.game_panel(Color("fff0bd") if run.last_input_ok else Color("ffddd1"),Color("c39038") if run.last_input_ok else Color("c86e61"),13,5-int(press)),key_rect)
-	if shift:
-		text("Shift +",Vector2(27,26+press),15,PlayTheme.TEXT)
-	var key_font := 34 if next==" " else 68
+	var key_font := 36 if next==" " else 76
 	var key_width := TypingPrompt.FONT.get_string_size(key_label,HORIZONTAL_ALIGNMENT_LEFT,-1,key_font).x
-	draw_string(TypingPrompt.FONT,Vector2(67-key_width/2,83+press),key_label,HORIZONTAL_ALIGNMENT_LEFT,-1,key_font,PlayTheme.TEXT)
-	var layout := TypingPrompt.measure(word,834,64,32)
+	draw_string(TypingPrompt.FONT,Vector2(74-key_width/2,84+press),key_label,HORIZONTAL_ALIGNMENT_LEFT,-1,key_font,PlayTheme.TEXT)
+	text(TypingGuide.NAMES[data.finger],Vector2(162,46),24)
+	text(data.shift_hand+" Shift + " + data.key.to_upper() if data.shift else "回到 "+TypingGuide.HOMES[data.finger],Vector2(162,81),20,PlayTheme.TEAL)
 	var meaning := Vocabulary.meaning(run.lesson,word)
-	if layout.rows.size()==1:
-		text(meaning if run.last_input_ok else "按键不匹配 · 进度保留",Vector2(150,26),18,PlayTheme.TEAL if run.last_input_ok else Color("a3433a"))
-	TypingPrompt.paint(self,word,target.typed,Rect2(134,18 if layout.rows.size()==1 else 0,834,90),layout,true,not run.last_input_ok,false)
+	if not run.last_input_ok:
+		text("再试一次，进度保留",Vector2(500,63),24,Color("a3433a"))
+	elif not meaning.is_empty():
+		# Definitions support the in-world word; do not repeat a second complete prompt.
+		var shaped := TextParagraph.new()
+		shaped.add_string(meaning,FONT,24)
+		shaped.width = 450
+		shaped.draw(get_canvas_item(),Vector2(500,30),PlayTheme.TEAL)
 	if run is ArcadeRun:
 		draw_line(Vector2(980,16),Vector2(980,92),Color("dfebf2"),1)
 		var ready: bool = run.skill_charge>=3 and run.skill_time<=0

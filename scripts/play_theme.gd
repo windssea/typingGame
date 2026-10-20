@@ -20,6 +20,16 @@ const SKY := Color("78bcf3")
 const LILAC := Color("b4a0ee")
 const PASTELS := [Color("e8f3ff"),Color("e5f7ef"),Color("fff1ce"),Color("fce9ef"),Color("efeaff")]
 
+static func decorated_panel(tint := SURFACE) -> StyleBoxTexture:
+	var box := StyleBoxTexture.new()
+	box.texture = preload("res://assets/generated/ui-panel-v14.png")
+	# Fixed bevel pixels, stretched quiet center: no distortion of corner ornaments.
+	for side in [SIDE_LEFT,SIDE_TOP,SIDE_RIGHT,SIDE_BOTTOM]:
+		box.set_texture_margin(side,28)
+		box.set_content_margin(side,0)
+	box.modulate_color = Color.WHITE.lerp(tint,.12)
+	return box
+
 static func game_panel(color := Color.WHITE, edge := BORDER, radius := 20, depth := 4) -> StyleBoxFlat:
 	var box := surface(color,edge,radius)
 	box.border_width_bottom = mini(depth,2)
@@ -28,7 +38,16 @@ static func game_panel(color := Color.WHITE, edge := BORDER, radius := 20, depth
 	box.shadow_offset = Vector2(0,2)
 	return box
 
-static func game_button(primary := false, state := "normal") -> StyleBoxFlat:
+static func game_button(primary := false, state := "normal") -> StyleBox:
+	if state!="disabled":
+		var painted := StyleBoxTexture.new()
+		painted.texture = preload("res://assets/generated/ui-button-gold-v14.png") if primary else preload("res://assets/ui-button-blue-v14.svg")
+		painted.set_texture_margin(SIDE_LEFT,28)
+		painted.set_texture_margin(SIDE_RIGHT,28)
+		painted.set_texture_margin(SIDE_TOP,16)
+		painted.set_texture_margin(SIDE_BOTTOM,16)
+		painted.modulate_color = Color(1.06,1.06,1.06) if state=="hover" else Color(.9,.94,.97) if state=="pressed" else Color.WHITE
+		return painted
 	var fill := Color("ffdf91") if primary else Color("d8eaf6")
 	var edge := Color("e6bf67") if primary else Color("b7d2e5")
 	var depth := 2
@@ -63,6 +82,7 @@ static func ui(font: Font) -> Theme:
 	result.default_font_size = 18
 	result.set_color("font_color","Label",TEXT)
 	result.set_font("font","Button",preload("res://assets/ui-heading.ttf"))
+	result.set_font_size("font_size","Button",20)
 	result.set_type_variation("PrimaryButton","Button")
 	for variant in ["Button","PrimaryButton"]:
 		var primary: bool = variant=="PrimaryButton"
@@ -70,6 +90,8 @@ static func ui(font: Font) -> Theme:
 			var box := game_button(primary,state)
 			box.content_margin_left = 16
 			box.content_margin_right = 16
+			box.content_margin_top = 5
+			box.content_margin_bottom = 7
 			result.set_stylebox(state,variant,box)
 		var focus := surface(Color.TRANSPARENT,PRIMARY,16)
 		focus.set_border_width_all(3)

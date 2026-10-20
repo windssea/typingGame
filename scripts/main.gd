@@ -93,7 +93,7 @@ func clear_ui() -> void:
 	layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(layer)
 	var backdrop := ColorRect.new()
-	backdrop.color = BG
+	backdrop.color = Color("dfede8") if page=="game" else BG
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	layer.add_child(backdrop)
@@ -179,7 +179,7 @@ func speed_controls(at: Vector2, parent: Control = layer) -> void:
 	title.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	for i in range(SessionOptions.SPEEDS.size()):
 		var index := i
-		button(SessionOptions.SPEED_NAMES[i],Vector2.ZERO,Vector2(176,48),func(): select_speed(index),is_equal_approx(pace,SessionOptions.SPEEDS[i]),row).name = "TrainingSpeed%d" % i
+		button(("✓ " if is_equal_approx(pace,SessionOptions.SPEEDS[i]) else "")+SessionOptions.SPEED_NAMES[i],Vector2.ZERO,Vector2(176,48),func(): select_speed(index),is_equal_approx(pace,SessionOptions.SPEEDS[i]),row).name = "TrainingSpeed%d" % i
 
 func menu_content() -> VBoxContainer:
 	var safe := UiLayout.margin(layer,0)
@@ -219,8 +219,6 @@ func navigation(active: String) -> void:
 	button("打字训练",Vector2.ZERO,Vector2(208,60),show_lessons,active=="lessons",stack).name = "TrainingNav"
 	button("打字挑战",Vector2.ZERO,Vector2(208,60),show_challenges,active=="challenges",stack).name = "ChallengeNav"
 	UiLayout.space(stack,0,true)
-	var badge := add_badge("moles",Vector2.ZERO,Vector2(200,160),stack)
-	badge.custom_minimum_size = Vector2(200,160)
 	var progress := UiLayout.column(UiLayout.margin(UiLayout.card(stack,Color("f0f8ff")),16),8)
 	UiLayout.text(progress,"Lv. %02d  ·  %d XP" % [1+int(store.data.xp/100),store.data.xp],19)
 	UiLayout.text(progress,"已掌握 %d / 10 节" % store.data.completed.size(),16,MINT)
@@ -260,7 +258,11 @@ func show_home() -> void:
 		content.add_child(center)
 		var badge := add_badge(recommended_mode() if i==0 else "aliens",Vector2.ZERO,Vector2(360,220),center)
 		badge.custom_minimum_size = Vector2(360,220)
-		UiLayout.text(content,"打字训练" if i==0 else "打字挑战",34)
+		var caption := UiLayout.row(content,12)
+		UiLayout.text(caption,"打字训练" if i==0 else "打字挑战",34)
+		UiLayout.space(caption,0,true)
+		if i==0:
+			button("选课程",Vector2.ZERO,Vector2(128,44),show_lessons,false,caption).name = "ChooseCourse"
 		UiLayout.text(content,"从 F / J 开始，逐步练习单词。" if i==0 else "选好难度，用连击改变战局。",20,MUTED)
 		var launch := button("继续训练  →" if i==0 else "选择挑战  →",Vector2.ZERO,Vector2(0,60),begin_recommended_training if i==0 else show_challenges,i==0,content)
 		launch.name = "StartTraining" if i==0 else "StartChallenge"
@@ -329,21 +331,16 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String, 
 	scroll.add_child(grid)
 	for definition in modes:
 		var mode: Dictionary = definition
-		var card := UiLayout.card(grid,PlayTheme.PASTELS[GameContent.modes().find(definition)%5])
+		var tint: Color = PlayTheme.PASTELS[GameContent.modes().find(definition)%5]
+		var card := UiLayout.card(grid,tint)
+		UiLayout.illustrate(card,GeneratedArt.background_path(mode.id),tint,.32,.48)
 		card.custom_minimum_size = Vector2(350,290)
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var content := UiLayout.column(UiLayout.margin(card,14),10)
 		var art := Control.new()
-		art.custom_minimum_size.y = 116
+		art.custom_minimum_size.y = 128
 		art.clip_contents = true
 		content.add_child(art)
-		var picture := TextureRect.new()
-		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		picture.texture = load(GeneratedArt.background_path(mode.id))
-		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		art.add_child(picture)
-		picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		var mascot := add_badge(mode.id,Vector2.ZERO,Vector2(160,112),art)
 		mascot.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 		mascot.offset_left = -80
@@ -351,7 +348,7 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String, 
 		mascot.offset_right = 80
 		mascot.offset_bottom = 56
 		mascot.reduced_motion = true
-		UiLayout.text(content,mode.name,24)
+		UiLayout.text(content,mode.name+(" · 推荐" if purpose=="training" and mode.id==recommended_mode() else ""),24)
 		var rule := UiLayout.text(content,mission_goal(mode.id,purpose),16,MUTED)
 		rule.custom_minimum_size.y = 46
 		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -359,10 +356,10 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String, 
 		var enter := button("进入挑战  →" if purpose=="challenge" else "开始训练  →",Vector2.ZERO,Vector2(0,46),func(): start_game(mode.id,purpose),false,content)
 		enter.name = "Mission_"+str(mode.id)
 		enter.focus_entered.connect(func():
-			card.add_theme_stylebox_override("panel",PlayTheme.surface(Color("f5f9ff"),PlayTheme.PRIMARY,20))
+			enter.theme_type_variation = "PrimaryButton"
 			mascot.reduced_motion = store.data.settings.reduced_motion)
 		enter.focus_exited.connect(func():
-			card.add_theme_stylebox_override("panel",PlayTheme.surface(PlayTheme.PASTELS[GameContent.modes().find(definition)%5]))
+			enter.theme_type_variation = "Button"
 			mascot.reduced_motion = true)
 
 
@@ -376,6 +373,8 @@ func show_training_games() -> void:
 	UiLayout.text(content,lessons[lesson_index].name,22,MINT)
 	speed_controls(Vector2.ZERO,content)
 	var order := ["moles","balloons","aliens","racing","fighter","dojo","bubbles","rain","sprint","castle"]
+	order.erase(recommended_mode())
+	order.push_front(recommended_mode())
 	var modes := GameContent.modes()
 	modes.sort_custom(func(a,b): return order.find(a.id)<order.find(b.id))
 	game_grid(modes,Vector2.ZERO,Vector2.ZERO,"training",content)
@@ -383,6 +382,7 @@ func show_training_games() -> void:
 	button("返回课程",Vector2.ZERO,Vector2(180,48),show_lessons,false,footer)
 	UiLayout.space(footer,0,true)
 	vocabulary_button(Vector2.ZERO,footer)
+	layer.find_child("Mission_"+recommended_mode(),true,false).grab_focus()
 
 func show_challenges() -> void:
 	page = "challenges"
@@ -396,6 +396,7 @@ func show_challenges() -> void:
 	text_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var selector := OptionButton.new()
 	selector.custom_minimum_size.y = 48
+	selector.name = "ChallengeText"
 	selector.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for lesson in lessons:
 		selector.add_item(lesson.name)
@@ -404,26 +405,28 @@ func show_challenges() -> void:
 		lesson_index=index
 		store.data.last_lesson=index
 		store.save_profile()
-		show_challenges())
+		show_challenges()
+		layer.find_child("ChallengeText",true,false).grab_focus())
 	setup.add_child(selector)
 	var ranks := UiLayout.row(content,12)
 	for i in range(3):
 		var index := i
-		button(SessionOptions.RANK_NAMES[i]+"  "+str(SessionOptions.RANK_SPEEDS[i])+"×",Vector2.ZERO,Vector2(200,48),func(): select_rank(index),i==challenge_index,ranks).name = "ChallengeRank%d" % i
+		button(("✓ " if i==challenge_index else "")+SessionOptions.RANK_NAMES[i]+"  "+str(SessionOptions.RANK_SPEEDS[i])+"×",Vector2.ZERO,Vector2(200,48),func(): select_rank(index),i==challenge_index,ranks).name = "ChallengeRank%d" % i
 	var modes := GameContent.modes().filter(func(m): return m.id not in ["dojo","bubbles"])
 	game_grid(modes,Vector2.ZERO,Vector2.ZERO,"challenge",content)
 	var footer := UiLayout.row(content)
 	UiLayout.space(footer,0,true)
 	vocabulary_button(Vector2.ZERO,footer)
+	selector.grab_focus()
 
 func vocabulary_button(at: Vector2, parent: Control = layer) -> void:
 	var active := Vocabulary.supports(lessons[lesson_index])
-	var title := "KET 词库 · 709 词 / 24 主题" if active else "KET 词库 · 第 6 课起使用"
+	var title := "词库与主题" if active else "词库 · 第 6 课起使用"
 	if active and vocabulary_topic!="mixed":
 		for topic in Vocabulary.topics():
 			if topic.id==vocabulary_topic:
 				title = "KET 主题 · "+str(topic.name)+"  ▾"
-	button(title,at,Vector2(360,48),show_vocabulary,active,parent).name = "VocabularySettings"
+	button(title,at,Vector2(280,48),show_vocabulary,false,parent).name = "VocabularySettings"
 
 func show_vocabulary() -> void:
 	var content := dialog_content(modal(),780)
@@ -446,11 +449,11 @@ func show_vocabulary() -> void:
 		if page=="challenges":
 			show_challenges()
 		else:
-			show_training_games())
+			show_training_games()
+		layer.find_child("VocabularySettings",true,false).grab_focus())
 	content.add_child(selector)
-	UiLayout.text(content,"短词 → 长词 → 大小写 → 完整短句",21)
-	UiLayout.text(content,"第 6 课起使用主题词汇，基础指法课程保持原有键位。",18,MUTED)
-	UiLayout.text(content,"独立编写，参照 Cambridge A2 Key 2025 词表范围。",16,MUTED)
+	UiLayout.text(content,"从短词到短句，随课程逐步增加难度。",20,MUTED)
+	UiLayout.text(content,"A1–A2 范围独立训练词库",18,MUTED)
 	button("返回继续",Vector2.ZERO,Vector2(700,54),close_modal,true,content)
 	selector.grab_focus()
 
@@ -505,6 +508,7 @@ func show_lessons() -> void:
 	button("进入本课训练任务  →",Vector2.ZERO,Vector2(300,56),show_training_games,true,footer).name = "EnterTrainingTasks"
 	UiLayout.space(footer,0,true)
 	UiLayout.text(footer,"%02d / 10  ·  %s" % [lesson_index+1,str(lessons[lesson_index].name).substr(5)],19,MINT)
+	layer.find_child("Course%d" % lesson_index,true,false).grab_focus()
 
 
 func select_lesson(index: int) -> void:
@@ -519,23 +523,30 @@ func show_fingering() -> void:
 	run = null
 	clear_ui()
 	navigation("lessons")
-	label("让每个手指都有自己的位置。",Vector2(300,48),34)
-	label("美式 QWERTY 指法示意 · 可按实体键盘，或点击示例查看手指分工",Vector2(300,111),17,MINT)
+	var content := menu_content()
+	UiLayout.text(content,"让手指找到自己的位置",34)
+	var body := UiLayout.row(content,24)
+	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	typing_guide = TypingGuide.new()
-	typing_guide.position = Vector2(300,177)
-	layer.add_child(typing_guide)
-	panel(Vector2(630,177),Vector2(760,435))
-	label("01  找到基准行",Vector2(660,201),25,GOLD)
-	label("左手：小指 A、无名指 S、中指 D、食指 F\n右手：食指 J、中指 K、无名指 L、小指 ;\n两只拇指轻放空格键，F / J 的凸点帮助盲定位。",Vector2(660,249),20)
-	label("02  移动一个手指，其他手指自然放松",Vector2(660,357),24,GOLD)
-	label("手指自然弯曲，肩膀与手腕放松，击键后回到基准行。\n先练 F / J，再扩展少量键位、连续组合、单词和句子。\n大写和上档符号：另一只手的小指按住 Shift 后击键。",Vector2(660,406),20)
-	label("试一试：同色键区由同一个手指负责",Vector2(660,538),19,MINT)
-	var samples := ["f","j","a","k","F","?"," "]
-	for i in range(samples.size()):
-		var value: String = samples[i]
-		button("空格" if value==" " else value,Vector2(630+i*108,644),Vector2(94,58),func(): typing_guide.preview_character=value)
-	label("示意图用于教学，不会检测你的真实手势。",Vector2(630,735),18,MUTED)
-	button("回到课程，开始练习  →",Vector2(630,785),Vector2(375,52),show_lessons,true)
+	typing_guide.wide = true
+	typing_guide.custom_minimum_size = Vector2(600,580)
+	body.add_child(typing_guide)
+	var copy := UiLayout.column(body,24)
+	copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	UiLayout.text(copy,"双手，回到基准行",26)
+	var homes := UiLayout.text(copy,"左手 A S D F\n右手 J K L ;\n拇指轻放空格键",24)
+	homes.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	UiLayout.text(copy,"摸到 F / J 的凸点，\n不看键盘也能找到起点。",21,MINT)
+	var tips := UiLayout.text(copy,"击键后回到原位。\n大写与符号，用另一只手按 Shift。",21)
+	tips.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	UiLayout.space(copy,0,true)
+	var note := UiLayout.text(copy,"按下实体键，查看分工。\n示意图不会检测真实手势。",18,MUTED)
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var samples := UiLayout.row(content,12)
+	for value in ["f","j","a","k","F","?"," "]:
+		button("空格" if value==" " else value,Vector2.ZERO,Vector2(100,56),func(): typing_guide.preview_character=value,false,samples)
+	UiLayout.space(samples,0,true)
+	button("开始练习  →",Vector2.ZERO,Vector2(260,56),show_lessons,true,samples).grab_focus()
 
 func show_game_guide() -> void:
 	if run == null or run.done or guide_open:
@@ -543,19 +554,20 @@ func show_game_guide() -> void:
 	guide_was_paused = run.paused
 	run.paused = true
 	guide_open = true
-	var content := dialog_content(modal(),900)
+	var content := dialog_content(modal(),1160)
 	var row := UiLayout.row(content,32)
 	var coach := TypingGuide.new()
-	coach.custom_minimum_size = Vector2(300,580)
+	coach.wide = true
+	coach.custom_minimum_size = Vector2(600,580)
 	coach.run = run
 	row.add_child(coach)
 	var copy := UiLayout.column(row,20)
-	copy.custom_minimum_size.x = 480
+	copy.custom_minimum_size.x = 420
 	UiLayout.text(copy,"指法与规则",30,GOLD)
 	var goal := UiLayout.text(copy,mission_goal(run.mode,run.context),21,MINT)
 	goal.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var action_rules := "敲下金色按键，修好脚下的桥。\n每六步点亮一座星灯，18步到达对岸。\n按错不会掉进度，重试即可。\n" if run is BridgeRun else "输入高亮词牌上的完整文字。\nTab 换目标，退格撤回一字。\n"+("命中三次后，F3 释放技能。\n" if run is ArcadeRun else "")
-	var rules := UiLayout.text(copy,action_rules+"\n左手 A S D F · 右手 J K L ;\n拇指轻放空格，F / J 凸点定位。\n击键后回到基准行，手腕放松。\nF2 开关声音。",20)
+	var action_rules := "敲下金色按键，修好脚下的桥。\n每六步点亮一座星灯。\n按错保留进度，重试即可。" if run is BridgeRun else "输入高亮词牌上的完整文字。\nTab 换目标，退格撤回一字。"+("\n命中三次后，F3 释放技能。" if run is ArcadeRun else "")
+	var rules := UiLayout.text(copy,action_rules+"\n\nF2 开关声音 · Esc 暂停",20)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	UiLayout.space(copy,0,true)
 	UiLayout.text(copy,"指法为教学示意，不检测真实手势。",16,MUTED)
@@ -578,27 +590,34 @@ func show_profile() -> void:
 	title.add_theme_color_override("font_outline_color",Color("e9f4e4"))
 	title.add_theme_constant_override("outline_size",5)
 	var ribbon := UiLayout.row(UiLayout.margin(UiLayout.card(content,Color("d6e8cc")),16),32)
-	for metric in [[str(int(store.data.xp)),"总经验"],["%d / 10" % store.data.completed.size(),"已掌握课程"],[str(store.data.records.size()),"成绩记录"]]:
+	for metric in [[str(int(store.data.xp)),"总经验"],["%d / 10" % store.data.completed.size(),"已掌握课程"]]:
 		var cell := UiLayout.column(ribbon,4)
 		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		UiLayout.text(cell,metric[0],28,GOLD)
 		UiLayout.text(cell,metric[1],17,MUTED)
 	var body := UiLayout.row(content,24)
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	var settings := UiLayout.card(body,Color("d5e9e4"))
+	var settings := UiLayout.framed(body,Color("d5e9e4"))
+	settings.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	settings.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var controls := UiLayout.column(UiLayout.margin(settings,20),12)
+	var controls := UiLayout.column(UiLayout.margin(settings,28),12)
 	UiLayout.text(controls,"声音与偏好",26)
 	volume_control("音乐","music_volume",Vector2.ZERO,controls)
 	volume_control("音效","sfx_volume",Vector2.ZERO,controls)
-	button("减少动态效果："+("开" if store.data.settings.reduced_motion else "关"),Vector2.ZERO,Vector2(0,48),func(): store.data.settings.reduced_motion = not store.data.settings.reduced_motion; store.save_profile(); show_profile(),false,controls)
-	UiLayout.space(controls,0,true)
+	button("减少动态效果："+("开" if store.data.settings.reduced_motion else "关"),Vector2.ZERO,Vector2(0,48),func():
+		store.data.settings.reduced_motion = not store.data.settings.reduced_motion
+		store.save_profile()
+		show_profile()
+		layer.find_child("ReducedMotion",true,false).grab_focus(),false,controls).name = "ReducedMotion"
+	UiLayout.space(controls,20)
+	UiLayout.text(controls,"冒险存档",24)
 	var backups := UiLayout.row(controls,12)
-	button("导出存档备份",Vector2.ZERO,Vector2(278,50),export_save,true,backups)
+	button("导出存档备份",Vector2.ZERO,Vector2(278,50),export_save,false,backups).name = "ExportSave"
 	button("导入存档备份",Vector2.ZERO,Vector2(278,50),show_import,false,backups)
-	var status := UiLayout.text(controls,store.status,16,MINT)
+	var status := UiLayout.text(controls,store.status,18,MINT)
+	status.visible = "备份" in store.status or "失败" in store.status
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var note := UiLayout.text(controls,"进度保存在当前浏览器，导出备份可用于恢复。",16,MUTED)
+	var note := UiLayout.text(controls,"进度自动保存在此设备，导出备份可迁移。",18,MUTED)
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	if OS.has_feature("web") and not OS.is_userfs_persistent():
 		UiLayout.text(controls,"浏览器未允许持久化，请导出备份。",17,GOLD)
@@ -609,7 +628,7 @@ func show_profile() -> void:
 	companion.custom_minimum_size = Vector2(380,380)
 	companion.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	companion_column.add_child(companion)
-	var cheer := UiLayout.text(companion_column,"每一点进步，都值得庆祝。",22)
+	var cheer := UiLayout.text(companion_column,"",22)
 	cheer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cheer.add_theme_color_override("font_outline_color",Color("e9f4e4"))
 	cheer.add_theme_constant_override("outline_size",4)
@@ -626,11 +645,12 @@ func show_profile() -> void:
 	stats.sort_custom(func(a,b): return float(a.miss)/maxf(1,a.hit+a.miss)>float(b.miss)/maxf(1,b.hit+b.miss))
 	var keys := UiLayout.row(practice,12)
 	if stats.is_empty():
-		UiLayout.text(keys,"暂未记录易错键，继续保持！",18,MUTED)
+		practice.get_parent().get_parent().hide()
 	for i in range(mini(6,stats.size())):
 		var cell := UiLayout.column(UiLayout.margin(UiLayout.card(keys,Color("e5efdc")),8),4)
 		UiLayout.text(cell,"空格" if stats[i].key==" " else stats[i].key,26,GOLD)
 		UiLayout.text(cell,"错误 %d 次" % stats[i].miss,15,MUTED)
+	layer.find_child("MusicVolume",true,false).grab_focus()
 
 func volume_control(title: String, setting: String, at: Vector2, parent: Control = layer) -> void:
 	var row := UiLayout.row(parent,16)
@@ -670,6 +690,7 @@ func export_save() -> void:
 		else:
 			store.status = "备份失败，请检查目录权限"
 	show_profile()
+	layer.find_child("ExportSave",true,false).grab_focus()
 
 func modal() -> Control:
 	previous_focus = get_viewport().gui_get_focus_owner()
@@ -718,7 +739,7 @@ func dialog_content(root: Control, width := 700) -> VBoxContainer:
 	var center := CenterContainer.new()
 	root.add_child(center)
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var surface := UiLayout.card(center,Color("e4efdd"))
+	var surface := UiLayout.framed(center,Color("e4efdd"))
 	surface.name = "GameDialog"
 	surface.custom_minimum_size.x = width
 	return UiLayout.column(UiLayout.margin(surface,32),20)
@@ -761,6 +782,7 @@ func start_game(mode: String, purpose := "training") -> void:
 		if definition.id == mode:
 			title = definition.name
 	var shell := GameShell.new()
+	shell.wide_stage = mode!="castle"
 	layer.add_child(shell)
 	var title_label := UiLayout.text(shell.heading,title,28)
 	title_label.name = "GameTitle"
@@ -781,23 +803,19 @@ func start_game(mode: String, purpose := "training") -> void:
 	pause_button.focus_mode = Control.FOCUS_NONE
 	var arena: GameArena = CastleArena.new() if mode == "castle" else (ArcadeArena.new() if run is ArcadeRun else GameArena.new())
 	arena.size = Vector2(1040,650) if mode=="castle" or run is ArcadeRun else Vector2(1360,650)
-	if not run is CastleRun and not run is ArcadeRun:
-		arena.scale = Vector2.ONE * (1040.0/1360.0)
 	arena.run = run
 	arena.reduced_motion = store.data.settings.reduced_motion
 	shell.field.add_child(arena)
-	if mode != "castle":
-		typing_guide = TypingGuide.new()
-		typing_guide.custom_minimum_size = Vector2(300,580)
-		typing_guide.run = run
-		shell.sidebar.add_child(typing_guide)
-		UiLayout.space(shell.sidebar,0,true)
-		if not run is ArcadeRun:
-			var ledger := TrainingLedger.new()
-			ledger.position = Vector2(0,510)
-			ledger.run = run
-			shell.field.add_child(ledger)
-	else:
+	if run is ArcadeRun:
+		# Keep the simulation/actor proportions intact; the scenery fills the wider stage.
+		arena.position.x = 160
+		arena.remove_child(arena.backdrop)
+		shell.field.add_child(arena.backdrop)
+		shell.field.move_child(arena.backdrop,0)
+		arena.backdrop.show_behind_parent = false
+		arena.backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		arena.backdrop_external = true
+	if mode == "castle":
 		castle_panel = CastlePanel.new()
 		castle_panel.custom_minimum_size = Vector2(300,650)
 		castle_panel.app = self
@@ -1065,7 +1083,8 @@ func finish_game() -> void:
 		UiLayout.text(content,"统领 %d / 2 · 建造 %d 座塔 · 抵达第 %d 波" % [run.bosses_defeated,run.towers.size(),run.wave],18,GOLD)
 	if session_context=="training" and run.won:
 		UiLayout.text(content,"已掌握本课" if run.accuracy()>=.9 and run.correct>=18 else "掌握目标：准确率 90%，有效输入 18 字符",18,MINT)
-	UiLayout.text(content,store.status,16,MUTED)
+	if "失败" in store.status:
+		UiLayout.text(content,store.status,18,PlayTheme.ORANGE)
 	var mode := run.mode
 	var mastered: bool = session_context=="training" and run.won and run.accuracy()>=.9 and run.correct>=18 and lesson_index<lessons.size()-1
 	var actions := UiLayout.row(content,16)

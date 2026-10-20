@@ -9,6 +9,7 @@ const GROUPS := ["`1qaz", "2wsx", "3edc", "45rtfgvb", "67yuhjnm", "8ik,", "9ol."
 var run: GameRun
 var preview_character := "f"
 var current := ""
+var wide := false
 
 static func mapping(character: String) -> Dictionary:
 	var shifted := "~!@#$%^&*()_+{}|:\"<>?"
@@ -50,17 +51,19 @@ func box(rect: Rect2, color: Color, border := PlayTheme.BORDER, radius := 12) ->
 	draw_style_box(PlayTheme.game_panel(color,border,radius,3),rect)
 
 func _draw() -> void:
-	box(Rect2(0,0,300,580),Color("daeee9"),Color.TRANSPARENT,24)
-	box(Rect2(12,12,276,155),Color("fff4d9"),Color.TRANSPARENT,16)
-	text("我的指法小教练",Vector2(20,35),22,PlayTheme.ORANGE)
+	var width := 600.0 if wide else 300.0
+	box(Rect2(0,0,width,580),Color("daeee9"),Color.TRANSPARENT,24)
+	box(Rect2(12,12,width-24,155),Color("fff4d9"),Color.TRANSPARENT,16)
+	text("当前按键" if wide else "我的指法小教练",Vector2(20,40),22,PlayTheme.ORANGE)
 	var data := mapping(current)
 	var key_label := "空格" if current == " " else current
-	text(key_label if current != "" else "准备",Vector2(22,122),40,PlayTheme.TEXT)
-	text(NAMES[data.finger] if current != "" else "双手回到基准行",Vector2(117,117),18,PlayTheme.TEXT)
+	text(key_label if current != "" else "准备",Vector2(22,128),72 if wide else 40,PlayTheme.TEXT)
+	text(NAMES[data.finger] if current != "" else "双手回到基准行",Vector2(180 if wide else 117,95 if wide else 117),26 if wide else 18,PlayTheme.TEXT)
 	var instruction: String = "+ " + data.shift_hand + " Shift" if data.shift else "回到 " + HOMES[data.finger]
-	text("" if current == "" else instruction,Vector2(20,156),17)
+	text("" if current == "" else instruction,Vector2(180 if wide else 20,138 if wide else 156),22 if wide else 17)
 	# Full US QWERTY, including both Shift keys and punctuation.
-	draw_set_transform(Vector2(12,181),0,Vector2(0.42,0.42))
+	var keyboard_scale := .84 if wide else .42
+	draw_set_transform(Vector2(12,181),0,Vector2.ONE*keyboard_scale)
 	var rows := ["`1234567890-=", "qwertyuiop[]\\", "asdfghjkl;'", "zxcvbnm,./"]
 	for r in range(rows.size()):
 		for c in range(rows[r].length()):
@@ -80,7 +83,10 @@ func _draw() -> void:
 	box(Rect2(148,202,305,42),COLORS[8] if current == " " else Color("edf2fa"))
 	text("SPACE",Vector2(265,231),22,PlayTheme.TEXT)
 	draw_set_transform(Vector2.ZERO)
-	text("手指分工",Vector2(20,316),18)
+	if wide:
+		draw_set_transform(Vector2(150,0))
+	else:
+		text("手指分工",Vector2(20,316),18)
 	for side in range(2):
 		var base := Vector2(24+side*145,460)
 		box(Rect2(base,Vector2(106,72)),Color("fff0df"),Color("e8c9a8"),24)

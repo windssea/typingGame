@@ -30,14 +30,16 @@ func refresh(run: GameRun) -> void:
 			note = "%d / 18" % run.kills
 		fraction = run.distance if run.mode=="racing" else float(run.kills)/run.goal
 		if run.mode=="aliens":
-			status = "护盾"
-			last = str(run.shield)
+			status = "船体"
+			last = str(run.hp)
 	elif run.mode in ["rain","sprint"]:
 		var seconds := 90.0 if run.mode=="rain" else 60.0
 		note = "剩余 %d 秒" % maxi(0,ceili(seconds-run.elapsed))
 		if run.mode=="sprint" and run.context=="challenge":
 			var rank := SessionOptions.rank_index(run.challenge_rank)
-			note = "还剩 %d 秒 · 目标 %d 字符 / %d%% 准确率" % [maxi(0,ceili(seconds-run.elapsed)),[18,36,60][rank],[85,90,95][rank]]
+			note = "目标 %d 字符 · %d%% 准确率" % [[18,36,60][rank],[85,90,95][rank]]
+		elif run.mode=="sprint":
+			note = "60 秒自由冲刺"
 		fraction = clampf(run.elapsed/seconds,0,1)
 	if run.mode in ["dojo","bubbles","sprint","racing"]:
 		status = "速度 WPM"

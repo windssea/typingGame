@@ -1,0 +1,734 @@
+{
+  "checks": 4696,
+  "failures": 0,
+  "states": [
+    {
+      "controls": 5,
+      "focus": "StartTraining",
+      "screenshot": "v14-audit-home-1280x800.png",
+      "state": "home-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 16,
+      "focus": "Course0",
+      "screenshot": "v14-audit-courses-1280x800.png",
+      "state": "courses-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 12,
+      "focus": "@Button@354",
+      "screenshot": "v14-audit-fingering-1280x800.png",
+      "state": "fingering-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 14,
+      "focus": "Mission_fighter",
+      "screenshot": "v14-audit-training-1280x800.png",
+      "state": "training-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 15,
+      "focus": "Mission_fighter",
+      "screenshot": "v14-audit-training-bottom-1280x800.png",
+      "state": "training-bottom-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 12,
+      "focus": "ChallengeText",
+      "screenshot": "v14-audit-challenge-1280x800.png",
+      "state": "challenge-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "VocabularyTopic",
+      "screenshot": "v14-audit-vocabulary-1280x800.png",
+      "state": "vocabulary-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 10,
+      "focus": "MusicVolume",
+      "screenshot": "v14-audit-settings-1280x800.png",
+      "state": "settings-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 10,
+      "focus": "MusicVolume",
+      "screenshot": "v14-audit-practice-keys-1280x800.png",
+      "state": "practice-keys-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 3,
+      "focus": "@TextEdit@1117",
+      "screenshot": "v14-audit-import-1280x800.png",
+      "state": "import-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 3,
+      "focus": "@TextEdit@1117",
+      "screenshot": "v14-audit-import-error-1280x800.png",
+      "state": "import-error-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-dojo-1280x800.png",
+      "state": "dojo-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-bubbles-1280x800.png",
+      "state": "bubbles-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-rain-1280x800.png",
+      "state": "rain-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-sprint-1280x800.png",
+      "state": "sprint-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 14,
+      "focus": "@Button@1236",
+      "screenshot": "v14-audit-castle-build-1280x800.png",
+      "state": "castle-build-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-castle-1280x800.png",
+      "state": "castle-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-balloons-1280x800.png",
+      "state": "balloons-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-aliens-1280x800.png",
+      "state": "aliens-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-moles-1280x800.png",
+      "state": "moles-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-racing-1280x800.png",
+      "state": "racing-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "v14-audit-fighter-1280x800.png",
+      "state": "fighter-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@1405",
+      "screenshot": "v14-audit-pause-1280x800.png",
+      "state": "pause-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 1,
+      "focus": "@Button@1422",
+      "screenshot": "v14-audit-help-1280x800.png",
+      "state": "help-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@1453",
+      "screenshot": "v14-audit-win-1280x800.png",
+      "state": "win-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@1507",
+      "screenshot": "v14-audit-retry-1280x800.png",
+      "state": "retry-1280x800",
+      "window": "(1280, 800)"
+    },
+    {
+      "controls": 5,
+      "focus": "StartTraining",
+      "screenshot": "",
+      "state": "home-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 16,
+      "focus": "Course6",
+      "screenshot": "",
+      "state": "courses-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 12,
+      "focus": "@Button@1805",
+      "screenshot": "",
+      "state": "fingering-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 14,
+      "focus": "Mission_fighter",
+      "screenshot": "",
+      "state": "training-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 15,
+      "focus": "Mission_fighter",
+      "screenshot": "",
+      "state": "training-bottom-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 12,
+      "focus": "ChallengeText",
+      "screenshot": "",
+      "state": "challenge-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "VocabularyTopic",
+      "screenshot": "",
+      "state": "vocabulary-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 10,
+      "focus": "MusicVolume",
+      "screenshot": "",
+      "state": "settings-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 10,
+      "focus": "MusicVolume",
+      "screenshot": "",
+      "state": "practice-keys-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 3,
+      "focus": "@TextEdit@2583",
+      "screenshot": "",
+      "state": "import-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 3,
+      "focus": "@TextEdit@2583",
+      "screenshot": "",
+      "state": "import-error-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "dojo-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "bubbles-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "rain-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "sprint-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 14,
+      "focus": "@Button@2702",
+      "screenshot": "",
+      "state": "castle-build-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "castle-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "balloons-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "aliens-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "moles-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "racing-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "fighter-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@2871",
+      "screenshot": "",
+      "state": "pause-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 1,
+      "focus": "@Button@2888",
+      "screenshot": "",
+      "state": "help-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@2919",
+      "screenshot": "",
+      "state": "win-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@2973",
+      "screenshot": "",
+      "state": "retry-1280x720",
+      "window": "(1280, 720)"
+    },
+    {
+      "controls": 5,
+      "focus": "StartTraining",
+      "screenshot": "",
+      "state": "home-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 16,
+      "focus": "Course6",
+      "screenshot": "",
+      "state": "courses-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 12,
+      "focus": "@Button@3271",
+      "screenshot": "",
+      "state": "fingering-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 14,
+      "focus": "Mission_fighter",
+      "screenshot": "",
+      "state": "training-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 15,
+      "focus": "Mission_fighter",
+      "screenshot": "",
+      "state": "training-bottom-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 12,
+      "focus": "ChallengeText",
+      "screenshot": "",
+      "state": "challenge-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "VocabularyTopic",
+      "screenshot": "",
+      "state": "vocabulary-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 10,
+      "focus": "MusicVolume",
+      "screenshot": "",
+      "state": "settings-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 10,
+      "focus": "MusicVolume",
+      "screenshot": "",
+      "state": "practice-keys-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 3,
+      "focus": "@TextEdit@4049",
+      "screenshot": "",
+      "state": "import-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 3,
+      "focus": "@TextEdit@4049",
+      "screenshot": "",
+      "state": "import-error-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "dojo-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "bubbles-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "rain-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "sprint-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 14,
+      "focus": "@Button@4168",
+      "screenshot": "",
+      "state": "castle-build-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "castle-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "balloons-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "aliens-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "moles-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "racing-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "fighter-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@4337",
+      "screenshot": "",
+      "state": "pause-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 1,
+      "focus": "@Button@4354",
+      "screenshot": "",
+      "state": "help-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@4385",
+      "screenshot": "",
+      "state": "win-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@4439",
+      "screenshot": "",
+      "state": "retry-1920x1080",
+      "window": "(1920, 1080)"
+    },
+    {
+      "controls": 5,
+      "focus": "StartTraining",
+      "screenshot": "",
+      "state": "home-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 16,
+      "focus": "Course6",
+      "screenshot": "",
+      "state": "courses-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 12,
+      "focus": "@Button@4737",
+      "screenshot": "",
+      "state": "fingering-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 14,
+      "focus": "Mission_fighter",
+      "screenshot": "",
+      "state": "training-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 15,
+      "focus": "Mission_fighter",
+      "screenshot": "",
+      "state": "training-bottom-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 12,
+      "focus": "ChallengeText",
+      "screenshot": "",
+      "state": "challenge-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "VocabularyTopic",
+      "screenshot": "",
+      "state": "vocabulary-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 10,
+      "focus": "MusicVolume",
+      "screenshot": "",
+      "state": "settings-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 10,
+      "focus": "MusicVolume",
+      "screenshot": "",
+      "state": "practice-keys-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 3,
+      "focus": "@TextEdit@5515",
+      "screenshot": "",
+      "state": "import-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 3,
+      "focus": "@TextEdit@5515",
+      "screenshot": "",
+      "state": "import-error-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "dojo-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "bubbles-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "rain-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "sprint-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 14,
+      "focus": "@Button@5634",
+      "screenshot": "",
+      "state": "castle-build-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "castle-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "balloons-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "aliens-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "moles-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "racing-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "",
+      "screenshot": "",
+      "state": "fighter-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@5803",
+      "screenshot": "",
+      "state": "pause-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 1,
+      "focus": "@Button@5820",
+      "screenshot": "",
+      "state": "help-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@5851",
+      "screenshot": "",
+      "state": "win-1920x800",
+      "window": "(1920, 800)"
+    },
+    {
+      "controls": 2,
+      "focus": "@Button@5905",
+      "screenshot": "",
+      "state": "retry-1920x800",
+      "window": "(1920, 800)"
+    }
+  ]
+}

@@ -454,7 +454,8 @@ func draw_top_status() -> void:
 	panel(Rect2(16,14,1008,44),Color(.81,.93,.95,.95),14,Color("c8dcb8"))
 	var text_value := battle.banner if banner_time>0 or battle.phase=="build" else "誓光林地 / 守住六波进攻"
 	write(text_value,Vector2(34,43),19,GOLD)
-	write("准备阶段 · 点击基座建塔" if battle.phase=="build" else "敌军  %02d / %02d" % [battle.spawned,CastleRun.WAVE_COUNTS[battle.wave-1]],Vector2(740,42),16,MINT)
+	if battle.phase!="build":
+		write("敌军  %02d / %02d" % [battle.spawned,CastleRun.WAVE_COUNTS[battle.wave-1]],Vector2(820,42),18,MINT)
 	for target in battle.targets:
 		if target.kind == "boss":
 			panel(Rect2(260,64,520,40),Color("fff3e5"),12,Color("e0c7a9"))

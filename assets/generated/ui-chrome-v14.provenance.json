@@ -1,0 +1,40 @@
+{
+  "generator": "built-in image_gen",
+  "date": "2026-10-20",
+  "panel_source": "ui-panel-source-v14.png",
+  "panel_original_size": [
+    1254,
+    1254
+  ],
+  "runtime_panel": "ui-panel-v14.png",
+  "normalization": "Lanczos resize to 256 square for fixed-width nine-slice bevel; original preserved",
+  "prompt": "Single empty square pale seafoam enameled panel, thin aqua frame, top-left highlight, quiet center, four restrained corner stars, true alpha, no baked text",
+  "role": "Godot StyleBoxTexture panel skin; text/focus remain native",
+  "button": {
+    "source": "ui-button-source-v14.png",
+    "original_size": [
+      2172,
+      724
+    ],
+    "alpha_bbox": [
+      29,
+      136,
+      2141,
+      562
+    ],
+    "runtime": "ui-button-gold-v14.png",
+    "runtime_size": [
+      317,
+      64
+    ],
+    "normalization": "Alpha>=16 visual bounding box crop excluding imperceptible alpha speckles; Lanczos resize to 64px height",
+    "prompt": "One empty wide honey gold enameled button, original American cartoon adventure art, broad top-left highlight, restrained lower lip, true alpha, no text"
+  },
+  "full_panel_prompt": "Use case: stylized-concept. Production game UI sprite, one single empty square panel surface on genuine transparent background. Premium original American cartoon children's keyboard adventure, bright relaxed pastel, hand-painted clean large forms, toy-like enameled mint/aqua painted frame and soft pale seafoam blue-green interior (not white). Strict front orthographic view. Panel occupies 94 percent of square canvas with rounded chamfered corners, thin 3 percent canvas-width beveled frame, top-left broad soft highlight and restrained lower shadow. Quiet smooth nearly uniform center occupies 84 percent width and height for code-native text. One tiny restrained engraved four-point star in each corner of frame, no other decoration. Four edges must be straight and uniform through their middle 70 percent so nine-slice stretching is seamless. Light, refined, NOT chunky dark medieval stone or gold filigree. ONE object only. No letters, no text, no icons in center, no mockup, no scene, no characters, no checkerboard, no watermark. Render crisp at 1024 square with alpha; keep all edges inside canvas.",
+  "full_button_prompt": "Use case: stylized-concept. Production game UI sprite: ONE empty wide horizontal rounded lozenge rectangular primary action button, front orthographic view, on genuine transparent background. Original premium American cartoon children's adventure art. Soft warm golden honey enameled painted surface, clean broad forms, top-left warm cream rim highlight, gentle convex center, warm amber thin bevel, restrained 3D bottom lip no taller than 6 percent of button height. Bright relaxed playful color, professional high quality hand-painted game HUD finish matching a pale mint/aqua enameled panel. The button width to height ratio about 4.5 to 1, centered with narrow transparent padding. Corners rounded/chamfered about 20 percent height. Center 75 percent completely clear for native code text. Straight smooth edges through middle 70 percent for nine-slice stretching. No jewel, no ornament, NO letters or symbols, no text, no scene, no character, no UI mockup, no shadows far outside button, no checkerboard. One single object only; high resolution crisp alpha edges.",
+  "secondary_button": {
+    "path": "../ui-button-blue-v14.svg",
+    "source": "Original code-native SVG, authored in project",
+    "role": "Companion blue enamel button, gradient and highlight following top-left light"
+  }
+}

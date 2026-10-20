@@ -185,7 +185,7 @@ func prepare_prompts() -> void:
 	var actors: Array[Rect2] = []
 	var blocked: Array[Rect2] = []
 	if run.mode in ["aliens","fighter"]:
-		blocked.append(Rect2(20,18,570,48))
+		blocked.append(Rect2(20,18,220,48))
 	if run.mode=="fighter":
 		actors.assign([Rect2(240,270,240,300),Rect2(575,270,245,300)])
 		blocked.append(Rect2(50,105,380,65))
@@ -299,11 +299,9 @@ func sprite_pose(id: String, center: Vector2, bounds: Vector2, angle: float, str
 	art.draw_sprite(self,id,Vector2.ZERO,bounds)
 	draw_set_transform(world_offset)
 
-func banner(title: String, subtitle: String) -> void:
-	panel(Rect2(20,18,570,48),Color(.81,.93,.95,.95),16)
-	draw_circle(Vector2(40,42),5,MINT)
-	write(title,Vector2(54,49),21,INK)
-	write(subtitle,Vector2(227,48),14,PlayTheme.MUTED)
+func banner(title: String, _subtitle: String) -> void:
+	panel(Rect2(20,18,220,48),Color(.81,.93,.95,.95),16)
+	write(title,Vector2(36,50),24,INK)
 
 func motion_sprite(state: String, seconds: float, center: Vector2, bounds: Vector2, tint := Color.WHITE, angle := 0.0, stretch := Vector2.ONE) -> bool:
 	var texture := motion.texture(state,seconds,reduced_motion)
@@ -316,9 +314,9 @@ func motion_sprite(state: String, seconds: float, center: Vector2, bounds: Vecto
 
 func draw_generated_game() -> void:
 	if run.mode=="aliens":
-		banner("外星来袭", "第 %d 阵" % mini(run.wave,4))
+		banner("第 %d 阵" % mini(run.wave,4), "")
 	elif run.mode=="fighter":
-		banner("对手", "第 %d 位" % run.round_number)
+		banner("第 %d 位对手" % run.round_number, "")
 	if run.mode == "moles":
 		for i in range(6):
 			var hole := Vector2(240+(i%3)*280,326+(i/3)*170)
@@ -396,8 +394,9 @@ func draw_generated_game() -> void:
 		write("你  %d%%" % roundi(run.distance*100),player-Vector2(33,50),17,MINT)
 		panel(Rect2(rival-Vector2(52,71),Vector2(104,29)),Color("deedf5"),9)
 		write("陪练车" if run.context=="training" else "对手",rival-Vector2(29,50),17,CORAL)
-		panel(Rect2(330,204,380,44),Color(.81,.93,.95,.95),12)
-		write("三连击 · 氮气加速" if run.boost>0 and run.combo>=3 else "连续输入为赛车充能",Vector2(520,234),22,GOLD,true)
+		if run.correct==0 or (run.boost>0 and run.combo>=3):
+			panel(Rect2(330,204,380,44),Color(.81,.93,.95,.95),12)
+			write("氮气加速！" if run.boost>0 and run.combo>=3 else "输入，让赛车前进",Vector2(520,234),22,GOLD,true)
 	elif run.mode == "fighter":
 		var punch := 0.0 if reduced_motion else sin(clampf(strike/0.5,0,1)*PI)
 		var left := Vector2(350,440)+Vector2(punch*(0 if last_impact=="block" else -32 if last_impact=="miss" else 72),-punch*6)

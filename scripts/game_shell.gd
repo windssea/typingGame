@@ -7,6 +7,7 @@ var actions: HBoxContainer
 var field: Control
 var sidebar: VBoxContainer
 var dock: Control
+var wide_stage := false
 
 func _init() -> void:
 	name = "GameShell"
@@ -31,12 +32,13 @@ func _ready() -> void:
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	field = Control.new()
 	field.name = "PlayfieldSlot"
-	field.custom_minimum_size = Vector2(1040,650)
+	field.custom_minimum_size = Vector2(1360 if wide_stage else 1040,650)
 	field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(field)
 	sidebar = UiLayout.column(body,0)
 	sidebar.name = "AssistantSlot"
 	sidebar.custom_minimum_size.x = 300
+	sidebar.visible = not wide_stage
 	UiLayout.space(stack,10)
 	dock = Control.new()
 	dock.custom_minimum_size.y = 108

@@ -28,6 +28,7 @@ var impact_age := 1.0
 var impact_tier := 1
 var impact_point := Vector2.ZERO
 var backdrop: TextureRect
+var backdrop_external := false
 var coach_motion := ArcadeMotion.new()
 var coach_age := -1.0
 const BREEZE = preload("res://shaders/scene_breeze.gdshader")
@@ -49,7 +50,8 @@ func setup_backdrop(texture: Texture2D) -> void:
 
 func draw_scene_background() -> void:
 	if is_instance_valid(backdrop):
-		backdrop.size = size
+		if not backdrop_external:
+			backdrop.size = size
 		backdrop.material.set_shader_parameter("clock",clock)
 
 func layout_labels(candidates: Array[Dictionary], actors: Array[Rect2], blocked: Array[Rect2] = []) -> void:
@@ -90,7 +92,7 @@ func draw_target_labels() -> void:
 		var edge := Color("bb6256") if active and error_pulse>0 else PlayTheme.PRIMARY if active else Color("afc9d4")
 		if active:
 			draw_style_box(PlayTheme.surface(Color(.24,.58,.82,.18),Color.TRANSPARENT,16),rect.grow(5))
-		draw_style_box(PlayTheme.game_panel(Color("dcedfa") if active else Color("f5e4ba"),edge,12,4),rect)
+		draw_style_box(PlayTheme.game_panel(Color("fff0bd") if active else Color("e3edf2"),Color("cf9e44") if active and error_pulse<=0 else edge,14,4),rect)
 		TypingPrompt.paint(self,target.word,target.typed,rect,label_layouts[target.id],active,active and error_pulse>0)
 		if target.has("health"):
 			var fraction: float = clampf(float(target.health)/target.max_health,0,1)
@@ -422,7 +424,6 @@ func draw_dojo() -> void:
 	write("SPACE",Vector2(700,628),15,INK if next == " " else Color("405a77"),true)
 
 func draw_bubbles() -> void:
-	panel(Rect2(420,533,520,65),Color(.8,.94,.9,.92),16)
 	for i in range(20):
 		var p := Vector2(70+fmod(i*173,1230),150+fmod(i*97,440))
 		draw_circle(p,3+(i%5),Color(0.5,0.8,0.8,0.08))
@@ -442,7 +443,7 @@ func draw_bubbles() -> void:
 		draw_circle(p,radius,Color(0.4,0.8,0.75,0.08))
 		prompts.append({"target":target,"center":target.position-Vector2(0,112),"source":p-Vector2(0,68)})
 		actors.append(Rect2(p-Vector2(60,60),Vector2(120,120)))
-	layout_labels(prompts,actors,[Rect2(420,533,520,65)])
+	layout_labels(prompts,actors)
 	for effect in effects:
 		var t: float = 1-effect.life/0.55
 		draw_arc(effect.to,75+t*35,0,TAU,40,Color(0.6,0.9,0.8,1-t),2,true)
@@ -451,16 +452,12 @@ func draw_bubbles() -> void:
 				var angle := i*TAU/10
 				var drop: Vector2 = effect.to+Vector2.from_angle(angle)*(45+t*95)+Vector2(0,t*t*30)
 				draw_circle(drop,(1-t)*6,Color(0.35,0.75,0.85,1-t))
-	for i in range(18):
-		draw_circle(Vector2(450+i*27,505),6,PlayTheme.MINT if i<run.kills else Color(0.5,0.7,0.8,0.2))
 	draw_key_beats()
-	write("%d / 18  个泡泡已点亮" % run.kills,Vector2(680,575),25,GOLD,true)
 
 func draw_sprint() -> void:
 	panel(Rect2(275,25,810,595),Color(.81,.92,.95,.9),30)
 	art.draw_sprite(self,"stopwatch",Vector2(410,141),Vector2(100,105))
 	art.draw_sprite(self,"trophy",Vector2(947,142),Vector2(100,105))
-	write("极 速 60 秒",Vector2(680,64),24,MINT,true)
 	var remaining := maxf(0,60-run.elapsed)
 	write("%02d" % ceili(remaining),Vector2(680,185),64,GOLD,true)
 	var speed_fraction := clampf(displayed_wpm/60.0,0,1)
@@ -472,8 +469,7 @@ func draw_sprint() -> void:
 	draw_line(Vector2(300,219),Vector2(300+760*remaining/60,219),MINT,6,true)
 	if not run.targets.is_empty():
 		var target: Dictionary = run.targets[0]
-		training_word(target,Vector2(680,350),58,700)
-		write("接下来输入："+str(target.word).substr(target.typed,1),Vector2(680,415),22,MINT,true)
+		training_word(target,Vector2(680,365),112 if str(target.word).length()==1 else 76,740)
 	# Per-character motion on a miniature track; the text itself stays fixed.
 	var track_y := 507.0
 	draw_line(Vector2(327,track_y),Vector2(1033,track_y),Color("ddeaf3"),4,true)
@@ -482,6 +478,4 @@ func draw_sprint() -> void:
 	var frame := coach_motion.texture("run",clock,reduced_motion)
 	if frame!=null:
 		draw_texture_rect(frame,Rect2(runner-Vector2(73,122),Vector2(146,146)),false)
-	for i in range(5):
-		write(str(i*5),Vector2(340+i*170,541),13,PlayTheme.MUTED,true)
-	write("已完成 %d 个目标   /   %.1f WPM" % [run.kills,run.wpm()],Vector2(680,563),23,GOLD,true)
+	write("%d 次完成" % run.kills,Vector2(680,575),25,MINT,true)

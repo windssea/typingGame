@@ -54,10 +54,10 @@ func exercise() -> void:
 		await process_frame
 		if app.run.paused:
 			app.toggle_pause()
-		check(app.run is ArcadeRun and is_instance_valid(app.typing_guide),"mode and live coach integrated: "+mode)
+		check(app.run is ArcadeRun and app.typing_guide==null and app.layer.find_child("InputDock",true,false)!=null,"mode exposes a compact finger cue instead of a permanent guide: "+mode)
 		var word: String = app.run.targets[0].word
 		await key(word[0])
-		check(app.run.correct==1 and app.typing_guide.current==word[1],"typing advances target and live next-finger cue: "+mode)
+		check(app.run.correct==1 and str(app.run.recommended_target().word).substr(app.run.recommended_target().typed,1)==word[1],"typing advances target and live next-finger cue: "+mode)
 		for character in word.substr(1):
 			await key(character)
 		check(app.run.kills==1,"actual key events complete one target: "+mode)

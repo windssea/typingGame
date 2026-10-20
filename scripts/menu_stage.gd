@@ -25,7 +25,8 @@ func _draw() -> void:
 		draw_circle(Vector2(160,750),430,Color("dcf0d4"))
 		draw_circle(Vector2(1330,730),420,Color("dceef9"))
 	if not home and not settings_room:
-		draw_style_box(PlayTheme.surface(Color(.77,.9,.93,.91),Color(.6,.8,.85,.35),32),Rect2(270,18,1148,864))
+		# A quiet wash lets the actual illustration remain visible; individual controls own their framing.
+		draw_style_box(PlayTheme.surface(Color(.8,.93,.89,.88),Color.TRANSPARENT,32),Rect2(270,18,1148,864))
 		draw_rect(Rect2(0,0,260,900),Color(.75,.89,.82,.45))
 	if settings_room:
 		draw_rect(Rect2(0,0,260,900),Color(.75,.89,.82,.9))

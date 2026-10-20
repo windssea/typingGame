@@ -47,7 +47,12 @@ static func card(parent: Control, tint := PlayTheme.SURFACE) -> PanelContainer:
 	parent.add_child(node)
 	return node
 
-static func illustrate(parent: PanelContainer, path: String, tint: Color) -> void:
+static func framed(parent: Control, tint := PlayTheme.SURFACE) -> PanelContainer:
+	var node := card(parent,tint)
+	node.add_theme_stylebox_override("panel",PlayTheme.decorated_panel(tint))
+	return node
+
+static func illustrate(parent: PanelContainer, path: String, tint: Color, shelf_start := .40, shelf_end := .70) -> void:
 	var art := TextureRect.new()
 	art.texture = load(path)
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -56,6 +61,8 @@ static func illustrate(parent: PanelContainer, path: String, tint: Color) -> voi
 	var material := ShaderMaterial.new()
 	material.shader = preload("res://shaders/ui_scene.gdshader")
 	material.set_shader_parameter("tint",tint)
+	material.set_shader_parameter("shelf_start",shelf_start)
+	material.set_shader_parameter("shelf_end",shelf_end)
 	art.material = material
 	parent.add_child(art)
 	parent.move_child(art,0)
