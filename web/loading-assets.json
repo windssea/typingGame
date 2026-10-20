@@ -1,0 +1,47 @@
+{
+  "format": "static WebP frame atlases; 24 fps playback, no interpolation",
+  "assets": [
+    {
+      "file": "loading-scene-v191.webp",
+      "source": "assets/generated/academy-lobby-v10.png",
+      "bytes": 135136,
+      "source_sha256": "882c081c484042674d588565cc4d768015587802b624cd87dbd4d03eb7435b15",
+      "first_frame_crop": false
+    },
+    {
+      "file": "loading-cloud-v191.webp",
+      "source": "assets/generated/v18/cloud.png",
+      "bytes": 27360,
+      "source_sha256": "96841e6e0447f0545ab97dc9f2cd1cffc1e48647dd424e55e323aa8bb3c62c6c",
+      "first_frame_crop": false
+    },
+    {
+      "file": "loading-robot-v191.webp",
+      "source": "assets/animations/robot-v18/idle-atlas.png",
+      "bytes": 327506,
+      "source_sha256": "69a0287c8b4b4a94ab2b96521e1cbddca1b6c02c738dd31c998489cbfe30e397",
+      "first_frame_crop": false
+    },
+    {
+      "file": "loading-knight-v191.webp",
+      "source": "assets/animations/knight-v18/idle-atlas.png",
+      "bytes": 563618,
+      "source_sha256": "3a212c1ee31f99e05d26b837127fbdd123f46e14d8fb287de97a2c2fdf2cbe4c",
+      "first_frame_crop": false
+    },
+    {
+      "file": "loading-robot-pose-v191.webp",
+      "source": "assets/animations/robot-v18/idle-atlas.png",
+      "bytes": 7262,
+      "source_sha256": "69a0287c8b4b4a94ab2b96521e1cbddca1b6c02c738dd31c998489cbfe30e397",
+      "first_frame_crop": true
+    },
+    {
+      "file": "loading-knight-pose-v191.webp",
+      "source": "assets/animations/knight-v18/idle-atlas.png",
+      "bytes": 11916,
+      "source_sha256": "3a212c1ee31f99e05d26b837127fbdd123f46e14d8fb287de97a2c2fdf2cbe4c",
+      "first_frame_crop": true
+    }
+  ]
+}

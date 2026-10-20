@@ -1,0 +1,72 @@
+/* Standalone loading scene. Explicitly reset the Godot shell's absolute progress layout. */
+body { background:#9ad7e7; color:#fff8dd; }
+#status.keybound-loading {
+ position:fixed; inset:0; box-sizing:border-box; isolation:isolate; overflow:hidden;
+ display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr) auto; justify-items:center; align-items:center;
+ gap:16px; padding:clamp(18px,4vh,44px) max(24px,env(safe-area-inset-left)) max(36px,11vh,env(safe-area-inset-bottom));
+ background:#80c7e4 url('./loading-scene-v191.webp') center/cover no-repeat;
+ font-family:ui-rounded,'Microsoft YaHei','PingFang SC',system-ui,sans-serif;
+}
+#status::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none;
+ background:linear-gradient(180deg,rgba(22,74,108,.02) 25%,rgba(24,78,86,.04) 52%,rgba(9,51,64,.46)); }
+#status-splash { display:none !important; }
+.loading-hero { position:relative; width:min(760px,100%); align-self:center; padding-top:clamp(0px,4vh,40px); }
+.loading-brand { text-align:center; position:relative; z-index:2; }
+#loading-title { margin:0; font-size:clamp(44px,6.6vw,82px); font-weight:900; line-height:1.2; letter-spacing:.045em;
+ color:#fff2be; text-shadow:0 3px 0 #2f6779,0 6px 0 rgba(32,74,93,.55),0 12px 26px rgba(17,70,100,.25); }
+.loading-emblem { display:block; font-size:30px; color:#ffe098; line-height:1.3; text-shadow:0 0 24px #fff8c7; animation:emblem-breathe 3s ease-in-out infinite; }
+.loading-party { display:grid; grid-template-columns:1fr 70px 1fr; align-items:end; max-width:660px; margin:8px auto 0; }
+.loading-actor { appearance:none; border:0; padding:0; background:none; cursor:pointer; position:relative; width:clamp(140px,21vw,260px); aspect-ratio:1;
+ justify-self:center; color:#fdf0b9; -webkit-tap-highlight-color:transparent; }
+.loading-actor:focus-visible { outline:3px solid #fff5b9; outline-offset:4px; border-radius:35%; }
+.actor-sprite { display:block; position:absolute; inset:0; background-repeat:no-repeat; background-size:100% 100%; filter:drop-shadow(0 8px 5px rgba(22,57,73,.2)); }
+.loading-robot .actor-sprite { background-image:url('./loading-robot-pose-v191.webp'); }
+.loading-knight .actor-sprite { background-image:url('./loading-knight-pose-v191.webp'); }
+.loading-robot.has-motion .actor-sprite { background-image:url('./loading-robot-v191.webp'); background-size:800% 500%; }
+.loading-knight.has-motion .actor-sprite { background-image:url('./loading-knight-v191.webp'); background-size:800% 600%; }
+.actor-shadow { position:absolute; bottom:4%; left:24%; width:52%; height:8%; background:radial-gradient(ellipse,rgba(20,67,76,.24),transparent 70%); }
+.loading-actor kbd { position:absolute; right:9%; bottom:8%; display:grid; place-items:center; width:35px; height:35px; border:2px solid #fff7cd; border-radius:10px;
+ background:linear-gradient(#fff4c8,#f9c558); box-shadow:0 3px 0 #ae843a,0 5px 12px #315e7440; color:#52616e; font-family:inherit; font-weight:800; font-size:20px; line-height:1; }
+.loading-actor.is-greeting .actor-sprite { animation:character-greet .52s cubic-bezier(.2,.8,.2,1); }
+.loading-actor.is-greeting kbd { transform:translateY(3px); box-shadow:0 1px 0 #ae843a; }
+.loading-magic { position:relative; align-self:center; text-align:center; margin-top:36px; color:#fff6be; font-size:48px; text-shadow:0 0 26px #f2e8a3; }
+.loading-magic>span { display:block; animation:magic-float 3.5s ease-in-out infinite; }
+.loading-magic i { position:absolute; width:5px; height:5px; background:#fff2b0; border-radius:50%; animation:magic-mote 2.6s ease-out infinite; bottom:10px; left:25%; }
+.loading-magic i:nth-child(3) { left:65%; animation-delay:-1s; }.loading-magic i:nth-child(4) { left:45%; animation-delay:-1.8s; }
+.loading-content { width:min(460px,100%); position:relative; z-index:3; display:grid; gap:13px; }
+.loading-info { display:flex; justify-content:space-between; align-items:baseline; gap:16px; color:#fff8dc; text-shadow:0 2px 8px rgba(16,56,70,.55); }
+#loading-caption { position:static; margin:0; font-size:clamp(17px,2vw,21px); line-height:1.4; font-weight:750; }
+#loading-percent { font-size:19px; font-weight:800; font-variant-numeric:tabular-nums; }
+#status-progress { appearance:none; -webkit-appearance:none; position:static; inset:auto; box-sizing:border-box; width:100%; height:18px; margin:0; padding:0;
+ border:2px solid #fff1c2; border-radius:999px; overflow:hidden; background:rgba(16,70,85,.6); box-shadow:0 3px 0 rgba(29,75,87,.35),inset 0 2px 4px #0e394c66; }
+#status-progress::-webkit-progress-bar { background:transparent; border-radius:999px; }
+#status-progress::-webkit-progress-value { background:linear-gradient(180deg,#fff6c4 0%,#ffe698 35%,#ffc65c 65%,#efac3d 100%); border-radius:999px; box-shadow:0 0 14px #ffe3a4a0; }
+#status-progress::-moz-progress-bar { background:linear-gradient(#fff1bc,#ffc65c); border-radius:999px; }
+#status-progress:not([value]) { background:linear-gradient(90deg,#194e63 20%,#75c6d0 45%,#194e63 70%); background-size:220% 100%; animation:progress-search 2s linear infinite; }
+#status-notice { position:static; margin:0; padding:15px 18px; border:1px solid #a8d6db; border-radius:14px; background:rgba(21,68,86,.9); color:#fff6d9;
+ font-family:inherit; font-weight:600; font-size:16px; line-height:1.6; text-align:center; overflow-wrap:anywhere; }
+#loading-retry { justify-self:center; border:2px solid #fff1bb; border-radius:999px; padding:12px 30px; color:#544b32; background:linear-gradient(#ffeeb5,#ffc24e);
+ font-family:inherit; font-weight:800; font-size:18px; line-height:1.3; cursor:pointer; box-shadow:0 4px 0 #8e702e; }
+#loading-retry:focus-visible { outline:3px solid #e6ffff; outline-offset:5px; }
+#loading-retry kbd { margin-left:14px; font-family:inherit; font-weight:700; font-size:13px; line-height:1; opacity:.75; }
+#loading-retry[hidden] { display:none; }
+.loading-cloud { position:absolute; z-index:-1; pointer-events:none; width:clamp(260px,46vw,700px); height:240px; opacity:.24;
+ background:url('./loading-cloud-v191.webp') center/contain no-repeat; animation:cloud-drift 24s ease-in-out infinite alternate; }
+.loading-cloud-back { top:6%; left:-15%; }.loading-cloud-front { top:30%; right:-20%; animation-delay:-11s; opacity:.18; }
+.loading-sparkles { position:absolute; inset:0; z-index:-1; pointer-events:none; }
+.loading-sparkles i { position:absolute; width:4px; height:4px; border-radius:50%; background:#fff6be; box-shadow:0 0 10px #fff0a3; animation:sparkle-drift 5s ease-in-out infinite; }
+.loading-sparkles i:nth-child(1) { left:15%; top:29%; }.loading-sparkles i:nth-child(2) { left:30%; top:65%; animation-delay:-2s; }
+.loading-sparkles i:nth-child(3) { left:72%; top:22%; animation-delay:-4s; }.loading-sparkles i:nth-child(4) { left:84%; top:56%; animation-delay:-1s; }
+.loading-sparkles i:nth-child(5) { left:43%; top:42%; animation-delay:-3s; }.loading-sparkles i:nth-child(6) { left:63%; top:60%; animation-delay:-2.5s; }
+.loading-sparkles i:nth-child(7) { left:24%; top:48%; animation-delay:-4.5s; }.loading-sparkles i:nth-child(8) { left:78%; top:72%; animation-delay:-1.5s; }
+@keyframes character-greet { 0%,100% { transform:translateY(0) rotate(0); } 35% { transform:translateY(-20px) rotate(-6deg); } 70% { transform:translateY(-5px) rotate(4deg); } }
+@keyframes emblem-breathe { 50% { opacity:.65; transform:scale(.85); } }
+@keyframes magic-float { 50% { transform:translateY(-10px) rotate(15deg); } }
+@keyframes magic-mote { from { opacity:0; transform:translateY(5px); } 25% { opacity:.8; } to { opacity:0; transform:translateY(-58px); } }
+@keyframes cloud-drift { to { transform:translateX(90px); } }
+@keyframes sparkle-drift { 0%,100% { opacity:.05; transform:translateY(10px) scale(.6); } 50% { opacity:.8; transform:translateY(-16px) scale(1); } }
+@keyframes progress-search { to { background-position:-220% 0; } }
+@media (max-height:600px) { #status.keybound-loading { padding-top:12px; padding-bottom:24px; gap:8px; } .loading-hero { padding-top:0; } #loading-title { font-size:clamp(40px,6vw,64px); } .loading-emblem { font-size:20px; } .loading-party { margin-top:0; }.loading-actor { width:clamp(120px,27vh,190px); } }
+@media (max-height:600px) { #status[data-state="error"] .loading-party { display:none; } }
+@media (max-width:480px) { #status.keybound-loading { padding-inline:24px; padding-bottom:max(36px,9vh,env(safe-area-inset-bottom)); } .loading-party { grid-template-columns:1fr 34px 1fr; margin-inline:-12px; } .loading-magic { font-size:32px; } .loading-actor { width:clamp(120px,40vw,180px); } .loading-actor kbd { width:28px; height:28px; font-size:17px; } .loading-content { gap:11px; } }
+@media (prefers-reduced-motion:reduce) { #status *,#status *::before,#status *::after { animation:none !important; transition:none !important; } }

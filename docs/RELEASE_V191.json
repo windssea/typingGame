@@ -1,0 +1,57 @@
+{
+  "version": "1.9.1",
+  "date": "2026-10-20",
+  "url": "https://typing.nanokid.win/?release=v191",
+  "pages_preview": "https://1d0078f5.typinggame-cl5.pages.dev",
+  "type": "Pages loading-shell update; existing WASM/PCK reused",
+  "game_assets": [
+    {
+      "key": "keybound/engine-fc74679e3b97f7687894.wasm",
+      "content_type": "application/wasm",
+      "content_encoding": "gzip",
+      "cache_control": "public, max-age=31536000, immutable",
+      "raw_bytes": 39514754,
+      "upload_bytes": 10054758,
+      "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+    },
+    {
+      "key": "keybound/game-991b1228c1bf36795e4d.pck",
+      "content_type": "application/octet-stream",
+      "content_encoding": "gzip",
+      "cache_control": "public, max-age=31536000, immutable",
+      "raw_bytes": 125776632,
+      "upload_bytes": 125013947,
+      "sha256": "991b1228c1bf36795e4dd11c9c8b6e258463364c7b0f0249b5f33b1f65d7f5b1"
+    }
+  ],
+  "loader_art_bytes": 1072798,
+  "validation": {
+    "automated_tests": 5,
+    "layout_sizes": [
+      [
+        375,
+        667
+      ],
+      [
+        1280,
+        720
+      ],
+      [
+        1376,
+        1032
+      ],
+      [
+        1920,
+        1080
+      ]
+    ],
+    "short_error_size": [
+      768,
+      360
+    ],
+    "center_error_px": 0,
+    "public_started": true,
+    "public_console_errors": 0,
+    "normal_profile_preserved": true
+  }
+}
