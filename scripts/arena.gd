@@ -19,6 +19,8 @@ var input_point := Vector2.ZERO
 var recent_key := ""
 var key_beats: Array[Dictionary] = []
 var displayed_wpm := 0.0
+var sprint_steps := 0.0
+var sprint_running := false
 var world_offset := Vector2.ZERO
 var cannon_x := 680.0
 var label_rects: Dictionary = {}
@@ -168,7 +170,7 @@ func _ready() -> void:
 		juice.reduced_motion = reduced_motion
 		run.key_feedback.connect(on_key_feedback)
 		run.spell.connect(func(a, b, lightning):
-			var point: Vector2 = Vector2(1020,300) if run.mode=="dojo" else Vector2(340+680*fposmod(run.correct,20)/20,496) if run.mode=="sprint" else b
+			var point: Vector2 = Vector2(1020,300) if run.mode=="dojo" else Vector2(sprint_runner_x(),586) if run.mode=="sprint" else b
 			var origin: Vector2 = Vector2(cannon_x+24,544) if run.mode=="rain" else a
 			effects.append({"from":origin,"to":point,"lightning":lightning,"life":0.55})
 			juice.burst(point,PlayTheme.SKY if run.mode in ["bubbles","rain"] else PlayTheme.YELLOW,2 if lightning else 1,{"bubbles":"droplet","rain":"ember","dojo":"confetti","sprint":"speed"}.get(run.mode,"spark"))
@@ -187,6 +189,10 @@ func _process(delta: float) -> void:
 				coach_age += delta
 				if coach_age>=coach_motion.duration("cheer"):
 					coach_age = -1
+		if run!=null and run.mode=="sprint":
+			var previous := sprint_steps
+			sprint_steps = float(run.correct) if reduced_motion else move_toward(sprint_steps,float(run.correct),delta*maxf(6,(run.correct-sprint_steps)*12))
+			sprint_running = absf(sprint_steps-previous)>.0001
 		juice.step(delta)
 		for effect in effects.duplicate():
 			effect.life -= delta
@@ -232,7 +238,7 @@ func _draw() -> void:
 		draw_target_labels()
 		return
 	if run.mode == "sprint":
-		juice.protected_regions = [Rect2(300,275,760,145)]
+		juice.protected_regions = [Rect2(270,235,820,215),Rect2(620,125,120,95)]
 		draw_sprint()
 		juice.draw(self)
 		draw_impact()
@@ -461,28 +467,26 @@ func draw_bubbles() -> void:
 				draw_circle(drop,(1-t)*6,Color(0.35,0.75,0.85,1-t))
 	draw_key_beats()
 
+func sprint_runner_x() -> float:
+	return 150+fposmod(sprint_steps,40)/40.0*1060
+
 func draw_sprint() -> void:
-	panel(Rect2(275,25,810,595),Color(.81,.92,.95,.9),30)
-	art.draw_sprite(self,"stopwatch",Vector2(410,141),Vector2(100,105))
-	art.draw_sprite(self,"trophy",Vector2(947,142),Vector2(100,105))
+	# The painted stadium board is the actual display, rather than a second giant panel.
 	var remaining := maxf(0,60-run.elapsed)
-	write("%02d" % ceili(remaining),Vector2(680,185),64,GOLD,true)
-	var speed_fraction := clampf(displayed_wpm/60.0,0,1)
-	for i in range(24):
-		var angle := PI*0.8+i*PI*1.4/23
-		var point := Vector2(680,158)+Vector2.from_angle(angle)*78
-		draw_line(point,point+Vector2.from_angle(angle)*8,PlayTheme.TEAL if i/24.0<speed_fraction else Color("d5e6f0"),4,true)
-	draw_line(Vector2(300,219),Vector2(1060,219),Color("d5e1f1"),6,true)
-	draw_line(Vector2(300,219),Vector2(300+760*remaining/60,219),MINT,6,true)
+	write("%02d" % ceili(remaining),Vector2(680,203),54,INK,true)
+	SoftStroke.line(self,Vector2(355,438),Vector2(1005,438),Color("d7c89f"),5)
+	SoftStroke.line(self,Vector2(355,438),Vector2(355+650*remaining/60,438),PlayTheme.TEAL,5)
 	if not run.targets.is_empty():
 		var target: Dictionary = run.targets[0]
-		training_word(target,Vector2(680,365),112 if str(target.word).length()==1 else 76,740)
-	# Per-character motion on a miniature track; the text itself stays fixed.
-	var track_y := 507.0
-	draw_line(Vector2(327,track_y),Vector2(1033,track_y),Color("ddeaf3"),4,true)
-	var progress := fposmod(run.correct,20)/20.0
-	var runner := Vector2(340+680*progress,track_y-11)
-	var frame := coach_motion.texture("run",clock,reduced_motion)
+		var layout:=TypingPrompt.measure(target.word,810,112 if str(target.word).length()==1 else 82,36)
+		var rect:=Rect2(Vector2(680,342)-layout.size*.5,layout.size)
+		TypingPrompt.paint(self,target.word,target.typed,rect,layout,true,error_pulse>0)
+	var progress:=fposmod(sprint_steps,40)
+	var runner:=Vector2(sprint_runner_x(),579)
+	var opacity:=1.0 if sprint_steps<36 else minf(1,minf(progress/2.0,(40-progress)/2.0))
+	var state: String="run" if sprint_running else "cheer" if coach_age>=0 else "idle"
+	var frame:=coach_motion.texture(state,coach_age if state=="cheer" else clock,reduced_motion)
+	draw_ellipse_shadow(runner+Vector2(0,13),Vector2(37,8))
 	if frame!=null:
-		draw_texture_rect(frame,Rect2(runner-Vector2(73,122),Vector2(146,146)),false)
-	write("%d 次完成" % run.kills,Vector2(680,575),25,MINT,true)
+		draw_texture_rect(frame,Rect2(runner-Vector2(110,176),Vector2(220,220)),false,Color(1,1,1,opacity))
+	art.draw_sprite(self,"trophy",Vector2(1220,542),Vector2(72,90))

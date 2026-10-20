@@ -54,6 +54,7 @@ static func framed(parent: Control, tint := PlayTheme.SURFACE) -> PanelContainer
 
 static func illustrate(parent: PanelContainer, path: String, tint: Color, shelf_start := .40, shelf_end := .70) -> void:
 	var art := TextureRect.new()
+	art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	art.texture = load(path)
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED

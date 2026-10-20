@@ -356,6 +356,7 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String, 
 		var enter := button("进入挑战  →" if purpose=="challenge" else "开始训练  →",Vector2.ZERO,Vector2(0,46),func(): start_game(mode.id,purpose),false,content)
 		enter.name = "Mission_"+str(mode.id)
 		enter.focus_entered.connect(func():
+			GeneratedArt.warm_props(mode.id)
 			enter.theme_type_variation = "PrimaryButton"
 			mascot.reduced_motion = store.data.settings.reduced_motion)
 		enter.focus_exited.connect(func():

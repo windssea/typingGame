@@ -1,0 +1,165 @@
+{
+  "version": "1.7",
+  "provider": "built-in image_gen",
+  "assets": [
+    {
+      "id": "tower-fire",
+      "runtime": "assets/generated/v17/tower-fire.png",
+      "source": "docs/art-sources-v17/tower-fire-source.png",
+      "source_size": [
+        1213,
+        1296
+      ],
+      "runtime_size": [
+        512,
+        640
+      ],
+      "anchor": [
+        0.5,
+        0.975
+      ],
+      "alpha": "native preserved",
+      "camera": "intended orthographic downward view; visually reviewed in the actual arena",
+      "key_light": "upper left",
+      "mipmaps": true,
+      "sha256": "4a9323c3e5aa9cc3ac0f503705b3b085f563e1073c40010d86195532c694ce32",
+      "source_sha256": "69a2578147f95b4225d37feb25024f51d4fc64b5949faafed723ea1870d1df53",
+      "prompt": "Primary request: a friendly royal FIRE defense tower. A sturdy octagonal limestone drum, two sapphire blue enamel bands, gold corner braces, at the top a broad dark bronze brazier holding three broad sculpted orange fire tongues with a warm golden core. One simple original diamond-shaped copper vent on the front. Strong silhouette, actual functional brazier, flame contained close to tower, avoid giant glow. Use case: stylized-concept. Asset type: production 2D game building sprite, isolated cutout with genuine transparent alpha. A refined ORIGINAL American animated cartoon strategy game, premium hand-painted 3D-like illustration, chunky readable masses, chamfered edges, low frequency materials, broad designed highlights, warm daylight from upper left, subtle ambient contact shading. Orthographic three-quarter view looking down about 30 degrees, front facing camera. Warm ivory limestone, painted sapphire blue structural bands, restrained brushed warm gold fittings. Centered full building, same squat round octagonal base, footprint wide, height about 1.35 times width, ample transparent margin. No platform scene, no ground plane outside footprint, no cast shadow extending beyond sprite, no text, no letters, no fleur-de-lis, no crowns, no logos, no existing IP. Transparent background, no checkerboard. Crisp edges and carefully balanced material detail, readable at 128 pixels tall; not photorealistic, not pixel art, no heavy outlines.",
+      "status": "native alpha and in-engine review passed",
+      "generation_mode": "generate",
+      "input_reference": null
+    },
+    {
+      "id": "tower-ice",
+      "runtime": "assets/generated/v17/tower-ice.png",
+      "source": "docs/art-sources-v17/tower-ice-source.png",
+      "source_size": [
+        1145,
+        1374
+      ],
+      "runtime_size": [
+        512,
+        640
+      ],
+      "anchor": [
+        0.5,
+        0.975
+      ],
+      "alpha": "native preserved",
+      "camera": "intended orthographic downward view; visually reviewed in the actual arena",
+      "key_light": "upper left",
+      "mipmaps": true,
+      "sha256": "19ddfdd4e15c887569e5e111233b70439a836ee77e37ccd7782ca54467a248c5",
+      "source_sha256": "a5e053bf782014f6c71d75c3b98268e1abc0dbaf92fd279727bf26b255a1161f",
+      "prompt": "Primary request: a friendly royal ICE defense tower. A sturdy octagonal limestone drum, two sapphire blue enamel bands, gold corner braces, at the top three large pale cyan crystalline blades suspended in a protective gold fork; the central crystal is tallest. One simple original diamond-shaped icy blue vent on the front. Broad faceted translucent forms, small readable energy reservoir, no fine spiky snowflakes or giant glow. Use case: stylized-concept. Asset type: production 2D game building sprite, isolated cutout with genuine transparent alpha. A refined ORIGINAL American animated cartoon strategy game, premium hand-painted 3D-like illustration, chunky readable masses, chamfered edges, low frequency materials, broad designed highlights, warm daylight from upper left, subtle ambient contact shading. Orthographic three-quarter view looking down about 30 degrees, front facing camera. Warm ivory limestone, painted sapphire blue structural bands, restrained brushed warm gold fittings. Centered full building, same squat round octagonal base, footprint wide, height about 1.35 times width, ample transparent margin. No platform scene, no ground plane outside footprint, no cast shadow extending beyond sprite, no text, no letters, no fleur-de-lis, no crowns, no logos, no existing IP. Transparent background, no checkerboard. Crisp edges and carefully balanced material detail, readable at 128 pixels tall; not photorealistic, not pixel art, no heavy outlines.",
+      "status": "native alpha and in-engine review passed",
+      "generation_mode": "generate",
+      "input_reference": null
+    },
+    {
+      "id": "tower-storm",
+      "runtime": "assets/generated/v17/tower-storm.png",
+      "source": "docs/art-sources-v17/tower-storm-source.png",
+      "source_size": [
+        1079,
+        1458
+      ],
+      "runtime_size": [
+        512,
+        640
+      ],
+      "anchor": [
+        0.5,
+        0.975
+      ],
+      "alpha": "native preserved",
+      "camera": "intended orthographic downward view; visually reviewed in the actual arena",
+      "key_light": "upper left",
+      "mipmaps": true,
+      "sha256": "824f9c1b8e1aeae79f0746d48e0ef6f6859b75105513f3d9e9ca850c9547aa3e",
+      "source_sha256": "1ca27a9c38f6d70f261c2174ac03c60839a8858b129b6449489bb84a9d4627cd",
+      "prompt": "Primary request: a friendly royal LIGHTNING defense tower. A sturdy octagonal limestone drum, two sapphire blue enamel bands, gold corner braces; at the top a violet energy core held between two broad curved brass conductors and one small copper coil. One simple original diamond-shaped violet vent on the front. Readable electrical machinery silhouette, only a few clean violet energy arcs within its head, no huge glow. Use case: stylized-concept. Asset type: production 2D game building sprite, isolated cutout with genuine transparent alpha. A refined ORIGINAL American animated cartoon strategy game, premium hand-painted 3D-like illustration, chunky readable masses, chamfered edges, low frequency materials, broad designed highlights, warm daylight from upper left, subtle ambient contact shading. Orthographic three-quarter view looking down about 30 degrees, front facing camera. Warm ivory limestone, painted sapphire blue structural bands, restrained brushed warm gold fittings. Centered full building, same squat round octagonal base, footprint wide, height about 1.35 times width, ample transparent margin. No platform scene, no ground plane outside footprint, no cast shadow extending beyond sprite, no text, no letters, no fleur-de-lis, no crowns, no logos, no existing IP. Transparent background, no checkerboard. Crisp edges and carefully balanced material detail, readable at 128 pixels tall; not photorealistic, not pixel art, no heavy outlines.",
+      "status": "native alpha and in-engine review passed",
+      "generation_mode": "generate",
+      "input_reference": null
+    },
+    {
+      "id": "castle-field",
+      "runtime": "assets/generated/v17/castle-field.png",
+      "source": "docs/art-sources-v17/castle-field-source.png",
+      "source_size": [
+        1536,
+        1024
+      ],
+      "runtime_size": [
+        1536,
+        1024
+      ],
+      "anchor": null,
+      "alpha": "opaque",
+      "camera": "intended orthographic downward view; visually reviewed in the actual arena",
+      "key_light": "upper left",
+      "mipmaps": true,
+      "sha256": "95277569614377115c8e4e09b0048a741165f763dc35ec3017613ec957f228bd",
+      "source_sha256": "284a718050b2aacf9d7da3c68893d6b057db984aad23ab33a3ee95f6e707ad54",
+      "prompt": "Use case: precise-object-edit. Asset type: a runtime 2D battle ground layer. Edit the provided royal courtyard image. Remove ONLY the central blue-roof castle and its flags, people and rubble, replacing that area seamlessly with quiet short grass and a small warm packed-earth crossing. Also remove the four large circular training-lawn outlines; replace them with ordinary quiet short grass. Preserve the outer walls, corner towers, bridges, trees, water, peripheral props, existing warm light from upper left, camera angle, original illustration style and general diagonal paths. No new buildings, circles, glyphs, units, labels, text, UI or shadows of removed buildings. Leave the middle 75 percent open and calm for separately rendered dynamic castle, defense towers and moving enemies. Refined American animated cartoon game background, large forms, controlled detail, broad highlights, not photorealism. Retain the original wide 3:2 composition.",
+      "status": "native alpha and in-engine review passed",
+      "generation_mode": "edit",
+      "input_reference": "assets/worlds/royal-battlefield.png"
+    },
+    {
+      "id": "castle-keep",
+      "runtime": "assets/generated/v17/castle-keep.png",
+      "source": "docs/art-sources-v17/castle-keep-source.png",
+      "source_size": [
+        1457,
+        1080
+      ],
+      "runtime_size": [
+        640,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.96875
+      ],
+      "alpha": "native preserved",
+      "camera": "intended orthographic downward view; visually reviewed in the actual arena",
+      "key_light": "upper left",
+      "mipmaps": true,
+      "sha256": "94a93f0e920530603bd9e57c31ed91e49cbda4914f058d400344fa500cf12b0e",
+      "source_sha256": "21cadf82d902e623741a8d9ad23b29342fb0564504bc2667d54faa1fef06f630",
+      "prompt": "Use case: stylized-concept. Asset type: production 2D game castle sprite with genuine transparent alpha. A friendly ORIGINAL royal fantasy fortress headquarters for an American animated cartoon game. Refined chunky ivory limestone forms, blue enamel roof tiles, warm brass edges and very restrained banners with an original simple diamond mark. A squat wide fortified gatehouse with two shoulder towers and one slightly higher central blue pitched roof, substantial wooden front door. No crowns, no fleur-de-lis, no weapons, no people, no existing game IP. Orthographic three-quarter view looking down about 30 degrees, front oriented toward camera, same palette as ivory limestone defense towers with sapphire blue and gold. Large readable masses, clean bevels, broad soft highlights, warm upper-left key light, low-noise painted material, no photorealistic microtexture. Full object centered, footprint width about 1.35 times height, all flags and roof tips inside frame with generous transparent margin. No scenery or ground plane outside its small foundation footprint, no extended cast shadow, no text, no watermark. Crisp at 256 pixels wide. Transparent background, no checkerboard.",
+      "status": "native alpha and in-engine review passed",
+      "generation_mode": "generate",
+      "input_reference": null
+    },
+    {
+      "id": "tower-pad",
+      "runtime": "assets/generated/v17/tower-pad.png",
+      "source": "docs/art-sources-v17/tower-pad-source.png",
+      "source_size": [
+        1536,
+        1024
+      ],
+      "runtime_size": [
+        512,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.9375
+      ],
+      "alpha": "native preserved",
+      "camera": "intended orthographic downward view; visually reviewed in the actual arena",
+      "key_light": "upper left",
+      "mipmaps": true,
+      "sha256": "7523d58a7159d29f6b2578186e5581b1425427dbeee4e7a1cc6ecdb3150ff0b6",
+      "source_sha256": "a489bcbc7067cd174142605efac92634098cfe81ea4490bebd1f0bf01f0fce27",
+      "prompt": "Use case: stylized-concept. Asset type: production 2D building foundation sprite with genuine transparent alpha. An ORIGINAL round octagonal construction socket for an American animated cartoon royal strategy game. A low, broad warm ivory stone plinth, one sapphire blue inlaid ring around the outer chamfer, four small brass corner studs, clean flat sandstone top surface ready for a building. Deliberately empty middle, absolutely no plus sign, no icon, no text. Orthographic three-quarter view looking down about 30 degrees, front facing viewer, horizontal elliptical silhouette about twice as wide as tall. Broad designed highlights, warm upper-left daylight, soft ambient creases, a few large stones, low texture noise; match refined chunky cartoon castle towers, no heavy black outline or photorealism. Whole isolated object centered with generous transparent margins, no surrounding terrain or extra props, no extended shadow, transparent background no checkerboard, no logo.\n\nTargeted refinement: Use case: background-extraction. Edit target: the supplied royal stone building foundation. Keep the stone plinth itself completely unchanged: all stones, blue enamel ring, gold studs, perspective, proportions, upper-left light, painted material and exact object silhouette. Remove ALL surrounding brown smoky haze, ambient vignette, aura, backdrop, ground shadows and every pixel not belonging to the physical stone/metal plinth. Outside the actual object must be genuinely fully transparent alpha 0, right up to its antialiased silhouette. No soft broad glow or shadow around the plinth. No text, no other edits, no new marks. This cutout will be drawn directly on green grass, so there must be no brown rectangular/cloudy halo.",
+      "status": "native alpha and in-engine review passed",
+      "generation_mode": "edit",
+      "input_reference": "initial generated pad, refined with built-in background extraction"
+    }
+  ]
+}

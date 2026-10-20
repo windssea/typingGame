@@ -10,7 +10,6 @@ var enemy_reactions: Dictionary = {}
 var last_enemy_flash: Dictionary = {}
 var creature_clips: Dictionary = {}
 var defeat_ghosts: Array[Dictionary] = []
-const ROYAL_MAP = preload("res://assets/worlds/royal-battlefield.png")
 var guard_idle: SpriteFrames
 
 func _ready() -> void:
@@ -18,7 +17,7 @@ func _ready() -> void:
 	battle = run as CastleRun
 	guard_idle = load("res://assets/animations/royal-guard-idle-hd-v11/idle.tres")
 	art.setup("castle")
-	setup_backdrop(ROYAL_MAP)
+	setup_backdrop(art.background)
 	enemy_motion.setup("castle")
 	juice.reduced_motion = reduced_motion
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -111,8 +110,11 @@ func _draw() -> void:
 		return
 	world_offset = feel.offset()
 	var prompts: Array[Dictionary] = []
-	var actors: Array[Rect2] = [Rect2(CastleRun.KEEP-Vector2(110,145),Vector2(220,205))]
-	var blocked: Array[Rect2] = [Rect2(16,14,1008,44)]
+	var actors: Array[Rect2] = [Rect2(CastleRun.KEEP-Vector2(130,130),Vector2(260,220))]
+	var blocked: Array[Rect2] = []
+	if battle.phase=="assault" and banner_time>0: blocked.append(Rect2(16,14,320,38))
+	for tower in battle.towers:
+		actors.append(Rect2(CastleRun.PADS[tower.pad]-Vector2(78,164),Vector2(156,200)))
 	for target in battle.targets:
 		var boss: bool = target.kind=="boss"
 		prompts.append({"target":target,"center":target.position-Vector2(0,146 if boss else 94),"source":target.position-Vector2(0,27)})
@@ -122,17 +124,25 @@ func _draw() -> void:
 	layout_labels(prompts,actors,blocked)
 	draw_set_transform(world_offset)
 	draw_battlefield()
+	draw_build_range()
+	var ordered: Array[Dictionary] = [{"depth":CastleRun.KEEP.y+82,"type":"keep"},{"depth":CastleRun.KEEP.y+120,"type":"defender"}]
 	for i in range(CastleRun.PADS.size()):
-		draw_pad(i)
-	var guard_frame := 0 if reduced_motion else int(clock*guard_idle.get_animation_speed("idle"))%guard_idle.get_frame_count("idle")
-	draw_texture_rect(guard_idle.get_frame_texture("idle",guard_frame),Rect2(CastleRun.KEEP+Vector2(-110,24),Vector2(96,96)),false)
+		ordered.append({"depth":CastleRun.PADS[i].y+20,"type":"pad","index":i})
+	for target in battle.targets:
+		ordered.append({"depth":target.position.y+18,"type":"enemy","target":target})
+	ordered.sort_custom(func(a,b): return a.depth<b.depth)
+	for entry in ordered:
+		match entry.type:
+			"keep": draw_keep()
+			"defender":
+				var guard_frame := 0 if reduced_motion else int(clock*guard_idle.get_animation_speed("idle"))%guard_idle.get_frame_count("idle")
+				draw_texture_rect(guard_idle.get_frame_texture("idle",guard_frame),Rect2(CastleRun.KEEP+Vector2(-110,24),Vector2(96,96)),false)
+			"pad": draw_pad(entry.index)
+			"enemy":
+				draw_enemy_intent(entry.target)
+				draw_enemy(entry.target)
 	panel(Rect2(CastleRun.KEEP+Vector2(-55,84),Vector2(110,9)),Color("dbe7dc"),4)
 	panel(Rect2(CastleRun.KEEP+Vector2(-55,84),Vector2(110*float(battle.hp)/battle.max_hp,9)),MINT,4)
-	var ordered := battle.targets.duplicate()
-	ordered.sort_custom(func(a,b): return a.position.y < b.position.y)
-	for target in ordered:
-		draw_enemy_intent(target)
-		draw_enemy(target)
 	draw_defeat_ghosts()
 	for effect in effects:
 		draw_effect(effect)
@@ -159,6 +169,12 @@ func draw_defeat_ghosts() -> void:
 		draw_set_transform(point+Vector2(0,18+phase*12)+world_offset,phase*.18*facing,Vector2(facing*(1-phase*.15),1-phase*.15))
 		draw_texture_rect(frame,Rect2(-bounds*.5,top,bounds,bounds),false,Color(1,1,1,1-phase))
 		draw_set_transform(world_offset)
+
+func draw_keep() -> void:
+	var foot:=CastleRun.KEEP+Vector2(0,82)
+	draw_ellipse_shadow(foot-Vector2(0,8),Vector2(92,23))
+	var recoil:=0.0 if reduced_motion or impact_age>.28 or impact_point.distance_to(CastleRun.KEEP)>85 else GameFeel.kick(impact_age,.28)
+	art.draw_grounded(self,"keep",foot,Vector2(260,245),Vector2(1+recoil*.018,1-recoil*.025))
 
 func draw_battlefield() -> void:
 	draw_scene_background()
@@ -256,20 +272,22 @@ func fortress(p: Vector2,s: float) -> void:
 	panel(Rect2(p+Vector2(-52,106),Vector2(104,7)),Color("20332e"),3)
 	draw_rect(Rect2(p+Vector2(-50,108),Vector2(health_width,3)),MINT)
 
+func draw_build_range() -> void:
+	if battle.phase!="build": return
+	var p: Vector2=CastleRun.PADS[battle.selected_pad]
+	var tower:=battle.tower_at(battle.selected_pad)
+	var reach: float=230.0 if tower.is_empty() else float(CastleRun.TOWERS[tower.kind].range)+(tower.level-1)*22
+	draw_circle(p,reach,Color(.6,.79,.64,.035))
+	draw_arc(p,reach,0,TAU,80,Color(.65,.85,.67,.3),1,true)
+
 func draw_pad(index: int) -> void:
 	var p: Vector2 = CastleRun.PADS[index]
 	var tower := battle.tower_at(index)
 	if tower.is_empty() and battle.phase!="build":
 		return
 	var selected := index == battle.selected_pad and battle.phase == "build"
-	if selected:
-		var reach: float = 230.0 if tower.is_empty() else float(CastleRun.TOWERS[tower.kind].range)+(tower.level-1)*22
-		draw_circle(p,reach,Color(0.6,0.79,0.64,0.035))
-		draw_arc(p,reach,0,TAU,80,Color(0.65,0.85,0.67,0.3),1,true)
-	draw_ellipse_shadow(p+Vector2(0,13),Vector2(39,16))
-	draw_set_transform(p+world_offset,0,Vector2(1,.5))
-	draw_circle(Vector2.ZERO,36,Color("e9d7ad") if selected else Color("cbd6ae"),true,-1,true)
-	draw_set_transform(world_offset)
+	draw_ellipse_shadow(p+Vector2(0,16),Vector2(48,15))
+	art.draw_grounded(self,"pad",p+Vector2(0,28),Vector2(116,62))
 	if selected:
 		SoftStroke.arc(self,p,38,0,TAU,Color("d5ab56"),2.0)
 	if tower.is_empty():
@@ -279,12 +297,12 @@ func draw_pad(index: int) -> void:
 		return
 	var tint: Color = {"fire":Color("ffb96d"),"ice":Color("a2e6ec"),"storm":Color("c7b5ff")}[tower.kind]
 	if art.sprites.has("tower_"+str(tower.kind)):
-		var pulse := 0.0 if reduced_motion else sin(clock*3+index)*0.025
+		var level_scale: float = 1.0+(tower.level-1)*.06
 		var recovery: float = float(tower.cooldown)/(float(CastleRun.TOWERS[tower.kind].cooldown)/(1.0+(tower.level-1)*.15))
 		var kick := 0.0 if reduced_motion else clampf((recovery-.82)/.18,0,1)*.08
-		draw_circle(p-Vector2(0,65),28+sin(clock*3)*3,Color(tint,0.13))
+		draw_circle(p-Vector2(0,112),24+(0 if reduced_motion else sin(clock*3)*2),Color(tint,0.10 if battle.energy>0 else .025))
 		draw_arc(p,31,-PI/2,-PI/2+TAU*maxf(.001,1-recovery),40,Color(tint,.65),2,true)
-		art.draw_sprite(self,"tower_"+str(tower.kind),p-Vector2(0,36-kick*80),Vector2(100*(1-pulse+kick),116*(1+pulse-kick))*(1.0+(tower.level-1)*0.1))
+		art.draw_grounded(self,"tower_"+str(tower.kind),p+Vector2(0,20),Vector2(142,176)*level_scale,Vector2(1+kick*.25,1-kick*.35))
 		for i in range(tower.level):
 			draw_circle(p+Vector2((i-(tower.level-1)/2.0)*10,29),3,tint)
 		write(str(index+1),p+Vector2(0,51),14,GOLD,true)
@@ -431,12 +449,18 @@ func draw_enemy(target: Dictionary) -> void:
 			draw_arc(p,67,-PI/2,-PI/2+TAU*minf(1,target.windup/4.5),60,Color("ffb170"),4,true)
 			write("蓄力中 · 输入打断",p+Vector2(0,81),16,Color("8f4a23"),true)
 
+func spell_origin(point: Vector2) -> Vector2:
+	if point.distance_to(CastleRun.KEEP)<1: return point-Vector2(0,60)
+	for pad in CastleRun.PADS:
+		if point.distance_to(pad)<1: return point-Vector2(0,112)
+	return point-Vector2(0,30)
+
 func draw_effect(fx: Dictionary) -> void:
 	var t: float = 1-fx.life/fx.duration
 	var kind: String = fx.kind
 	var tint: Color = {"ice":Color("a9e9ff"),"storm":Color("d0c1ff"),"heal":MINT,"damage":Color("f3947f"),"defeat":GOLD}.get(kind,Color("ffc277"))
 	tint.a = 1-t
-	var origin: Vector2 = fx.from-Vector2(0,30)
+	var origin: Vector2 = spell_origin(fx.from)
 	var dest: Vector2 = fx.to-Vector2(0,10)
 	if not reduced_motion:
 		if kind == "storm":
@@ -448,14 +472,25 @@ func draw_effect(fx: Dictionary) -> void:
 				points.append(p)
 			draw_polyline(points,Color(0.55,0.4,1,(1-t)*0.25),10,true)
 			draw_polyline(points,tint,3,true)
-		elif kind in ["fire","ember","ice","heal"]:
+			art.draw_sprite(self,"lightning",dest,Vector2(62,47),Color(1,1,1,maxf(0,1-t*3)))
+		elif kind in ["fire","ember","ice"]:
+			var age: float = fx.duration-fx.life
+			var travel := minf(1,age/.14)
+			var p := origin.lerp(dest,travel)
+			var direction := (dest-origin).angle()+PI
+			var spell: String = "iceball" if kind=="ice" else "fireball"
+			var alpha := 1.0-clampf((age-.14)/.18,0,1)
+			if alpha>0:
+				draw_set_transform(p+world_offset,direction)
+				art.draw_sprite(self,spell,Vector2.ZERO,Vector2(76,50) if kind!="ember" else Vector2(48,32),Color(1,1,1,alpha))
+				draw_set_transform(world_offset)
+		elif kind=="heal":
 			var travel := minf(1,t*2.8)
 			var p := origin.lerp(dest,travel)
-			for i in range(8):
-				var trail := origin.lerp(dest,maxf(0,travel-i*0.025))
-				draw_circle(trail,9-i*0.8,Color(tint.r,tint.g,tint.b,(1-i/8.0)*(1-t)*0.6))
-			draw_circle(p,17,Color(tint.r,tint.g,tint.b,0.12*(1-t)))
-			draw_circle(p,5,Color("fff8df"))
+			draw_circle(p,9,Color(tint,.22))
+			draw_circle(p,4,tint)
+			draw_line(p-Vector2(5,0),p+Vector2(5,0),Color("e8ffe9"),2,true)
+			draw_line(p-Vector2(0,5),p+Vector2(0,5),Color("e8ffe9"),2,true)
 		if kind in ["fire","ice","ember","defeat","quake","build","damage"]:
 			for i in range(10):
 				var a := i*TAU/10
@@ -469,11 +504,9 @@ func draw_effect(fx: Dictionary) -> void:
 		write("已打断",dest-Vector2(0,55+t*20),22,MINT,true)
 
 func draw_top_status() -> void:
-	panel(Rect2(16,14,1008,44),Color(.81,.93,.95,.95),14,Color("c8dcb8"))
-	var text_value := battle.banner if banner_time>0 or battle.phase=="build" else "誓光林地 / 守住六波进攻"
-	write(text_value,Vector2(34,43),19,GOLD)
-	if battle.phase!="build":
-		write("敌军  %02d / %02d" % [battle.spawned,CastleRun.WAVE_COUNTS[battle.wave-1]],Vector2(820,42),18,MINT)
+	if battle.phase=="assault" and banner_time>0:
+		panel(Rect2(16,14,320,38),Color(.81,.93,.95,.95),12)
+		write(battle.banner,Vector2(28,40),17,GOLD)
 	for target in battle.targets:
 		if target.kind == "boss":
 			panel(Rect2(260,64,520,40),Color("fff3e5"),12,Color("e0c7a9"))

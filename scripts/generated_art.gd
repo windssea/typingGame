@@ -4,15 +4,31 @@ extends RefCounted
 # Each arena owns its resources. No image decoding or texture lookup in _draw().
 var background: Texture2D
 var sprites: Dictionary = {}
+static var pending: Dictionary = {}
+const POLISHED := {"tower_fire":"tower-fire","tower_ice":"tower-ice","tower_storm":"tower-storm","keep":"castle-keep","pad":"tower-pad"}
+
+static func warm_props(mode: String) -> void:
+	if mode!="castle": return
+	for filename in POLISHED.values():
+		var path: String="res://assets/generated/v17/"+filename+".png"
+		if ResourceLoader.exists(path) and not pending.has(path):
+			if ResourceLoader.load_threaded_request(path)==OK: pending[path]=true
+
+static func load_texture(path: String) -> Texture2D:
+	if pending.has(path):
+		pending.erase(path)
+		return ResourceLoader.load_threaded_get(path)
+	return load(path)
 
 static func background_path(mode: String) -> String:
+	if mode=="castle": return "res://assets/generated/v17/castle-field.png"
 	var filename := "balloons-background-v2" if mode == "balloons" else mode+"-background"
 	if mode=="dojo":
 		filename = "skybridge-background-v13"
 	return "res://assets/generated/"+filename+".png"
 
 func setup(mode: String) -> void:
-	background = load(background_path(mode))
+	background = load_texture(background_path(mode))
 	var family := "castle" if mode == "castle" else ("arcade" if mode in ArcadeRun.MODES else "learning")
 	var atlas_path := "res://assets/generated/"+family+"-sprites.png"
 	if family=="learning":
@@ -30,6 +46,9 @@ func setup(mode: String) -> void:
 		texture.region = Rect2(coords[0],coords[1],coords[2],coords[3])
 		texture.filter_clip = true
 		sprites[id] = texture
+	if mode=="castle":
+		for id in POLISHED:
+			sprites[id] = GeneratedArt.load_texture("res://assets/generated/v17/"+POLISHED[id]+".png")
 
 func draw_sprite(canvas: CanvasItem, id: String, center: Vector2, bounds: Vector2, tint := Color.WHITE) -> void:
 	if not sprites.has(id):
@@ -38,3 +57,10 @@ func draw_sprite(canvas: CanvasItem, id: String, center: Vector2, bounds: Vector
 	var dimensions := texture.get_size()
 	var fitted := dimensions*minf(bounds.x/dimensions.x,bounds.y/dimensions.y)
 	canvas.draw_texture_rect(texture,Rect2(center-fitted/2,fitted),false,tint)
+
+func draw_grounded(canvas: CanvasItem, id: String, foot: Vector2, bounds: Vector2, stretch := Vector2.ONE, tint := Color.WHITE) -> void:
+	if not sprites.has(id): return
+	var image: Texture2D = sprites[id]
+	var fitted: Vector2 = image.get_size()*minf(bounds.x/image.get_width(),bounds.y/image.get_height())*stretch
+	var anchor:=Vector2(.5,.975 if id.begins_with("tower_") else .96875 if id=="keep" else .9375)
+	canvas.draw_texture_rect(image,Rect2(foot-fitted*anchor,fitted),false,tint)

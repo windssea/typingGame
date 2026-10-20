@@ -9,6 +9,7 @@ var preview_motion := ArcadeMotion.new()
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	art.setup(mode)
 	if size.x>=200 or mode=="dojo":
 		preview_motion.setup("coach" if mode=="dojo" else mode,true)
@@ -27,7 +28,9 @@ func _draw() -> void:
 			var side := 300.0 if minf(size.x,size.y)>=180 else minf(size.x,size.y)*1.35
 			draw_texture_rect(frame,Rect2(size/2-Vector2.ONE*side/2,Vector2.ONE*side),false)
 		else:
-			draw_circle(size/2,minf(size.x,size.y)*0.28,Color(1,1,1,0.65))
+			draw_set_transform(size/2+Vector2(0,size.y*.29),0,Vector2(1,.22))
+			draw_circle(Vector2.ZERO,minf(size.x,size.y)*.25,Color(.12,.23,.30,.12))
+			draw_set_transform(Vector2.ZERO)
 			art.draw_sprite(self,sprite,size/2+Vector2(0,bob),size*0.82)
 		return
 	draw_set_transform(size/2,0,Vector2.ONE*minf(1.0,size.x/120.0))

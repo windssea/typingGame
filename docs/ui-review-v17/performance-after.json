@@ -1,0 +1,111 @@
+{
+  "backend": "gl_compatibility",
+  "cpu": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+  "gpu": "AMD Radeon(TM) 890M Graphics",
+  "modes": [
+    {
+      "draw_calls_p95": 181.0,
+      "engine_process_p95_ms": 18.206,
+      "fps": 59.973084079865,
+      "frame_p50_ms": 16.691,
+      "frame_p95_ms": 17.537,
+      "mode": "dojo",
+      "particles": 80,
+      "texture_mib": 135.007323265076
+    },
+    {
+      "draw_calls_p95": 180.0,
+      "engine_process_p95_ms": 18.337,
+      "fps": 59.9899216931555,
+      "frame_p50_ms": 16.661,
+      "frame_p95_ms": 17.389,
+      "mode": "bubbles",
+      "particles": 52,
+      "texture_mib": 30.3828926086426
+    },
+    {
+      "draw_calls_p95": 218.0,
+      "engine_process_p95_ms": 18.269,
+      "fps": 59.9988240230491,
+      "frame_p50_ms": 16.658,
+      "frame_p95_ms": 17.636,
+      "mode": "rain",
+      "particles": 52,
+      "texture_mib": 30.5078926086426
+    },
+    {
+      "draw_calls_p95": 51.0,
+      "engine_process_p95_ms": 18.507,
+      "fps": 59.9942405529069,
+      "frame_p50_ms": 16.617,
+      "frame_p95_ms": 17.656,
+      "mode": "sprint",
+      "particles": 52,
+      "texture_mib": 141.007835388184
+    },
+    {
+      "draw_calls_p95": 442.0,
+      "engine_process_p95_ms": 17.837,
+      "fps": 60.0187018274895,
+      "frame_p50_ms": 16.632,
+      "frame_p95_ms": 17.511,
+      "mode": "castle",
+      "particles": 59,
+      "texture_mib": 246.716110229492
+    },
+    {
+      "draw_calls_p95": 142.0,
+      "engine_process_p95_ms": 31.062,
+      "fps": 60.0168767457409,
+      "frame_p50_ms": 16.673,
+      "frame_p95_ms": 17.805,
+      "mode": "balloons",
+      "particles": 54,
+      "texture_mib": 33.5078926086426
+    },
+    {
+      "draw_calls_p95": 244.0,
+      "engine_process_p95_ms": 18.182,
+      "fps": 59.9756738666797,
+      "frame_p50_ms": 16.646,
+      "frame_p95_ms": 17.419,
+      "mode": "aliens",
+      "particles": 59,
+      "texture_mib": 57.507884979248
+    },
+    {
+      "draw_calls_p95": 166.0,
+      "engine_process_p95_ms": 18.533,
+      "fps": 59.9741151718918,
+      "frame_p50_ms": 16.668,
+      "frame_p95_ms": 17.466,
+      "mode": "moles",
+      "particles": 46,
+      "texture_mib": 57.507884979248
+    },
+    {
+      "draw_calls_p95": 151.0,
+      "engine_process_p95_ms": 18.52,
+      "fps": 59.9906654524556,
+      "frame_p50_ms": 16.663,
+      "frame_p95_ms": 17.489,
+      "mode": "racing",
+      "particles": 59,
+      "texture_mib": 60.1745567321777
+    },
+    {
+      "draw_calls_p95": 256.0,
+      "engine_process_p95_ms": 18.034,
+      "fps": 60.0028561359521,
+      "frame_p50_ms": 16.657,
+      "frame_p95_ms": 17.712,
+      "mode": "fighter",
+      "particles": 53,
+      "texture_mib": 129.507839202881
+    }
+  ],
+  "window": [
+    1280,
+    800
+  ]
+}
