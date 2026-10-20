@@ -23,6 +23,8 @@ func text(value: String, at: Vector2, font_size: int, color := PlayTheme.TEXT) -
 	draw_string(FONT,at,value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,color)
 
 func _draw() -> void:
+	if history.is_empty() or run.last_meaning.is_empty():
+		return
 	draw_style_box(PlayTheme.game_panel(Color("e1edd0"),Color("d9d6a9"),20,4),Rect2(0,0,1040,130))
 	GameGlyph.draw(self,"training",Vector2(39,37),18,PlayTheme.TEAL)
 	text("刚学会" if not run.last_meaning.is_empty() else "练习进度",Vector2(70,43),23)
@@ -36,10 +38,3 @@ func _draw() -> void:
 			var font_size := 19 if word.length()<14 else 14
 			text(word,at+Vector2(12,27),font_size,PlayTheme.TEAL)
 			text(history[i].meaning,at+Vector2(12,56),16)
-	else:
-		var count := 18 if run.mode in ["dojo","bubbles"] else mini(18,run.correct)
-		for i in range(18):
-			var at := Vector2(390+(i%9)*65,31+(i/9)*48)
-			draw_style_box(PlayTheme.game_panel(Color("e6f5dc") if i<mini(count,run.kills if run.mode in ["dojo","bubbles"] else run.correct) else Color("f0f3e7"),Color("c4d6bd"),8,3),Rect2(at,Vector2(48,34)))
-			if i<mini(count,run.kills if run.mode in ["dojo","bubbles"] else run.correct):
-				GameGlyph.draw(self,"star",at+Vector2(24,17),9,PlayTheme.TEAL)

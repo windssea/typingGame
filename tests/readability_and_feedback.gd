@@ -81,8 +81,12 @@ func exercise() -> void:
 		run.paused = true
 		await render()
 		var dock: ActionCue = app.layer.find_child("InputDock",true,false)
-		check(dock.size==Vector2(1360,108),"expanded fixed input dock: "+mode)
-		check(arena().get_global_rect().end.y<=dock.global_position.y-8,"playfield does not overlap input dock: "+mode)
+		if run is BridgeRun:
+			check(dock==null,"bridge has one in-world prompt and no duplicated input dock")
+			check(arena().size==Vector2(1440,900),"bridge uses the entire playable stage")
+		else:
+			check(dock.size==Vector2(1360,108),"expanded fixed input dock: "+mode)
+			check(arena().get_global_rect().end.y<=dock.global_position.y-8,"playfield does not overlap input dock: "+mode)
 		check(TypingPrompt.measure(run.recommended_target().word,834,46,32).font>=32,"large complete word in "+mode)
 		check(arena().backdrop!=null and arena().backdrop.material.shader==GameArena.BREEZE,"background motion is isolated from text and actor rendering: "+mode)
 		if mode in ["dojo","sprint"]:

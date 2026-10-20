@@ -19,13 +19,13 @@ func refresh(run: GameRun) -> void:
 	var status := "体力"
 	var last := str(run.hp)
 	var fraction := float(run.kills)/18
-	note = "%d / 18 个目标" % run.kills
+	note = "%d / 18" % run.kills
 	if run is CastleRun:
 		status = "城防"
 		note = "第 %d / 6 波 · %s" % [run.wave,"建设时间" if run.phase=="build" else "守护城堡"]
 		fraction = float(run.wave-1)/6
 	elif run is ArcadeRun:
-		note = "%d / %d 个目标" % [run.kills,run.goal]
+		note = "%d / %d" % [run.kills,run.goal]
 		if run.context=="training" and run.goal==18:
 			note = "%d / 18" % run.kills
 		fraction = run.distance if run.mode=="racing" else float(run.kills)/run.goal
@@ -69,22 +69,20 @@ func _exit_tree() -> void:
 			tween.kill()
 
 func _draw() -> void:
-	# A single quiet score strip; value contrast carries hierarchy, not four heavy frames.
+	# Keep only actionable in-run values. Score and detailed labels belong in the result.
 	var width := size.x
-	draw_style_box(PlayTheme.surface(Color("e1eff8"),Color.TRANSPARENT,16),Rect2(0,0,width,80))
-	var cell := width/4.0
-	for i in range(values.size()):
-		var x := i*cell
-		var tint: Color = [PlayTheme.ORANGE,PlayTheme.TEAL,PlayTheme.PRIMARY,Color("a54e50")][i]
-		if i>0:
-			draw_line(Vector2(x,12),Vector2(x,46),PlayTheme.BORDER,1,true)
-		if i==2 and combo_glow>0:
-			draw_style_box(PlayTheme.surface(Color(.73,.92,.84,combo_glow),Color.TRANSPARENT,10),Rect2(x+4,4,cell-8,48))
-		var glyph: String = ["score","accuracy","combo","speed" if values[i][0]=="速度 WPM" else "health"][i]
-		GameGlyph.draw(self,glyph,Vector2(x+20,28),10,tint)
-		draw_string(FONT,Vector2(x+39,19),values[i][0],HORIZONTAL_ALIGNMENT_LEFT,-1,13,PlayTheme.MUTED)
-		draw_string(FONT,Vector2(x+39,45),values[i][1],HORIZONTAL_ALIGNMENT_LEFT,-1,26,tint)
-	draw_string(FONT,Vector2(14,66),note,HORIZONTAL_ALIGNMENT_LEFT,-1,14,PlayTheme.MUTED)
-	draw_line(Vector2(14,74),Vector2(width-14,74),Color("e5edf3"),3,true)
+	var cell := width/3.0
+	for slot in range(3):
+		var i := slot+1
+		if values.size()<=i:
+			return
+		var x := slot*cell
+		var tint: Color = [PlayTheme.TEAL,PlayTheme.PRIMARY,Color("a54e50")][slot]
+		var glyph: String = ["accuracy","combo","speed" if values[i][0]=="速度 WPM" else "health"][slot]
+		GameGlyph.draw(self,glyph,Vector2(x+22,27),12,tint)
+		var value: String = values[i][1]+(" 连击" if i==2 else " WPM" if values[i][0]=="速度 WPM" else "")
+		draw_string(FONT,Vector2(x+44,38),value,HORIZONTAL_ALIGNMENT_LEFT,-1,30,tint)
+	draw_string(FONT,Vector2(14,70),note,HORIZONTAL_ALIGNMENT_LEFT,-1,20,PlayTheme.TEXT)
+	draw_line(Vector2(14,78),Vector2(width-14,78),Color("d8e9e6"),3,true)
 	if shown_progress>0:
-		draw_line(Vector2(14,74),Vector2(14+(width-28)*shown_progress,74),PlayTheme.TEAL,3,true)
+		draw_line(Vector2(14,78),Vector2(14+(width-28)*shown_progress,78),PlayTheme.TEAL,3,true)

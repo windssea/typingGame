@@ -46,15 +46,16 @@ func _draw() -> void:
 	var press := 0.0 if reduced_motion else minf(1,key_pulse/.18)*3
 	var key_rect := Rect2(12,9+press,110,86)
 	draw_style_box(PlayTheme.game_panel(Color("fff0bd") if run.last_input_ok else Color("ffddd1"),Color("c39038") if run.last_input_ok else Color("c86e61"),13,5-int(press)),key_rect)
-	text("Shift +" if shift else "下一键",Vector2(27,29+press),15,PlayTheme.TEXT)
-	var key_font := 30 if next==" " else 49
+	if shift:
+		text("Shift +",Vector2(27,26+press),15,PlayTheme.TEXT)
+	var key_font := 34 if next==" " else 68
 	var key_width := TypingPrompt.FONT.get_string_size(key_label,HORIZONTAL_ALIGNMENT_LEFT,-1,key_font).x
-	draw_string(TypingPrompt.FONT,Vector2(67-key_width/2,79+press),key_label,HORIZONTAL_ALIGNMENT_LEFT,-1,key_font,PlayTheme.TEXT)
-	var layout := TypingPrompt.measure(word,834,46,32)
+	draw_string(TypingPrompt.FONT,Vector2(67-key_width/2,83+press),key_label,HORIZONTAL_ALIGNMENT_LEFT,-1,key_font,PlayTheme.TEXT)
+	var layout := TypingPrompt.measure(word,834,64,32)
 	var meaning := Vocabulary.meaning(run.lesson,word)
 	if layout.rows.size()==1:
 		text(meaning if run.last_input_ok else "按键不匹配 · 进度保留",Vector2(150,26),18,PlayTheme.TEAL if run.last_input_ok else Color("a3433a"))
-	TypingPrompt.paint(self,word,target.typed,Rect2(134,32 if layout.rows.size()==1 else 0,834,76),layout,true,not run.last_input_ok,false)
+	TypingPrompt.paint(self,word,target.typed,Rect2(134,18 if layout.rows.size()==1 else 0,834,90),layout,true,not run.last_input_ok,false)
 	if run is ArcadeRun:
 		draw_line(Vector2(980,16),Vector2(980,92),Color("dfebf2"),1)
 		var ready: bool = run.skill_charge>=3 and run.skill_time<=0
@@ -67,5 +68,3 @@ func _draw() -> void:
 			draw_colored_polygon(PackedVector2Array([at-Vector2(0,6),at+Vector2(5,0),at+Vector2(0,6),at-Vector2(5,0)]),tint)
 		var skill_note := "格挡就绪" if run.mode=="fighter" and run.guard_ready else "就绪" if ready else "%ds" % ceili(run.skill_time) if run.skill_time>0 else "%d / 3" % run.skill_charge
 		text(skill_note,Vector2(1093,82),18,PlayTheme.TEAL if ready else PlayTheme.MUTED)
-	else:
-		text("Tab 换目标 · 退格 撤回",Vector2(1000,64),16,PlayTheme.MUTED)

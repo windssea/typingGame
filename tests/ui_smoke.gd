@@ -69,8 +69,10 @@ func exercise() -> void:
 	check(app.run.paused and is_instance_valid(app.overlay), "escape opens pause UI")
 	await capture("pause")
 	app.toggle_pause()
-	while not app.run.done:
+	while app.run.kills<18:
+		app.run.paused = false
 		app.run.type_character(str(app.run.targets[0].word))
+	app.run.step(4)
 	await capture("result")
 	check(is_instance_valid(app.overlay) and app.store.data.completed.has("home_index"), "result overlay and profile recorded")
 	app.show_home()

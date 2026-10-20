@@ -7,7 +7,7 @@ static func lessons() -> Array:
 
 static func modes() -> Array:
 	return [
-		{"id":"dojo", "name":"指尖发射站", "tag":"LEARN / 无压力", "description":"跟着小教练找到按键，\n点亮一圈进步能量。", "goal":"完成 18 个目标 · 无失败惩罚"},
+		{"id":"dojo", "name":"星桥快跑", "tag":"LEARN / 修桥冒险", "description":"输入修复脚下的桥，\n带机器人点亮三座星灯。", "goal":"修好 18 块桥 · 点亮 3 座星灯"},
 		{"id":"bubbles", "name":"泡泡啵啵乐", "tag":"PLAY / 自由找键", "description":"选中漂浮泡泡，输入戳破它，\n收集一串彩色小水珠。", "goal":"自由选择目标 · 无时间压力"},
 		{"id":"rain", "name":"流星拦截队", "tag":"REACT / 反应训练", "description":"锁定坠落流星，击键拦截！\n守住下方的能量防线。", "goal":"守住 90 秒 · 5 次失误机会"},
 		{"id":"sprint", "name":"极速 60 秒", "tag":"SPRINT / 速度挑战", "description":"每个按键都是向前一步。\n保持准确，看速度表升起！", "goal":"60 秒连续输入 · 比拼准确与速度"},

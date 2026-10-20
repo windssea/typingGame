@@ -68,8 +68,9 @@ func exercise() -> void:
 	app.show_challenges()
 	await capture("challenges")
 	app.begin_recommended_training()
-	check(app.run.mode=="moles" and app.run.goal==18,"first recommended mission is direct short F/J mole practice")
-	check(app.typing_guide.suggested_character()==str(app.run.recommended_target().word)[0],"guide and action cue share the actual selected target")
+	check(app.run is BridgeRun and app.run.mode=="dojo","first recommended mission is playable F/J bridge repair")
+	check(app.typing_guide==null,"beginner stage avoids the duplicated hand panel")
+	app.start_game("moles","training")
 	var visual := arena()
 	await create_timer(.36).timeout
 	await capture("moles-ready")

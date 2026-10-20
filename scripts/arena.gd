@@ -62,7 +62,7 @@ func layout_labels(candidates: Array[Dictionary], actors: Array[Rect2], blocked:
 	for entry in candidates:
 		var target: Dictionary = entry.target
 		var active: bool = target.id==selected
-		var layout := TypingPrompt.measure(target.word,minf(390,size.x-32),36 if active else 29,25)
+		var layout := TypingPrompt.measure(target.word,minf(480,size.x-32),52 if active else 38,32)
 		var extent: Vector2 = layout.size
 		var center: Vector2 = entry.center-Vector2(0,maxf(0,extent.y-58)*.5)
 		var rect := TypingPrompt.place(center,extent,Rect2(12,12,size.x-24,size.y-28),occupied,actors,label_offsets.get(target.id,Vector2.ZERO))

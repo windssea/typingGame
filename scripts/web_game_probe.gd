@@ -34,6 +34,8 @@ func _process(delta: float) -> void:
 			value.run.targets.append({"id":target.id,"word":target.word,"typed":target.typed,"position":[target.position.x,target.position.y],"health":target.get("health",1),"kind":str(target.kind)})
 		if run is CastleRun:
 			value.run.merge({"phase":run.phase,"gold":run.gold,"wave":run.wave,"towers":run.towers.size(),"words_completed":run.words_completed})
+		if run is BridgeRun:
+			value.run.merge({"travel":run.travel,"lit_beacons":int(run.kills/6),"goal":18})
 		if run is ArcadeRun:
 			value.run.merge({"distance":run.distance,"rival":run.rival,"shield":run.shield,"enemy_hp":run.enemy_hp})
 			value.run.merge({"skill_charge":run.skill_charge,"skill_time":run.skill_time,"skill_uses":run.skill_uses,"goal":run.goal})

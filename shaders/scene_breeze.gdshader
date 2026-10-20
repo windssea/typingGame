@@ -4,6 +4,7 @@ render_mode unshaded;
 uniform float clock = 0.0;
 uniform float strength = 1.0;
 uniform int world_kind = 0;
+uniform float restored = 0.0;
 
 void fragment() {
 	vec2 uv = UV;
@@ -15,7 +16,7 @@ void fragment() {
 		sample_uv.y += strength*sin(clock*0.9+uv.x*12.0)*0.0012*edge;
 	} else if (world_kind==3) {
 		sample_uv += strength*vec2(sin(uv.y*12.0+clock*0.8),cos(uv.x*10.0+clock*0.6))*0.0018;
-	} else if (world_kind==2) {
+	} else if (world_kind==2 || world_kind==5) {
 		sample_uv.x += strength*sin(clock*0.09)*0.004*sky;
 	} else {
 		// Hanging pennants and lamps move slightly; the floor stays anchored.
@@ -28,5 +29,8 @@ void fragment() {
 		light += sin(uv.x*11.0+uv.y*7.0-clock*0.3)*0.012*edge*strength;
 	}
 	source.rgb *= 1.0+light;
+	if (world_kind==5) {
+		source.rgb = mix(source.rgb,source.rgb*vec3(1.06,1.025,.97),restored);
+	}
 	COLOR = source;
 }

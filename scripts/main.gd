@@ -253,12 +253,12 @@ func show_home() -> void:
 	for i in range(2):
 		var card := UiLayout.card(cards,Color("d7eee0") if i==0 else Color("d7eafa"))
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		UiLayout.illustrate(card,"res://assets/generated/"+("moles-background" if i==0 else "aliens-background")+".png",Color("d7eee0") if i==0 else Color("d7eafa"))
+		UiLayout.illustrate(card,GeneratedArt.background_path(recommended_mode() if i==0 else "aliens"),Color("d7eee0") if i==0 else Color("d7eafa"))
 		var content := UiLayout.column(UiLayout.margin(card,24),12)
 		var center := CenterContainer.new()
 		center.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		content.add_child(center)
-		var badge := add_badge("moles" if i==0 else "aliens",Vector2.ZERO,Vector2(360,220),center)
+		var badge := add_badge(recommended_mode() if i==0 else "aliens",Vector2.ZERO,Vector2(360,220),center)
 		badge.custom_minimum_size = Vector2(360,220)
 		UiLayout.text(content,"打字训练" if i==0 else "打字挑战",34)
 		UiLayout.text(content,"从 F / J 开始，逐步练习单词。" if i==0 else "选好难度，用连击改变战局。",20,MUTED)
@@ -275,7 +275,7 @@ func show_home() -> void:
 
 
 func recommended_mode() -> String:
-	return ["moles","balloons","aliens","moles","racing","balloons","fighter","racing","aliens","sprint"][lesson_index]
+	return ["dojo","dojo","aliens","moles","racing","balloons","fighter","racing","aliens","sprint"][lesson_index]
 
 func begin_recommended_training() -> void:
 	start_game(recommended_mode(),"training")
@@ -296,6 +296,8 @@ func add_badge(mode: String, at: Vector2, dimensions: Vector2, parent: Control =
 	return badge
 
 func mission_goal(mode: String, purpose: String) -> String:
+	if mode=="dojo":
+		return "修好星桥 · 点亮三座星灯"
 	if mode=="castle":
 		return "守住六波进攻 · 击败两位统领"
 	if mode=="rain":
@@ -337,7 +339,7 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String, 
 		content.add_child(art)
 		var picture := TextureRect.new()
 		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		picture.texture = load("res://assets/generated/"+("balloons-background-v2" if mode.id=="balloons" else str(mode.id)+"-background")+".png")
+		picture.texture = load(GeneratedArt.background_path(mode.id))
 		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		art.add_child(picture)
@@ -552,7 +554,8 @@ func show_game_guide() -> void:
 	UiLayout.text(copy,"指法与规则",30,GOLD)
 	var goal := UiLayout.text(copy,mission_goal(run.mode,run.context),21,MINT)
 	goal.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var rules := UiLayout.text(copy,"输入高亮词牌上的完整文字。\nTab 换目标，退格撤回一字。\n"+("命中三次后，F3 释放技能。\n" if run is ArcadeRun else "")+"\n左手 A S D F · 右手 J K L ;\n拇指轻放空格，F / J 凸点定位。\n高亮手指负责下一个按键。\n击键后回到基准行，手腕放松。",20)
+	var action_rules := "敲下金色按键，修好脚下的桥。\n每六步点亮一座星灯，18步到达对岸。\n按错不会掉进度，重试即可。\n" if run is BridgeRun else "输入高亮词牌上的完整文字。\nTab 换目标，退格撤回一字。\n"+("命中三次后，F3 释放技能。\n" if run is ArcadeRun else "")
+	var rules := UiLayout.text(copy,action_rules+"\n左手 A S D F · 右手 J K L ;\n拇指轻放空格，F / J 凸点定位。\n击键后回到基准行，手腕放松。\nF2 开关声音。",20)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	UiLayout.space(copy,0,true)
 	UiLayout.text(copy,"指法为教学示意，不检测真实手势。",16,MUTED)
@@ -744,12 +747,15 @@ func start_game(mode: String, purpose := "training") -> void:
 	page = "game"
 	session_context = purpose
 	clear_ui()
-	run = CastleRun.new() if mode == "castle" else (ArcadeRun.new() if mode in ArcadeRun.MODES else GameRun.new())
+	run = BridgeRun.new() if mode=="dojo" else CastleRun.new() if mode == "castle" else (ArcadeRun.new() if mode in ArcadeRun.MODES else GameRun.new())
 	run.context = purpose
 	run.challenge_rank = SessionOptions.RANK_IDS[challenge_index] if purpose=="challenge" else "normal"
 	run.setup(mode,Vocabulary.lesson(lessons[lesson_index],vocabulary_topic),pace if purpose=="training" else SessionOptions.RANK_SPEEDS[challenge_index])
 	soundscape.bind_run(run)
 	run.ended.connect(finish_game)
+	if mode=="dojo":
+		start_bridge_stage()
+		return
 	var title := ""
 	for definition in GameContent.modes():
 		if definition.id == mode:
@@ -758,7 +764,6 @@ func start_game(mode: String, purpose := "training") -> void:
 	layer.add_child(shell)
 	var title_label := UiLayout.text(shell.heading,title,28)
 	title_label.name = "GameTitle"
-	UiLayout.text(shell.heading,("训练 %.2f× · " % pace if purpose=="training" else "挑战 · "+SessionOptions.RANK_NAMES[challenge_index]+" · ")+str(lessons[lesson_index].name).substr(5),16,MUTED)
 	live_hud = LiveHud.new()
 	live_hud.reduced_motion = store.data.settings.reduced_motion
 	live_hud.custom_minimum_size = Vector2(660,80)
@@ -772,9 +777,6 @@ func start_game(mode: String, purpose := "training") -> void:
 	castle_audio.battle = run
 	castle_audio.enabled = store.data.settings.get("sound",true)
 	layer.add_child(castle_audio)
-	sound_button = button("F2 声音开" if castle_audio.enabled else "F2 声音关",Vector2.ZERO,Vector2(98,48),toggle_sound,false,shell.actions)
-	sound_button.add_theme_font_size_override("font_size",15)
-	sound_button.focus_mode = Control.FOCUS_NONE
 	pause_button = button("暂停 Esc",Vector2.ZERO,Vector2(116,48),toggle_pause,false,shell.actions)
 	pause_button.focus_mode = Control.FOCUS_NONE
 	var arena: GameArena = CastleArena.new() if mode == "castle" else (ArcadeArena.new() if run is ArcadeRun else GameArena.new())
@@ -790,10 +792,6 @@ func start_game(mode: String, purpose := "training") -> void:
 		typing_guide.run = run
 		shell.sidebar.add_child(typing_guide)
 		UiLayout.space(shell.sidebar,0,true)
-		var session_card := UiLayout.card(shell.sidebar,Color("edf5ff"))
-		var info := UiLayout.column(UiLayout.margin(session_card,10),0)
-		var goal := UiLayout.text(info,mission_goal(mode,purpose),16,TEXT)
-		goal.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		if not run is ArcadeRun:
 			var ledger := TrainingLedger.new()
 			ledger.position = Vector2(0,510)
@@ -816,6 +814,34 @@ func start_game(mode: String, purpose := "training") -> void:
 	if run is CastleRun:
 		run.phase_changed.connect(request_hud_refresh)
 	update_hud()
+
+func start_bridge_stage() -> void:
+	var arena := BridgeArena.new()
+	arena.name = "BridgeWorld"
+	arena.size = Vector2(1440,900)
+	arena.run = run
+	arena.reduced_motion = store.data.settings.reduced_motion
+	layer.add_child(arena)
+	arena.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var safe := UiLayout.margin(layer,0)
+	safe.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	safe.offset_left = 32
+	safe.offset_right = -32
+	safe.offset_top = 24
+	safe.offset_bottom = 80
+	var header := UiLayout.row(safe,12)
+	var title := UiLayout.text(header,"星桥快跑",32)
+	title.add_theme_constant_override("outline_size",4)
+	title.add_theme_color_override("font_outline_color",Color("d7eff5"))
+	UiLayout.space(header,0,true)
+	var help := button("F1 指法",Vector2.ZERO,Vector2(100,48),show_game_guide,false,header)
+	help.focus_mode = Control.FOCUS_NONE
+	pause_button = button("暂停 Esc",Vector2.ZERO,Vector2(126,48),toggle_pause,false,header)
+	pause_button.focus_mode = Control.FOCUS_NONE
+	castle_audio = CastleAudio.new()
+	castle_audio.battle = run
+	castle_audio.enabled = store.data.settings.get("sound",true)
+	layer.add_child(castle_audio)
 
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed or event.echo:

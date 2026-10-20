@@ -10,8 +10,8 @@ var preview_motion := ArcadeMotion.new()
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	art.setup(mode)
-	if size.x>=200:
-		preview_motion.setup(mode,true)
+	if size.x>=200 or mode=="dojo":
+		preview_motion.setup("coach" if mode=="dojo" else mode,true)
 
 func _process(delta: float) -> void:
 	if not reduced_motion:
@@ -24,7 +24,8 @@ func _draw() -> void:
 		var bob := 0.0 if reduced_motion else sin(clock*2.5)*3
 		var frame := preview_motion.texture("idle",clock,reduced_motion)
 		if frame!=null:
-			draw_texture_rect(frame,Rect2(size/2-Vector2(150,150),Vector2(300,300)),false)
+			var side := 300.0 if minf(size.x,size.y)>=180 else minf(size.x,size.y)*1.35
+			draw_texture_rect(frame,Rect2(size/2-Vector2.ONE*side/2,Vector2.ONE*side),false)
 		else:
 			draw_circle(size/2,minf(size.x,size.y)*0.28,Color(1,1,1,0.65))
 			art.draw_sprite(self,sprite,size/2+Vector2(0,bob),size*0.82)

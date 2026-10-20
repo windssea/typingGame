@@ -5,9 +5,14 @@ extends RefCounted
 var background: Texture2D
 var sprites: Dictionary = {}
 
-func setup(mode: String) -> void:
+static func background_path(mode: String) -> String:
 	var filename := "balloons-background-v2" if mode == "balloons" else mode+"-background"
-	background = load("res://assets/generated/"+filename+".png")
+	if mode=="dojo":
+		filename = "skybridge-background-v13"
+	return "res://assets/generated/"+filename+".png"
+
+func setup(mode: String) -> void:
+	background = load(background_path(mode))
 	var family := "castle" if mode == "castle" else ("arcade" if mode in ArcadeRun.MODES else "learning")
 	var atlas_path := "res://assets/generated/"+family+"-sprites.png"
 	if family=="learning":

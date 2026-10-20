@@ -74,7 +74,7 @@ func exercise() -> void:
 		check(not app.pause_button.get_global_rect().intersects(app.live_hud.get_global_rect()),"pause and metrics never overlap: "+str(resolution))
 		await capture("fighter-%dx%d" % [resolution.x,resolution.y])
 	root.size = Vector2i(1280,800)
-	app.start_game("dojo")
+	app.start_game("bubbles")
 	app.run.paused = true
 	await settle()
 	var refreshes: int = app.live_hud.refresh_count

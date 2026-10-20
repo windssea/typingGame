@@ -110,10 +110,12 @@ func exercise() -> void:
 		app.run.paused = true
 		await capture(mode.id+"-final")
 	app.start_game("dojo")
-	while not app.run.done:
+	while app.run.kills<18:
+		app.run.paused = false
 		var target: Dictionary = app.run.recommended_target()
 		for character in str(target.word).substr(target.typed):
 			app.run.type_character(character)
+	app.run.step(4)
 	check(app.store.data.completed.has("long_words"),"redesigned UI preserves training mastery and save")
 	check(app.overlay.find_children("*","ResultSeal",true,false).size()==1,"result has a game reward seal")
 	await create_timer(.8).timeout
