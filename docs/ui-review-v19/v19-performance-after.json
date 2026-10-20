@@ -1,0 +1,401 @@
+{
+  "backend": "gl_compatibility",
+  "cpu": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+  "gpu": "AMD Radeon(TM) 890M Graphics",
+  "modes": [
+    {
+      "draw_calls_p95": 254.0,
+      "engine_process_p95_ms": 184.962,
+      "engine_vfx": {
+        "active_bursts": 6,
+        "active_lights": 3,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 3.40826,
+        "events": 12,
+        "launches": 0,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 1,
+        "reduced": false,
+        "shake": [
+          0.397925972938538,
+          -0.217050522565842
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 103.71744050249,
+      "frame_p50_ms": 7.385,
+      "frame_p95_ms": 12.985,
+      "mode": "dojo",
+      "particles": 149,
+      "texture_mib": 136.470801353455
+    },
+    {
+      "draw_calls_p95": 275.0,
+      "engine_process_p95_ms": 13.828,
+      "engine_vfx": {
+        "active_bursts": 5,
+        "active_lights": 2,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 3.14116066666667,
+        "events": 12,
+        "launches": 0,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 4,
+        "reduced": false,
+        "shake": [
+          0.784004151821136,
+          -0.427638620138168
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 111.930525469045,
+      "frame_p50_ms": 8.601,
+      "frame_p95_ms": 12.524,
+      "mode": "bubbles",
+      "particles": 116,
+      "texture_mib": 30.0963706970215
+    },
+    {
+      "draw_calls_p95": 312.0,
+      "engine_process_p95_ms": 15.788,
+      "engine_vfx": {
+        "active_bursts": 5,
+        "active_lights": 1,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 3.27482175757575,
+        "events": 11,
+        "launches": 1,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 5,
+        "reduced": false,
+        "shake": [
+          0.543171525001526,
+          -0.29627537727356
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 109.453019480448,
+      "frame_p50_ms": 8.781,
+      "frame_p95_ms": 13.658,
+      "mode": "rain",
+      "particles": 163,
+      "texture_mib": 31.2421798706055
+    },
+    {
+      "draw_calls_p95": 105.0,
+      "engine_process_p95_ms": 13.05,
+      "engine_vfx": {
+        "active_bursts": 6,
+        "active_lights": 3,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 2.87447026887928,
+        "events": 12,
+        "launches": 0,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 3,
+        "reduced": false,
+        "shake": [
+          0.863893449306488,
+          -0.471214592456818
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 141.27486437613,
+      "frame_p50_ms": 7.028,
+      "frame_p95_ms": 9.295,
+      "mode": "sprint",
+      "particles": 152,
+      "texture_mib": 48.0540113449097
+    },
+    {
+      "draw_calls_p95": 380.0,
+      "engine_process_p95_ms": 27.686,
+      "engine_vfx": {
+        "active_bursts": 6,
+        "active_lights": 4,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 3.49088919576719,
+        "events": 29,
+        "launches": 8,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 7,
+        "reduced": false,
+        "shake": [
+          0.41190779209137,
+          -0.22467702627182
+        ],
+        "tower_auras": 3,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 106.63246844923,
+      "frame_p50_ms": 9.421,
+      "frame_p95_ms": 12.196,
+      "mode": "castle",
+      "particles": 129,
+      "texture_mib": 246.179588317871
+    },
+    {
+      "draw_calls_p95": 255.0,
+      "engine_process_p95_ms": 35.705,
+      "engine_vfx": {
+        "active_bursts": 6,
+        "active_lights": 3,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 2.97230287301587,
+        "events": 12,
+        "launches": 0,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 3,
+        "reduced": false,
+        "shake": [
+          0.872536897659302,
+          -0.475929200649261
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 132.876239070929,
+      "frame_p50_ms": 7.241,
+      "frame_p95_ms": 10.814,
+      "mode": "balloons",
+      "particles": 174,
+      "texture_mib": 40.9713668823242
+    },
+    {
+      "draw_calls_p95": 334.0,
+      "engine_process_p95_ms": 27.913,
+      "engine_vfx": {
+        "active_bursts": 5,
+        "active_lights": 2,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 3.04216757142857,
+        "events": 11,
+        "launches": 0,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 3,
+        "reduced": false,
+        "shake": [
+          0.806203067302704,
+          -0.439747124910355
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 126.945438850382,
+      "frame_p50_ms": 7.39,
+      "frame_p95_ms": 11.839,
+      "mode": "aliens",
+      "particles": 118,
+      "texture_mib": 56.971363067627
+    },
+    {
+      "draw_calls_p95": 300.0,
+      "engine_process_p95_ms": 11.768,
+      "engine_vfx": {
+        "active_bursts": 5,
+        "active_lights": 2,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 2.94289736363637,
+        "events": 11,
+        "launches": 0,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 1,
+        "reduced": false,
+        "shake": [
+          0.810166120529175,
+          -0.441908776760101
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 129.888685396615,
+      "frame_p50_ms": 7.323,
+      "frame_p95_ms": 11.413,
+      "mode": "moles",
+      "particles": 121,
+      "texture_mib": 56.971363067627
+    },
+    {
+      "draw_calls_p95": 270.0,
+      "engine_process_p95_ms": 11.557,
+      "engine_vfx": {
+        "active_bursts": 7,
+        "active_lights": 4,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 2.95303030303031,
+        "events": 14,
+        "launches": 0,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 1,
+        "reduced": false,
+        "shake": [
+          0.737394630908966,
+          -0.402215242385864
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 130.6798926334,
+      "frame_p50_ms": 7.316,
+      "frame_p95_ms": 11.059,
+      "mode": "racing",
+      "particles": 142,
+      "texture_mib": 59.6380348205566
+    },
+    {
+      "draw_calls_p95": 319.0,
+      "engine_process_p95_ms": 16.256,
+      "engine_vfx": {
+        "active_bursts": 5,
+        "active_lights": 2,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 3.0600576969697,
+        "events": 11,
+        "launches": 0,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 1,
+        "reduced": false,
+        "shake": [
+          0.339694678783417,
+          -0.185287982225418
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 119.133281550067,
+      "frame_p50_ms": 8.216,
+      "frame_p95_ms": 12.443,
+      "mode": "fighter",
+      "particles": 137,
+      "texture_mib": 129.09631729126
+    },
+    {
+      "draw_calls_p95": 265.0,
+      "engine_process_p95_ms": 16.333,
+      "engine_vfx": {
+        "active_bursts": 4,
+        "active_lights": 2,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 3.16118096969698,
+        "events": 11,
+        "launches": 1,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 2,
+        "reduced": false,
+        "shake": [
+          0.731190264225006,
+          -0.398831069469452
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 113.611059354962,
+      "frame_p50_ms": 8.445,
+      "frame_p95_ms": 12.293,
+      "mode": "royal",
+      "particles": 113,
+      "texture_mib": 71.1725378036499
+    },
+    {
+      "draw_calls_p95": 276.0,
+      "engine_process_p95_ms": 17.681,
+      "engine_vfx": {
+        "active_bursts": 6,
+        "active_lights": 1,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 3.03668481818183,
+        "events": 11,
+        "launches": 1,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 2,
+        "reduced": false,
+        "shake": [
+          0.642088174819946,
+          -0.350229918956757
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 122.794910396554,
+      "frame_p50_ms": 7.741,
+      "frame_p95_ms": 11.437,
+      "mode": "submarine",
+      "particles": 128,
+      "texture_mib": 47.3039236068726
+    },
+    {
+      "draw_calls_p95": 289.0,
+      "engine_process_p95_ms": 22.839,
+      "engine_vfx": {
+        "active_bursts": 4,
+        "active_lights": 1,
+        "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+        "burst_pool": 10,
+        "clock": 3.10268257575757,
+        "events": 11,
+        "launches": 0,
+        "light_pool": 5,
+        "paused": false,
+        "protected_regions": 3,
+        "reduced": false,
+        "shake": [
+          0.496546626091003,
+          -0.270843625068665
+        ],
+        "tower_auras": 0,
+        "trail_pool": 6,
+        "wave_pool": 6
+      },
+      "fps": 114.737495907696,
+      "frame_p50_ms": 8.337,
+      "frame_p95_ms": 12.253,
+      "mode": "restaurant",
+      "particles": 102,
+      "texture_mib": 51.0849370956421
+    }
+  ],
+  "window": [
+    1280,
+    800
+  ]
+}

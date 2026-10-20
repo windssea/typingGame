@@ -1,0 +1,43 @@
+{
+  "version": "1.9",
+  "date": "2026-10-20",
+  "url": "https://typing.nanokid.win/",
+  "pages_preview": "https://5dc09989.typinggame-cl5.pages.dev",
+  "asset_base_url": "https://pub-2fecf2e531bd4f9c8e3af7e52c6caf06.r2.dev",
+  "assets": [
+    {
+      "key": "keybound/engine-fc74679e3b97f7687894.wasm",
+      "content_type": "application/wasm",
+      "content_encoding": "gzip",
+      "cache_control": "public, max-age=31536000, immutable",
+      "raw_bytes": 39514754,
+      "upload_bytes": 10054758,
+      "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+    },
+    {
+      "key": "keybound/game-991b1228c1bf36795e4d.pck",
+      "content_type": "application/octet-stream",
+      "content_encoding": "gzip",
+      "cache_control": "public, max-age=31536000, immutable",
+      "raw_bytes": 125776632,
+      "upload_bytes": 125013947,
+      "sha256": "991b1228c1bf36795e4dd11c9c8b6e258463364c7b0f0249b5f33b1f65d7f5b1"
+    }
+  ],
+  "validation": {
+    "regression_suites": 18,
+    "regression_checks": 30886,
+    "native_vfx_checks": 148,
+    "render_pixel_checks": 12,
+    "package_tests": 2,
+    "public_modes": [
+      "rain",
+      "castle",
+      "balloons",
+      "submarine"
+    ],
+    "public_console_errors": 0,
+    "pause_freeze_verified": true,
+    "new_large_art_assets": false
+  }
+}

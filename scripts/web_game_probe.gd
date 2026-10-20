@@ -30,6 +30,7 @@ func _process(delta: float) -> void:
 		for arena in app.layer.find_children("*","Control",true,false):
 			if arena is GameArena:
 				value.run.merge({"particles":arena.juice.particles.size(),"motion_clock":arena.clock,"reduced_motion":arena.reduced_motion})
+				if is_instance_valid(arena.native_vfx): value.run.engine_vfx=arena.native_vfx.snapshot()
 		for target in run.targets:
 			value.run.targets.append({"id":target.id,"word":target.word,"typed":target.typed,"position":[target.position.x,target.position.y],"health":target.get("health",1),"kind":str(target.kind),"intent":target.get("intent",""),"intent_left":target.get("intent_left",0),"remaining":target.get("remaining",0),"pending":target.get("pending",false),"stage":target.get("stage",0)})
 		if run is CastleRun:

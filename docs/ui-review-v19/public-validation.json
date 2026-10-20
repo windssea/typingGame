@@ -1,0 +1,629 @@
+{
+  "states": [
+    {
+      "buttons": [
+        {
+          "disabled": false,
+          "name": "@Button@225",
+          "rect": [
+            1095,
+            40,
+            101,
+            48
+          ],
+          "text": "F1 指法"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@226",
+          "rect": [
+            1204,
+            40,
+            72,
+            48
+          ],
+          "text": "全屏"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@234",
+          "rect": [
+            1284,
+            40,
+            116,
+            48
+          ],
+          "text": "暂停 Esc"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@250",
+          "rect": [
+            398.279998779297,
+            461.664001464844,
+            643.631958007812,
+            56.6719970703125
+          ],
+          "text": "继续挑战  Esc"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@251",
+          "rect": [
+            402,
+            538,
+            636,
+            48
+          ],
+          "text": "返回训练与挑战"
+        }
+      ],
+      "focus": "继续挑战  Esc",
+      "focus_name": "@Button@250",
+      "lesson": 5,
+      "overlay": true,
+      "page": "game",
+      "profile": {
+        "completed": {
+          "home_index": true,
+          "short_words": true
+        },
+        "records": {
+          "challenge:balloons:short_words:expert:a2:animals": {
+            "accuracy": 0.634615384615385,
+            "score": 425,
+            "wpm": 26.3007049031683
+          },
+          "training:balloons:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1705,
+            "wpm": 11.9756201241683
+          },
+          "training:dojo:home_index": {
+            "accuracy": 0.947368421052632,
+            "score": 1035,
+            "wpm": 2.39403995772386
+          },
+          "training:fighter:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1380,
+            "wpm": 19.7672651173172
+          },
+          "training:moles:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1635,
+            "wpm": 35.3869473912773
+          }
+        },
+        "xp": 590
+      },
+      "run": {
+        "attempts": 3,
+        "context": "challenge",
+        "correct": 3,
+        "difficulty": 1,
+        "done": false,
+        "elapsed": 1.73558787878788,
+        "engine_vfx": {
+          "active_bursts": 1,
+          "active_lights": 0,
+          "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+          "burst_pool": 10,
+          "clock": 1.73558787878788,
+          "events": 1,
+          "launches": 1,
+          "light_pool": 5,
+          "paused": true,
+          "protected_regions": 0,
+          "reduced": false,
+          "shake": [
+            0,
+            0
+          ],
+          "tower_auras": 0,
+          "trail_pool": 6,
+          "wave_pool": 6
+        },
+        "hp": 100,
+        "kills": 1,
+        "last_meaning": "猪",
+        "last_word": "pig",
+        "mode": "rain",
+        "motion_clock": 1.73558787878788,
+        "particles": 3,
+        "paused": true,
+        "pool_size": 17,
+        "projectiles": 0,
+        "rank": "normal",
+        "recommended": -1,
+        "reduced_motion": false,
+        "score": 35,
+        "targets": [],
+        "vocabulary_topic": "animals",
+        "won": false
+      },
+      "viewport": [
+        1440,
+        900
+      ]
+    },
+    {
+      "buttons": [
+        {
+          "disabled": false,
+          "name": "@Button@463",
+          "rect": [
+            1095,
+            40,
+            101,
+            48
+          ],
+          "text": "F1 指法"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@464",
+          "rect": [
+            1204,
+            40,
+            72,
+            48
+          ],
+          "text": "全屏"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@472",
+          "rect": [
+            1284,
+            40,
+            116,
+            48
+          ],
+          "text": "暂停 Esc"
+        }
+      ],
+      "focus": "",
+      "lesson": 5,
+      "overlay": false,
+      "page": "game",
+      "profile": {
+        "completed": {
+          "home_index": true,
+          "short_words": true
+        },
+        "records": {
+          "challenge:balloons:short_words:expert:a2:animals": {
+            "accuracy": 0.634615384615385,
+            "score": 425,
+            "wpm": 26.3007049031683
+          },
+          "training:balloons:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1705,
+            "wpm": 11.9756201241683
+          },
+          "training:dojo:home_index": {
+            "accuracy": 0.947368421052632,
+            "score": 1035,
+            "wpm": 2.39403995772386
+          },
+          "training:fighter:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1380,
+            "wpm": 19.7672651173172
+          },
+          "training:moles:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1635,
+            "wpm": 35.3869473912773
+          }
+        },
+        "xp": 590
+      },
+      "run": {
+        "attempts": 3,
+        "context": "challenge",
+        "correct": 3,
+        "difficulty": 1,
+        "done": false,
+        "elapsed": 1.25617878787879,
+        "engine_vfx": {
+          "active_bursts": 2,
+          "active_lights": 2,
+          "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+          "burst_pool": 10,
+          "clock": 1.76271212121212,
+          "events": 3,
+          "launches": 1,
+          "light_pool": 5,
+          "paused": false,
+          "protected_regions": 0,
+          "reduced": false,
+          "shake": [
+            0.549642622470856,
+            -0.299805045127869
+          ],
+          "tower_auras": 1,
+          "trail_pool": 6,
+          "wave_pool": 6
+        },
+        "gold": 64,
+        "hp": 100,
+        "interrupts": 0,
+        "kills": 1,
+        "last_meaning": "母鸡",
+        "last_word": "hen",
+        "mode": "castle",
+        "motion_clock": 1.76271212121212,
+        "particles": 35,
+        "paused": false,
+        "phase": "assault",
+        "pool_size": 17,
+        "projectiles": 0,
+        "rank": "normal",
+        "recommended": -1,
+        "reduced_motion": false,
+        "score": 45,
+        "targets": [],
+        "towers": 1,
+        "vocabulary_topic": "animals",
+        "wave": 1,
+        "won": false,
+        "words_completed": 1
+      },
+      "viewport": [
+        1440,
+        900
+      ]
+    },
+    {
+      "buttons": [
+        {
+          "disabled": false,
+          "name": "@Button@795",
+          "rect": [
+            1095,
+            40,
+            101,
+            48
+          ],
+          "text": "F1 指法"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@796",
+          "rect": [
+            1204,
+            40,
+            72,
+            48
+          ],
+          "text": "全屏"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@804",
+          "rect": [
+            1284,
+            40,
+            116,
+            48
+          ],
+          "text": "暂停 Esc"
+        }
+      ],
+      "focus": "",
+      "lesson": 5,
+      "overlay": false,
+      "page": "game",
+      "profile": {
+        "completed": {
+          "home_index": true,
+          "short_words": true
+        },
+        "records": {
+          "challenge:balloons:short_words:expert:a2:animals": {
+            "accuracy": 0.634615384615385,
+            "score": 425,
+            "wpm": 26.3007049031683
+          },
+          "training:balloons:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1705,
+            "wpm": 11.9756201241683
+          },
+          "training:dojo:home_index": {
+            "accuracy": 0.947368421052632,
+            "score": 1035,
+            "wpm": 2.39403995772386
+          },
+          "training:fighter:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1380,
+            "wpm": 19.7672651173172
+          },
+          "training:moles:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1635,
+            "wpm": 35.3869473912773
+          }
+        },
+        "xp": 590
+      },
+      "run": {
+        "attempts": 3,
+        "context": "challenge",
+        "correct": 3,
+        "counters": 0,
+        "difficulty": 1,
+        "distance": 0,
+        "done": false,
+        "elapsed": 0.700940115440112,
+        "enemy_hp": 100,
+        "engine_vfx": {
+          "active_bursts": 1,
+          "active_lights": 0,
+          "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+          "burst_pool": 10,
+          "clock": 0.685788600288597,
+          "events": 1,
+          "launches": 0,
+          "light_pool": 5,
+          "paused": false,
+          "protected_regions": 3,
+          "reduced": false,
+          "shake": [
+            0,
+            0
+          ],
+          "tower_auras": 0,
+          "trail_pool": 6,
+          "wave_pool": 6
+        },
+        "goal": 30,
+        "guard_ready": false,
+        "hp": 100,
+        "kills": 1,
+        "last_meaning": "蝙蝠",
+        "last_word": "bat",
+        "mode": "balloons",
+        "motion_clock": 0.685788600288597,
+        "particles": 54,
+        "paused": false,
+        "pool_size": 17,
+        "projectiles": 0,
+        "rank": "normal",
+        "recommended": 1,
+        "reduced_motion": false,
+        "rival": 0,
+        "score": 35,
+        "shield": 40,
+        "skill_charge": 1,
+        "skill_time": 0,
+        "skill_uses": 0,
+        "targets": [
+          {
+            "health": 1,
+            "id": 1,
+            "intent": "cruise",
+            "intent_left": 0,
+            "kind": "1",
+            "pending": false,
+            "position": [
+              520,
+              452.179504394531
+            ],
+            "remaining": 6.24905988455988,
+            "stage": 0,
+            "typed": 0,
+            "word": "zoo"
+          },
+          {
+            "health": 1,
+            "id": 2,
+            "intent": "cruise",
+            "intent_left": 0,
+            "kind": "2",
+            "pending": false,
+            "position": [
+              840,
+              452.179504394531
+            ],
+            "remaining": 6.24905988455988,
+            "stage": 0,
+            "typed": 0,
+            "word": "pet"
+          },
+          {
+            "health": 1,
+            "id": 3,
+            "intent": "cruise",
+            "intent_left": 0,
+            "kind": "0",
+            "pending": false,
+            "position": [
+              200,
+              473.587432861328
+            ],
+            "remaining": 6.6458202020202,
+            "stage": 0,
+            "typed": 0,
+            "word": "bee"
+          }
+        ],
+        "vocabulary_topic": "animals",
+        "won": false
+      },
+      "viewport": [
+        1440,
+        900
+      ]
+    },
+    {
+      "buttons": [
+        {
+          "disabled": false,
+          "name": "@Button@1033",
+          "rect": [
+            1095,
+            40,
+            101,
+            48
+          ],
+          "text": "F1 指法"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@1034",
+          "rect": [
+            1204,
+            40,
+            72,
+            48
+          ],
+          "text": "全屏"
+        },
+        {
+          "disabled": false,
+          "name": "@Button@1042",
+          "rect": [
+            1284,
+            40,
+            116,
+            48
+          ],
+          "text": "暂停 Esc"
+        }
+      ],
+      "focus": "",
+      "lesson": 5,
+      "overlay": false,
+      "page": "game",
+      "profile": {
+        "completed": {
+          "home_index": true,
+          "short_words": true
+        },
+        "records": {
+          "challenge:balloons:short_words:expert:a2:animals": {
+            "accuracy": 0.634615384615385,
+            "score": 425,
+            "wpm": 26.3007049031683
+          },
+          "training:balloons:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1705,
+            "wpm": 11.9756201241683
+          },
+          "training:dojo:home_index": {
+            "accuracy": 0.947368421052632,
+            "score": 1035,
+            "wpm": 2.39403995772386
+          },
+          "training:fighter:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1380,
+            "wpm": 19.7672651173172
+          },
+          "training:moles:short_words:a2:animals": {
+            "accuracy": 1,
+            "score": 1635,
+            "wpm": 35.3869473912773
+          }
+        },
+        "xp": 590
+      },
+      "run": {
+        "attempts": 10,
+        "context": "challenge",
+        "core": 100,
+        "correct": 10,
+        "difficulty": 1,
+        "done": false,
+        "elapsed": 4.98852222222225,
+        "engine_vfx": {
+          "active_bursts": 3,
+          "active_lights": 2,
+          "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+          "burst_pool": 10,
+          "clock": 4.98018888888891,
+          "events": 8,
+          "launches": 3,
+          "light_pool": 5,
+          "paused": false,
+          "protected_regions": 2,
+          "reduced": false,
+          "shake": [
+            0,
+            0
+          ],
+          "tower_auras": 0,
+          "trail_pool": 6,
+          "wave_pool": 6
+        },
+        "goal": 18,
+        "hp": 100,
+        "kills": 3,
+        "last_meaning": "蜜蜂",
+        "last_word": "bee",
+        "mode": "submarine",
+        "motion_clock": 4.98018888888891,
+        "particles": 28,
+        "paused": false,
+        "pool_size": 17,
+        "projectiles": 0,
+        "rank": "normal",
+        "recommended": 4,
+        "reduced_motion": false,
+        "score": 130,
+        "skill_charge": 0,
+        "skill_time": 3.75653333333333,
+        "skill_uses": 1,
+        "targets": [
+          {
+            "health": 1,
+            "id": 2,
+            "intent": "",
+            "intent_left": 0,
+            "kind": "enemy",
+            "pending": false,
+            "position": [
+              991.782592773438,
+              510
+            ],
+            "remaining": 29.2,
+            "stage": 0,
+            "typed": 0,
+            "word": "goat"
+          },
+          {
+            "health": 1,
+            "id": 4,
+            "intent": "",
+            "intent_left": 0,
+            "kind": "enemy",
+            "pending": false,
+            "position": [
+              862.6787109375,
+              345
+            ],
+            "remaining": 27.4,
+            "stage": 0,
+            "typed": 0,
+            "word": "pet"
+          }
+        ],
+        "units": 0,
+        "vocabulary_topic": "animals",
+        "won": false
+      },
+      "viewport": [
+        1440,
+        900
+      ]
+    }
+  ],
+  "pause_frozen": true,
+  "console": []
+}

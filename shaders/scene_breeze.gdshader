@@ -1,16 +1,16 @@
 shader_type canvas_item;
-render_mode unshaded;
 
 uniform float clock = 0.0;
 uniform float strength = 1.0;
 uniform int world_kind = 0;
 uniform float restored = 0.0;
+uniform vec2 impact_offset = vec2(0.0);
 
 void fragment() {
 	vec2 uv = UV;
 	float edge = max(1.0-smoothstep(0.0,0.22,uv.x),smoothstep(0.78,1.0,uv.x));
 	float sky = 1.0-smoothstep(0.16,0.5,uv.y);
-	vec2 sample_uv = (uv-0.5)*0.988+0.5;
+	vec2 sample_uv = (uv-0.5)*0.988+0.5+impact_offset;
 	if (world_kind==1 || world_kind==4) {
 		sample_uv.x += strength*(sin(clock*1.15+uv.y*15.0)*0.0018*edge+sin(clock*0.14)*0.005*sky);
 		sample_uv.y += strength*sin(clock*0.9+uv.x*12.0)*0.0012*edge;

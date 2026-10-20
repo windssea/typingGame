@@ -1,0 +1,133 @@
+{
+  "suites": [
+    {
+      "suite": "test_runner",
+      "exit": 0,
+      "checks": 734,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "castle_tests",
+      "exit": 0,
+      "checks": 46,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "arcade_tests",
+      "exit": 0,
+      "checks": 601,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "animation_tests",
+      "exit": 0,
+      "checks": 12,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "ui_smoke",
+      "exit": 0,
+      "checks": 23,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "arcade_ui",
+      "exit": 0,
+      "checks": 40,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "motion_and_difficulty",
+      "exit": 0,
+      "checks": 33,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "interactive_training",
+      "exit": 0,
+      "checks": 38,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "vocabulary_and_polish",
+      "exit": 0,
+      "checks": 22311,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "product_finish",
+      "exit": 0,
+      "checks": 206,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "readability_and_feedback",
+      "exit": 0,
+      "checks": 229,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "ui_layout_and_focus",
+      "exit": 0,
+      "checks": 41,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "bridge_adventure",
+      "exit": 0,
+      "checks": 627,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "full_ui_audit",
+      "exit": 0,
+      "checks": 5572,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "game_feel_tests",
+      "exit": 0,
+      "checks": 195,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "enemy_tactics_tests",
+      "exit": 0,
+      "checks": 56,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "art_polish_tests",
+      "exit": 0,
+      "checks": 43,
+      "failures": 0,
+      "errors": []
+    },
+    {
+      "suite": "playable_v18_tests",
+      "exit": 0,
+      "checks": 79,
+      "failures": 0,
+      "errors": []
+    }
+  ],
+  "checks": 30886,
+  "failures": 0,
+  "runtime_errors": 0
+}

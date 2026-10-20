@@ -35,6 +35,7 @@ func sample() -> void:
 			if is_instance_valid(app.overlay): app.close_modal()
 			if i%15==0:
 				arena.juice.burst(Vector2(520,400),PlayTheme.YELLOW,3,"confetti")
+				if "--v19" in OS.get_cmdline_user_args(): arena.record_impact(Vector2(520,400),3,PlayTheme.SKY)
 				var target: Dictionary=app.run.recommended_target()
 				if not target.is_empty(): app.run.type_character(str(target.word).substr(target.typed,1))
 			await process_frame
@@ -43,9 +44,10 @@ func sample() -> void:
 			cpu.append(Performance.get_monitor(Performance.TIME_PROCESS)*1000)
 			draws.append(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
 		var record: Dictionary={"mode":definition.id,"fps":150.0/((Time.get_ticks_usec()-start)/1000000.0),"frame_p50_ms":percentile(frames,.5),"frame_p95_ms":percentile(frames,.95),"engine_process_p95_ms":percentile(cpu,.95),"draw_calls_p95":percentile(draws,.95),"texture_mib":Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED)/1048576.0,"particles":arena.juice.particles.size()}
+		if "--v19" in OS.get_cmdline_user_args(): record.engine_vfx=arena.native_vfx.snapshot()
 		report.modes.append(record);print(JSON.stringify(record))
 	var suffix: String="after" if "--after" in OS.get_cmdline_user_args() else "before"
-	var version: String="v18" if "--v18" in OS.get_cmdline_user_args() else "v17"
+	var version: String="v19" if "--v19" in OS.get_cmdline_user_args() else "v18" if "--v18" in OS.get_cmdline_user_args() else "v17"
 	FileAccess.open("res://build/"+version+"-performance-"+suffix+".json",FileAccess.WRITE).store_string(JSON.stringify(report,"  "))
 	app.queue_free();await process_frame
 	if FileAccess.file_exists(save_path): DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))

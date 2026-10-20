@@ -1,0 +1,20 @@
+[
+  {
+    "lit_pixels_changed": 23313,
+    "mode": "balloons",
+    "wave_pixels_changed": 4557,
+    "word_pixels_changed": 0
+  },
+  {
+    "lit_pixels_changed": 14219,
+    "mode": "castle",
+    "wave_pixels_changed": 4002,
+    "word_pixels_changed": 0
+  },
+  {
+    "lit_pixels_changed": 25600,
+    "mode": "submarine",
+    "wave_pixels_changed": 4118,
+    "word_pixels_changed": 0
+  }
+]

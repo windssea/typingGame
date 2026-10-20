@@ -36,6 +36,7 @@ var impact_tier := 1
 var impact_point := Vector2.ZERO
 var backdrop: TextureRect
 var backdrop_external := false
+var native_vfx: EngineVfx
 var coach_motion := ArcadeMotion.new()
 var coach_age := -1.0
 const BREEZE = preload("res://shaders/scene_breeze.gdshader")
@@ -55,6 +56,9 @@ func setup_backdrop(texture: Texture2D) -> void:
 	shader_material.set_shader_parameter("world_kind",1 if run.mode in ["castle","moles"] else 2 if run.mode in ["aliens","rain"] else 3 if run.mode=="bubbles" else 4 if run.mode=="balloons" else 0)
 	backdrop.material = shader_material
 	add_child(backdrop)
+	native_vfx=EngineVfx.new()
+	native_vfx.arena=self
+	add_child(native_vfx)
 
 func draw_scene_background() -> void:
 	if is_instance_valid(backdrop):
@@ -109,6 +113,7 @@ func draw_target_labels() -> void:
 			draw_line(rect.position+Vector2(10,rect.size.y-4),rect.position+Vector2(10+(rect.size.x-20)*fraction,rect.size.y-4),PlayTheme.CORAL if fraction<.25 else MINT,3,true)
 
 func record_impact(point: Vector2, tier := 1, tint := PlayTheme.YELLOW) -> void:
+	if is_instance_valid(native_vfx): native_vfx.impact(point,tier,tint)
 	feel.reduced_motion = reduced_motion
 	feel.hit(point,tier,tint)
 	impact_point = point
@@ -181,7 +186,7 @@ func _ready() -> void:
 			effects.append({"from":origin,"to":point,"lightning":lightning,"life":0.55})
 			juice.burst(point,PlayTheme.SKY if run.mode in ["bubbles","rain"] else PlayTheme.YELLOW,2 if lightning else 1,{"bubbles":"droplet","rain":"ember","dojo":"confetti","sprint":"speed"}.get(run.mode,"spark"))
 			juice.jet(point,Vector2.UP if run.mode=="bubbles" else Vector2.RIGHT,PlayTheme.SKY,1)
-			record_impact(point,3 if lightning else 1))
+			record_impact(point,3 if lightning else 2 if run.mode=="rain" else GameFeel.tier(run.combo,false)))
 		run.spell.connect(func(_a,_b,_l):
 			if coach_age<0:
 				coach_age = 0.0)
