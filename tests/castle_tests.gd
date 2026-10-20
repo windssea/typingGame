@@ -109,7 +109,10 @@ func _initialize() -> void:
 	guard.health=30
 	shaman.timer=0
 	run.step(0.01)
-	check(guard.health==42,"shaman heals nearby allies")
+	check(guard.health==30 and shaman.intent=="casting","shaman telegraphs healing before changing health")
+	guard.speed=0
+	for i in range(80): run.step(.1)
+	check(guard.health==42,"uninterrupted shaman heals its selected wounded ally")
 	var bomber := run.spawn_enemy("bomber")
 	bomber.position=CastleRun.KEEP
 	run.hp=30

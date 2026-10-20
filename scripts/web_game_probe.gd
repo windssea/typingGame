@@ -31,12 +31,12 @@ func _process(delta: float) -> void:
 			if arena is GameArena:
 				value.run.merge({"particles":arena.juice.particles.size(),"motion_clock":arena.clock,"reduced_motion":arena.reduced_motion})
 		for target in run.targets:
-			value.run.targets.append({"id":target.id,"word":target.word,"typed":target.typed,"position":[target.position.x,target.position.y],"health":target.get("health",1),"kind":str(target.kind)})
+			value.run.targets.append({"id":target.id,"word":target.word,"typed":target.typed,"position":[target.position.x,target.position.y],"health":target.get("health",1),"kind":str(target.kind),"intent":target.get("intent",""),"intent_left":target.get("intent_left",0),"remaining":target.get("remaining",0)})
 		if run is CastleRun:
-			value.run.merge({"phase":run.phase,"gold":run.gold,"wave":run.wave,"towers":run.towers.size(),"words_completed":run.words_completed})
+			value.run.merge({"phase":run.phase,"gold":run.gold,"wave":run.wave,"towers":run.towers.size(),"words_completed":run.words_completed,"interrupts":run.interrupts})
 		if run is BridgeRun:
 			value.run.merge({"travel":run.travel,"lit_beacons":int(run.kills/6),"goal":18})
 		if run is ArcadeRun:
 			value.run.merge({"distance":run.distance,"rival":run.rival,"shield":run.shield,"enemy_hp":run.enemy_hp})
-			value.run.merge({"skill_charge":run.skill_charge,"skill_time":run.skill_time,"skill_uses":run.skill_uses,"goal":run.goal})
+			value.run.merge({"skill_charge":run.skill_charge,"skill_time":run.skill_time,"skill_uses":run.skill_uses,"goal":run.goal,"counters":run.counters,"guard_ready":run.guard_ready})
 	JavaScriptBridge.eval("window.keyboundGame = "+JSON.stringify(value)+"; document.documentElement.setAttribute('data-keybound-state',JSON.stringify(window.keyboundGame));",true)

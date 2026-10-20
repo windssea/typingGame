@@ -114,4 +114,4 @@ func update_live() -> void:
 		live_label.text = "%d 金币 · %d / 20 能量" % [battle.gold,battle.energy]
 	if is_instance_valid(target_label):
 		var target := battle.recommended_target()
-		target_label.text = "等待下一位敌人" if target.is_empty() else "%s\n生命 %d / %d" % [CastleRun.ENEMIES[target.kind].name,maxi(0,target.health),target.max_health]
+		target_label.text = "等待下一位敌人" if target.is_empty() else "%s\n生命 %d / %d" % [CastleRun.ENEMIES[target.kind].name,maxi(0,target.health),target.max_health]+("\n"+EnemyTactics.caption(target) if not EnemyTactics.caption(target).is_empty() else "")

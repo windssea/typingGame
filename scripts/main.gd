@@ -567,6 +567,8 @@ func show_game_guide() -> void:
 	var goal := UiLayout.text(copy,mission_goal(run.mode,run.context),21,MINT)
 	goal.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var action_rules := "敲下金色按键，修好脚下的桥。\n每六步点亮一座星灯。\n按错保留进度，重试即可。" if run is BridgeRun else "输入高亮词牌上的完整文字。\nTab 换目标，退格撤回一字。"+("\n命中三次后，F3 释放技能。" if run is ArcadeRun else "")
+	var tactics: String = {"fighter":"蓄力时完成单词，打出双倍重拳。\nF3 格挡反击，抓住下一次破绽。", "aliens":"红圈亮起即将俯冲，输入击落。\n补给舰恢复护盾，俯冲拦截有奖励。", "castle":"输入萨满符文打断治疗。\n爆破兵点火时，输入符文拆弹。"}.get(run.mode, "")
+	if not tactics.is_empty(): action_rules += "\n\n"+tactics
 	var rules := UiLayout.text(copy,action_rules+"\n\nF2 开关声音 · Esc 暂停",20)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	UiLayout.space(copy,0,true)

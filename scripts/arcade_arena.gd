@@ -160,6 +160,7 @@ func _draw() -> void:
 			"racing": racing()
 			"fighter": fighter()
 	draw_skill_field()
+	draw_enemy_intentions()
 	draw_anticipation()
 	for burst in bursts:
 		draw_burst(burst)
@@ -173,11 +174,15 @@ func _draw() -> void:
 	# Words stay still and above feedback; readability takes priority over particles.
 	for target in run.targets:
 		var feature: String = target.get("feature","")
-		if not feature.is_empty():
+		var intent: String = target.get("intent","")
+		var note: String = {"supply":"补给 +8 盾","scout":"侦察舰","bonus":"奖励 +40 分"}.get(feature,"")
+		if run.mode=="aliens" and intent in ["windup","dive"]:
+			note = "俯冲！" if intent=="dive" else "锁定中"
+		if not note.is_empty():
 			var badge: Vector2 = target.position+Vector2(0,52 if run.mode=="aliens" else 63)
-			var color: Color = MINT if feature=="supply" else CORAL if feature=="scout" else PlayTheme.ORANGE
-			panel(Rect2(badge-Vector2(54,18),Vector2(108,25)),Color(.81,.93,.95,.95),10)
-			write({"supply":"补给 +8 盾","scout":"快速侦察舰","bonus":"奖励 +40 分"}[feature],badge,14,color,true)
+			var color: Color = CORAL if intent in ["windup","dive"] else MINT if feature=="supply" else PlayTheme.ORANGE
+			panel(Rect2(badge-Vector2(68,20),Vector2(136,29)),Color("d9ece7"),10)
+			write(note,badge,18,color,true)
 	draw_target_labels()
 
 func prepare_prompts() -> void:
@@ -216,6 +221,29 @@ func prepare_prompts() -> void:
 			source = Vector2(690,320)
 		prompts.append({"target":target,"center":center,"source":source})
 	layout_labels(prompts,actors,blocked)
+
+func draw_enemy_intentions() -> void:
+	for target in run.targets:
+		var intent: String = target.get("intent", "")
+		if run.mode=="aliens" and intent in ["windup","dive"]:
+			var p: Vector2 = target.position
+			var charge := clampf(1-float(target.remaining)/maxf(.01,EnemyTactics.warning_window(target.word,target.duration)),0,1)
+			# The warning lives under the UFO, away from the word above it.
+			draw_arc(p+Vector2(0,20),55,-PI/2,-PI/2+TAU*maxf(.04,charge),48,CORAL,3,true)
+			for i in range(3):
+				var y := p.y+78+i*17
+				if y<455: draw_polyline(PackedVector2Array([Vector2(p.x-9,y),Vector2(p.x,y+6),Vector2(p.x+9,y)]),Color(.85,.35,.3,.4+charge*.4),2,true)
+		elif run.mode=="fighter":
+			if intent=="windup":
+				var charge := 1-clampf(float(target.remaining)/maxf(.01,EnemyTactics.warning_window(target.word,target.duration)),0,1)
+				draw_arc(Vector2(716,395),60,-PI*.7,-PI*.7+PI*1.4*maxf(.04,charge),48,CORAL,4,true)
+				draw_circle(Vector2(785,279),23,Color("fff0bd"))
+				draw_circle(Vector2(785,279),20,CORAL)
+				write("!",Vector2(785,291),34,Color("fff0bd"),true)
+			elif intent=="exposed":
+				for i in range(3):
+					var p := Vector2(650+i*29,304)
+					draw_circle(p,4,PlayTheme.YELLOW)
 
 func draw_anticipation() -> void:
 	var target := run.recommended_target()
@@ -316,7 +344,8 @@ func draw_generated_game() -> void:
 	if run.mode=="aliens":
 		banner("第 %d 阵" % mini(run.wave,4), "")
 	elif run.mode=="fighter":
-		banner("第 %d 位对手" % run.round_number, "")
+		var intent := EnemyTactics.caption(run.recommended_target())
+		banner(intent if not intent.is_empty() else "第 %d 位对手" % run.round_number, "")
 	if run.mode == "moles":
 		for i in range(6):
 			var hole := Vector2(240+(i%3)*280,326+(i/3)*170)
@@ -400,7 +429,9 @@ func draw_generated_game() -> void:
 	elif run.mode == "fighter":
 		var punch := 0.0 if reduced_motion else GameFeel.kick(.5-strike,.34)
 		var left := Vector2(350,440)+Vector2((-punch*12 if last_impact=="miss" else 0.0 if last_impact=="block" else approach+punch*(200-approach)),-punch*6)
-		var right := Vector2(690,440)+Vector2(punch*(-200 if last_impact in ["miss","block"] else 12),-punch*3)
+		var enemy_intent: String = run.recommended_target().get("intent","")
+		var lean := 0.0 if reduced_motion else 14.0 if enemy_intent=="windup" else -10.0 if enemy_intent=="exposed" else 0.0
+		var right := Vector2(690+lean,440)+Vector2(punch*(-200 if last_impact in ["miss","block"] else 12),-punch*3)
 		draw_ellipse_shadow(Vector2(350,560),Vector2(67,16))
 		draw_ellipse_shadow(Vector2(690,560),Vector2(67,16))
 		draw_texture_rect(BoxingMotion.texture(0,pose_clock,blue_attack_age,reduced_motion,boxing_clips),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
@@ -414,9 +445,9 @@ func draw_generated_game() -> void:
 			panel(Rect2(x+15,119,350*delayed/100.0,10),PlayTheme.YELLOW,5)
 			panel(Rect2(x+15,119,350*health/100.0,10),MINT if side==0 else CORAL,5)
 			write(("你" if side==0 else "对手")+" · 体力 %d" % health,Vector2(x+15,154),17,INK)
-		if run.combo>1:
+		if run.combo>1 or (strike>0 and run.last_tactic=="counter"):
 			panel(Rect2(220,198,250,44),Color("deedf5"),12)
-			write("%d HIT COMBO" % run.combo,Vector2(345,230),25,GOLD,true)
+			write("破招！双倍重拳" if strike>0 and run.last_tactic=="counter" else "%d HIT COMBO" % run.combo,Vector2(345,230),25,GOLD,true)
 
 func balloons() -> void:
 	banner("风起气球节", "看清一个目标，让字母变成一场小小的烟花。")

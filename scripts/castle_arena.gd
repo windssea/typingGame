@@ -131,6 +131,7 @@ func _draw() -> void:
 	var ordered := battle.targets.duplicate()
 	ordered.sort_custom(func(a,b): return a.position.y < b.position.y)
 	for target in ordered:
+		draw_enemy_intent(target)
 		draw_enemy(target)
 	draw_defeat_ghosts()
 	for effect in effects:
@@ -307,6 +308,29 @@ func draw_pad(index: int) -> void:
 		draw_circle(p+Vector2((i-(tower.level-1)/2.0)*10,29),3,tint)
 	write(str(index+1),p+Vector2(0,51),14,GOLD,true)
 
+func draw_enemy_intent(target: Dictionary) -> void:
+	var intent: String = target.get("intent", "")
+	var p: Vector2 = target.position
+	if intent in ["casting","arming"]:
+		var tint := Color("df8460") if intent=="arming" else Color("56a896")
+		var charge := 1-clampf(float(target.intent_left)/maxf(.01,float(target.intent_duration)),0,1)
+		draw_circle(p+Vector2(0,12),42,Color(tint,.12))
+		draw_arc(p+Vector2(0,12),42,0,TAU,48,Color(tint,.5),2,true)
+		draw_arc(p+Vector2(0,12),42,-PI/2,-PI/2+TAU*maxf(.02,charge),48,tint,3,true)
+		write("拆弹！" if intent=="arming" else "治疗中",p+Vector2(0,66),20,tint.darkened(.38),true)
+		if intent=="casting":
+			var ally := battle.target_by_id(int(target.get("ally",-1)))
+			if not ally.is_empty():
+				for i in range(1,6):
+					draw_circle(p.lerp(ally.position,i/6.0)+Vector2(0,12),2,Color(tint,.65))
+	elif intent=="exposed" or intent=="recover":
+		draw_arc(p+Vector2(0,12),32,PI,TAU,32,PlayTheme.SKY,3,true)
+	elif intent=="rush":
+		var direction: Vector2 = (CastleRun.KEEP-p).normalized()
+		for i in range(2):
+			var tail: Vector2 = p-direction*(34+i*12)
+			draw_line(tail-direction*8,tail,Color(.6,.55,.35,.5),2,true)
+
 func draw_enemy(target: Dictionary) -> void:
 	var p: Vector2 = target.position
 	var kind: String = target.kind
@@ -326,7 +350,8 @@ func draw_enemy(target: Dictionary) -> void:
 		draw_circle(p,25*s,Color(0.5,0.85,1,0.12))
 		draw_arc(p+Vector2(0,12),23*s,0,TAU,24,Color("a2e6ec"),2,true)
 	if art.sprites.has(kind):
-		var stride := 0.0 if reduced_motion else sin(target.phase*1.6)
+		var stationary: bool = target.get("intent","") in ["casting","arming"]
+		var stride := 0.0 if reduced_motion or stationary else sin(target.phase*1.6)
 		var recoil: Vector2 = Vector2.ZERO if reduced_motion else (p-CastleRun.KEEP).normalized()*target.flash*55
 		var facing := -1.0 if p.x>CastleRun.KEEP.x else 1.0
 		# Mirror around the actor's root, never with a negative destination rectangle.

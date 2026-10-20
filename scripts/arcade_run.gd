@@ -26,6 +26,8 @@ var skill_time := 0.0
 var skill_uses := 0
 var guard_ready := false
 var previous_hole := -1
+var counters := 0
+var last_tactic := ""
 
 func skill_name() -> String:
 	return {"balloons":"微风减速","aliens":"护盾脉冲","moles":"专注时刻","racing":"干扰对手","fighter":"准备格挡"}.get(mode,"")
@@ -77,6 +79,7 @@ func spawn_target() -> void:
 	target.duration = time_budget(target.word)
 	target.remaining = target.duration
 	target.feature = ""
+	EnemyTactics.enter(target,"ready" if mode=="fighter" else "cruise")
 	if mode=="balloons" and target.lane==2:
 		target.feature = "bonus"
 	elif mode=="aliens" and target.id%4==3:
@@ -129,12 +132,19 @@ func advance(delta: float) -> void:
 	for target in targets.duplicate():
 		if mode == "racing":
 			continue
-		target.remaining -= delta*(0.2 if skill_time>0 and mode in ["moles","balloons","aliens"] else 1.0)
+		var tick := delta*(0.2 if skill_time>0 and mode in ["moles","balloons","aliens"] else 1.0)
+		target.remaining -= tick
+		if mode in ["fighter","aliens"]:
+			var previous: String = target.intent
+			EnemyTactics.arcade(target,mode,tick)
+			if previous!=target.intent: hud_changed.emit()
 		var fraction: float = clampf(target.remaining / target.duration, 0, 1)
 		if mode == "balloons":
 			target.position.y = 115 + fraction * 375
 		elif mode == "aliens":
-			target.position.y = 440 - fraction * 260
+			var descent := 1-fraction
+			# Patrol high above the ship, then commit to a visible dive. Deadline is unchanged.
+			target.position.y = 180 + (descent*180 if descent<.6 else 108+pow((descent-.6)/.4,1.6)*152)
 		if target.remaining <= 0:
 			miss_target(target)
 			if done:
@@ -152,7 +162,8 @@ func miss_target(target: Dictionary) -> void:
 		var absorbed := mini(shield, damage)
 		shield -= absorbed
 		damage -= absorbed
-	if mode=="fighter" and guard_ready:
+	var counter_open := mode=="fighter" and guard_ready
+	if counter_open:
 		damage = 0
 		guard_ready = false
 	# Moles retreat in training: repetition without a failure countdown.
@@ -166,9 +177,22 @@ func miss_target(target: Dictionary) -> void:
 		finish(false)
 	else:
 		spawn_target()
+		if counter_open:
+			EnemyTactics.enter(targets.back(),"exposed",targets.back().duration*.6)
+			hud_changed.emit()
 
 func on_word_completed(target: Dictionary) -> void:
 	var point: Vector2 = target.position
+	last_tactic = ""
+	var counter: bool = mode=="fighter" and target.intent in ["windup","exposed"]
+	if counter:
+		counters += 1
+		last_tactic = "counter"
+		score += 25
+	elif mode=="aliens" and target.intent=="dive":
+		counters += 1
+		last_tactic = "intercept"
+		score += 20
 	skill_charge = mini(3,skill_charge+1)
 	if target.get("feature","")=="bonus":
 		score += 40
@@ -190,7 +214,7 @@ func on_word_completed(target: Dictionary) -> void:
 			boost = 0.9 if combo < 3 else 1.5
 			feedback = "氮气加速！三连击后每次推进距离增加 15%" if combo>=3 else "稳定推进！连续准确输入三次可获得氮气加速"
 		"fighter":
-			enemy_hp = maxi(0, enemy_hp - 25)
+			enemy_hp = maxi(0, enemy_hp - (50 if counter else 25))
 			feedback = "打断攻击！%d 连击 · 重拳命中" % combo
 			if enemy_hp == 0:
 				round_number += 1

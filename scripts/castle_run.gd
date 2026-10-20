@@ -38,6 +38,7 @@ var boss_spawned := false
 var banner := "黎明前的准备"
 var boss_warning := 0.0
 var words_completed := 0
+var interrupts := 0
 
 func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 0) -> void:
 	super.setup(mode_id, lesson_data, pace, seed_value)
@@ -165,6 +166,12 @@ func spawn_enemy(kind: String) -> Dictionary:
 		"kind":kind,"health":health,"max_health":health,"slow":0.0,"flash":0.0,
 		"timer":8.0,"windup":0.0,"rage":false,"phase":0.0,"siege":0.0}
 	target.speed *= minf(1,5.0/maxi(5,str(target.word).length()))
+	EnemyTactics.enter(target,"flank" if kind=="wolf" else "march")
+	var radial: Vector2 = (position-KEEP).normalized()
+	target.waypoint = KEEP+radial.rotated(.48 if next_id%2==0 else -.48)*220
+	target.ally = -1
+	target.aim = KEEP
+	target.pace = 1.0
 	targets.append(target)
 	next_id += 1
 	if kind == "boss":
@@ -173,6 +180,9 @@ func spawn_enemy(kind: String) -> Dictionary:
 	return target
 
 func priority(target: Dictionary) -> float:
+	if target.get("intent", "") in ["casting","arming"]:
+		return maxf(0,float(target.intent_left))
+	if target.kind=="boss" and target.windup>0: return target.windup
 	return target.position.distance_to(KEEP) / maxf(1,target.speed)
 
 func step(delta: float) -> void:
@@ -196,18 +206,25 @@ func advance(dt: float) -> void:
 		target.slow = maxf(0,target.slow-dt)
 		target.flash = maxf(0,target.flash-dt)
 		target.phase += dt * 5
-		var speed: float = target.speed * (0.5 if target.slow > 0 else 1.0)
-		if target.rage:
-			speed *= 1.3
-		target.position = target.position.move_toward(KEEP,speed*dt)
-		if target.kind == "shaman":
-			target.timer -= dt
-			if target.timer <= 0:
-				target.timer = 7.0
-				for other in targets:
-					if other.id != target.id and other.position.distance_to(target.position) < 170:
-						other.health = mini(other.max_health,other.health+12)
-						effect.emit("heal",target.position,other.position,12)
+		var previous: String = target.intent
+		var action := EnemyTactics.castle(target,targets,KEEP,dt,tactic_window(target))
+		if previous!=target.intent: hud_changed.emit()
+		var speed: float = target.speed * target.pace * (0.5 if target.slow > 0 else 1.0)
+		if target.rage: speed *= 1.3
+		target.position = target.position.move_toward(target.aim,speed*dt)
+		if action=="casting":
+			var ally := target_by_id(target.ally)
+			if not ally.is_empty() and ally.position.distance_to(target.position)<190:
+				var restored := mini(12,int(ally.max_health-ally.health))
+				ally.health += restored
+				if restored>0: effect.emit("heal",target.position,ally.position,restored)
+			target.timer = 7.0
+		elif action=="arming":
+			effect.emit("quake",target.position,KEEP,0)
+			damage_castle(ENEMIES.bomber.damage)
+			remove_target(target)
+			if done: return
+			continue
 		if target.kind == "boss":
 			update_boss(target,dt)
 			if done:
@@ -235,6 +252,10 @@ func advance(dt: float) -> void:
 			banner = "防线守住了 · 建设与整备"
 			feedback = "获得 45 金币补给。可以建塔、升级或修复，准备好后开始下一波。"
 			phase_changed.emit()
+
+func tactic_window(target: Dictionary) -> float:
+	# Even one-key lessons get a readable warning; phrases scale with their actual length.
+	return (maxf(6.0, 3.0+str(target.word).length()*.8) if context=="training" else maxf(4.0,2.0+str(target.word).length()*.6)) / difficulty
 
 func update_boss(target: Dictionary, dt: float) -> void:
 	if target.health <= target.max_health * 0.5 and not target.rage:
@@ -270,8 +291,15 @@ func on_word_completed(target: Dictionary) -> void:
 	energy = mini(20,energy+2)
 	var pos: Vector2 = target.position
 	var amount: int = 36 + upgrades.power * 14
+	if target.intent in ["casting","arming"]:
+		interrupts += 1
+		EnemyTactics.enter(target,"recover",2.0)
+		target.timer = 7.0
+		target.position += (pos-KEEP).normalized()*24
+		effect.emit("interrupt",pos,pos,0)
 	if target.kind == "boss" and target.windup > 0:
 		target.windup = 0.0
+		interrupts += 1
 		target.timer = 10.0
 		feedback = "蓄力打断！继续攻击弱点。"
 		effect.emit("interrupt",pos,pos,0)
