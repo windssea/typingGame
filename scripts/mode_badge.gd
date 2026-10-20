@@ -11,7 +11,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	art.setup(mode)
 	if size.x>=200:
-		preview_motion.setup(mode)
+		preview_motion.setup(mode,true)
 
 func _process(delta: float) -> void:
 	if not reduced_motion:

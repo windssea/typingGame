@@ -1,0 +1,42 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\guard-motion-v10\\v001\\grok-raw.mp4",
+  "native": {
+    "width": 720,
+    "height": 720,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/guard-hit-hd-v11/idle-atlas.png",
+    "cell": 256,
+    "columns": 8,
+    "rows": 3,
+    "frames": 18,
+    "fps": "24",
+    "interval": [
+      5.25,
+      6.0
+    ],
+    "decoded_rgba_bytes": 6291456
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #ff00ff",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "pending-native-scale-review",
+  "status": "native-source-hd-candidate",
+  "static_crop": null,
+  "animation": "hit",
+  "loop": false,
+  "chroma_key": "ff00ff",
+  "cell_safety_inset_px": 24,
+  "source_runtime_version": "guard-hit-v10",
+  "color_detail_source": "original decoded video, not low-resolution atlas enlargement",
+  "alpha_reference": "assets/animations/guard-hit-v10/idle-atlas.png",
+  "minimum_frame_margin_px": 78
+}

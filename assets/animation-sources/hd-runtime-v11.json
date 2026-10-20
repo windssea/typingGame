@@ -1,0 +1,214 @@
+{
+  "date": "2026-10-20",
+  "pipeline": "original-video decode at native fps; no frame interpolation; RGB is not upscaled from old atlases",
+  "active_atlases": [
+    {
+      "old": "mole-idle-v10",
+      "new": "mole-idle-hd-v11",
+      "cell": 256,
+      "frames": 48,
+      "decoded_bytes": 12582912,
+      "margin": 46
+    },
+    {
+      "old": "mole-hit-v10",
+      "new": "mole-hit-hd-v11",
+      "cell": 256,
+      "frames": 24,
+      "decoded_bytes": 6291456,
+      "margin": 46
+    },
+    {
+      "old": "ufo-idle-v10",
+      "new": "ufo-idle-hd-v11",
+      "cell": 256,
+      "frames": 48,
+      "decoded_bytes": 12582912,
+      "margin": 48
+    },
+    {
+      "old": "ufo-hit-v10",
+      "new": "ufo-hit-hd-v11",
+      "cell": 256,
+      "frames": 18,
+      "decoded_bytes": 6291456,
+      "margin": 24
+    },
+    {
+      "old": "rally-drive-v10",
+      "new": "rally-drive-hd-v11",
+      "cell": 256,
+      "frames": 48,
+      "decoded_bytes": 12582912,
+      "margin": 48
+    },
+    {
+      "old": "rally-boost-v10",
+      "new": "rally-boost-hd-v11",
+      "cell": 256,
+      "frames": 30,
+      "decoded_bytes": 8388608,
+      "margin": 41
+    },
+    {
+      "old": "goblin-walk-v10",
+      "new": "goblin-walk-hd-v11",
+      "cell": 256,
+      "frames": 48,
+      "decoded_bytes": 12582912,
+      "margin": 48
+    },
+    {
+      "old": "goblin-hit-v10",
+      "new": "goblin-hit-hd-v11",
+      "cell": 256,
+      "frames": 18,
+      "decoded_bytes": 6291456,
+      "margin": 26
+    },
+    {
+      "old": "wolf-walk-v10",
+      "new": "wolf-walk-hd-v11",
+      "cell": 256,
+      "frames": 48,
+      "decoded_bytes": 12582912,
+      "margin": 40
+    },
+    {
+      "old": "wolf-hit-v10",
+      "new": "wolf-hit-hd-v11",
+      "cell": 256,
+      "frames": 18,
+      "decoded_bytes": 6291456,
+      "margin": 47
+    },
+    {
+      "old": "boss-walk-v10b",
+      "new": "boss-walk-hd-v11",
+      "cell": 384,
+      "frames": 48,
+      "decoded_bytes": 28311552,
+      "margin": 87
+    },
+    {
+      "old": "boss-hit-v10b",
+      "new": "boss-hit-hd-v11",
+      "cell": 384,
+      "frames": 18,
+      "decoded_bytes": 14155776,
+      "margin": 24
+    },
+    {
+      "old": "guard-walk-v10",
+      "new": "guard-walk-hd-v11",
+      "cell": 256,
+      "frames": 48,
+      "decoded_bytes": 12582912,
+      "margin": 83
+    },
+    {
+      "old": "guard-hit-v10",
+      "new": "guard-hit-hd-v11",
+      "cell": 256,
+      "frames": 18,
+      "decoded_bytes": 6291456,
+      "margin": 78
+    },
+    {
+      "old": "shaman-walk-v10",
+      "new": "shaman-walk-hd-v11",
+      "cell": 256,
+      "frames": 48,
+      "decoded_bytes": 12582912,
+      "margin": 81
+    },
+    {
+      "old": "shaman-hit-v10",
+      "new": "shaman-hit-hd-v11",
+      "cell": 256,
+      "frames": 18,
+      "decoded_bytes": 6291456,
+      "margin": 79
+    },
+    {
+      "old": "bomber-walk-v10",
+      "new": "bomber-walk-hd-v11",
+      "cell": 256,
+      "frames": 48,
+      "decoded_bytes": 12582912,
+      "margin": 76
+    },
+    {
+      "old": "bomber-hit-v10",
+      "new": "bomber-hit-hd-v11",
+      "cell": 256,
+      "frames": 18,
+      "decoded_bytes": 6291456,
+      "margin": 64
+    },
+    {
+      "old": "boxing-blue-idle-v002",
+      "new": "boxing-blue-idle-hd-v11",
+      "cell": 384,
+      "frames": 48,
+      "decoded_bytes": 28311552,
+      "margin": 21
+    },
+    {
+      "old": "boxing-blue-punch-v003",
+      "new": "boxing-blue-punch-hd-v11",
+      "cell": 384,
+      "frames": 10,
+      "decoded_bytes": 9437184,
+      "margin": 13
+    },
+    {
+      "old": "boxing-coral-idle-v001",
+      "new": "boxing-coral-idle-hd-v11",
+      "cell": 384,
+      "frames": 48,
+      "decoded_bytes": 28311552,
+      "margin": 30
+    },
+    {
+      "old": "boxing-coral-punch-v001",
+      "new": "boxing-coral-punch-hd-v11",
+      "cell": 384,
+      "frames": 12,
+      "decoded_bytes": 9437184,
+      "margin": 34
+    },
+    {
+      "old": "royal-guard-idle-v002",
+      "new": "royal-guard-idle-hd-v11",
+      "cell": 256,
+      "frames": 96,
+      "decoded_bytes": 25165824,
+      "margin": 10
+    },
+    {
+      "old": null,
+      "new": "coach-idle-hd-v11",
+      "cell": 384,
+      "frames": 48,
+      "decoded_bytes": 28311552,
+      "source_pixels": 960
+    },
+    {
+      "old": null,
+      "new": "coach-cheer-hd-v11",
+      "cell": 384,
+      "frames": 42,
+      "decoded_bytes": 28311552,
+      "source_pixels": 960
+    },
+    {
+      "old": null,
+      "new": "coach-run-hd-v11",
+      "cell": 384,
+      "frames": 48,
+      "decoded_bytes": 28311552,
+      "source_pixels": 960
+    }
+  ]
+}

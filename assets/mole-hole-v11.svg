@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="204" viewBox="0 0 160 68">
+<defs><radialGradient id="soil"><stop stop-color="#d8b578"/><stop offset=".75" stop-color="#a87c48"/><stop offset="1" stop-color="#8c693f"/></radialGradient><radialGradient id="depth" cy=".12" r=".95"><stop stop-color="#342e28"/><stop offset="1" stop-color="#66513c"/></radialGradient></defs>
+<ellipse cx="80" cy="42" rx="70" ry="21" fill="#4c5930" opacity=".15"/>
+<ellipse cx="80" cy="34" rx="66" ry="23" fill="url(#soil)"/>
+<ellipse cx="80" cy="31" rx="56" ry="16" fill="url(#depth)"/>
+<path d="M24 30C35 11 125 11 136 30" fill="none" stroke="#efcf91" stroke-width="2" stroke-linecap="round" opacity=".65"/>
+<ellipse cx="32" cy="45" rx="5" ry="2" fill="#e0be83"/><ellipse cx="120" cy="48" rx="4" ry="1.6" fill="#d5ac6b"/>
+</svg>

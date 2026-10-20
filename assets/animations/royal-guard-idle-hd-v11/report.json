@@ -1,0 +1,43 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\royal-guard\\idle-v001\\grok-raw.mp4",
+  "native": {
+    "width": 720,
+    "height": 720,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/royal-guard-idle-hd-v11/idle-atlas.png",
+    "cell": 256,
+    "columns": 8,
+    "rows": 12,
+    "frames": 96,
+    "fps": "24",
+    "interval": [
+      0.416666666666667,
+      4.416666666666667
+    ],
+    "decoded_rgba_bytes": 25165824
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #00ff00",
+    "green despill",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "pending-native-scale-review",
+  "status": "native-source-hd-candidate",
+  "static_crop": null,
+  "animation": "idle",
+  "loop": true,
+  "chroma_key": "00ff00",
+  "cell_safety_inset_px": 0,
+  "source_runtime_version": "royal-guard-idle-v002",
+  "color_detail_source": "original decoded video, not low-resolution atlas enlargement",
+  "alpha_reference": "assets/animations/royal-guard-idle-v002/idle-atlas.png",
+  "minimum_frame_margin_px": 10
+}

@@ -1,0 +1,14 @@
+{
+  "tool": "built-in image_gen",
+  "source": "exec-258a07d6-d786-4948-a7bd-073a88cb21e3.png",
+  "workspace_asset": "assets/generated/coach-mint-v11.png",
+  "prompt": "Friendly mint and cream toy robot typing coach, amber gloves, jointed limbs, clean transparent full-body American cartoon game mascot; no text or background",
+  "operation": "technical transparent compositing to a fixed magenta video seed",
+  "prompt_file": "imagegen-v11.txt",
+  "transparent_background": true,
+  "actual_pixels": [
+    1214,
+    1295
+  ],
+  "date": "2026-10-20"
+}

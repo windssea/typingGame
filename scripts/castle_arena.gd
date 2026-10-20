@@ -9,14 +9,17 @@ var terrain: Node2D
 var enemy_motion := ArcadeMotion.new()
 var enemy_reactions: Dictionary = {}
 var last_enemy_flash: Dictionary = {}
-var label_offsets: Dictionary = {}
 var creature_clips: Dictionary = {}
+var defeat_ghosts: Array[Dictionary] = []
 const ROYAL_MAP = preload("res://assets/worlds/royal-battlefield.png")
-const GUARD_IDLE = preload("res://assets/animations/royal-guard-idle-v002/idle.tres")
+var guard_idle: SpriteFrames
 
 func _ready() -> void:
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	battle = run as CastleRun
+	guard_idle = load("res://assets/animations/royal-guard-idle-hd-v11/idle.tres")
 	art.setup("castle")
+	setup_backdrop(ROYAL_MAP)
 	enemy_motion.setup("castle")
 	juice.reduced_motion = reduced_motion
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -42,9 +45,21 @@ func receive_effect(kind: String, origin: Vector2, destination: Vector2, amount:
 		shake = 0.26
 	if kind == "defeat":
 		duration = 1.2
+		if not reduced_motion:
+			for target in battle.targets:
+				if target.position.distance_to(destination)<1:
+					defeat_ghosts.append({"kind":target.kind,"position":target.position,"age":0.0})
+					if defeat_ghosts.size()>12:
+						defeat_ghosts.pop_front()
+					break
 	if kind in ["fire","ember","ice","storm","defeat","build","damage","quake","interrupt"]:
 		var tint: Color = {"ice":Color("74dcff"),"storm":Color("b192ff"),"damage":Color("ed8b71"),"defeat":Color("ffd261")}.get(kind,Color("ffb34d"))
-		juice.burst(destination,tint,3 if kind in ["quake","defeat"] else 1,"confetti" if kind=="defeat" else "spark")
+		var tier := 3 if kind in ["quake","defeat"] else 2 if kind in ["storm","interrupt"] else 1
+		juice.burst(destination,tint,tier,{"defeat":"confetti","fire":"ember","ember":"ember","ice":"snow"}.get(kind,"spark"))
+		if kind in ["fire","ice","storm","interrupt"]:
+			juice.jet(destination,(destination-origin).normalized(),tint,tier)
+		if kind in ["defeat","interrupt","storm","quake"]:
+			record_impact(destination-Vector2(0,16),tier)
 	effects.append({"kind":kind,"from":origin,"to":destination,"amount":amount,"life":duration,"duration":duration})
 	if effects.size() > 90:
 		effects.pop_front()
@@ -55,6 +70,10 @@ func _process(delta: float) -> void:
 	if not battle.paused:
 		clock += delta
 		step_feedback(delta)
+		for ghost in defeat_ghosts.duplicate():
+			ghost.age += delta
+			if ghost.age>=.42:
+				defeat_ghosts.erase(ghost)
 		for id in label_offsets.keys():
 			if battle.target_by_id(id).is_empty():
 				label_offsets.erase(id)
@@ -98,31 +117,57 @@ func _draw() -> void:
 		world_offset = Vector2(sin(clock*90)*shake*10,cos(clock*73)*shake*7)
 	else:
 		world_offset = Vector2.ZERO
+	var prompts: Array[Dictionary] = []
+	var actors: Array[Rect2] = [Rect2(CastleRun.KEEP-Vector2(110,145),Vector2(220,205))]
+	var blocked: Array[Rect2] = [Rect2(16,14,1008,44)]
+	for target in battle.targets:
+		var boss: bool = target.kind=="boss"
+		prompts.append({"target":target,"center":target.position-Vector2(0,146 if boss else 94),"source":target.position-Vector2(0,27)})
+		actors.append(Rect2(target.position-Vector2(74 if boss else 40,116 if boss else 58),Vector2(148,150) if boss else Vector2(80,90)))
+		if boss:
+			blocked.append(Rect2(260,64,520,40))
+	layout_labels(prompts,actors,blocked)
 	draw_set_transform(world_offset)
 	draw_battlefield()
 	for i in range(CastleRun.PADS.size()):
 		draw_pad(i)
-	var guard_frame := 0 if reduced_motion else int(clock*GUARD_IDLE.get_animation_speed("idle"))%GUARD_IDLE.get_frame_count("idle")
-	draw_texture_rect(GUARD_IDLE.get_frame_texture("idle",guard_frame),Rect2(CastleRun.KEEP+Vector2(-110,24),Vector2(96,96)),false)
+	var guard_frame := 0 if reduced_motion else int(clock*guard_idle.get_animation_speed("idle"))%guard_idle.get_frame_count("idle")
+	draw_texture_rect(guard_idle.get_frame_texture("idle",guard_frame),Rect2(CastleRun.KEEP+Vector2(-110,24),Vector2(96,96)),false)
 	panel(Rect2(CastleRun.KEEP+Vector2(-55,84),Vector2(110,9)),Color("dbe7dc"),4)
 	panel(Rect2(CastleRun.KEEP+Vector2(-55,84),Vector2(110*float(battle.hp)/battle.max_hp,9)),MINT,4)
 	var ordered := battle.targets.duplicate()
 	ordered.sort_custom(func(a,b): return a.position.y < b.position.y)
 	for target in ordered:
 		draw_enemy(target)
+	draw_defeat_ghosts()
 	for effect in effects:
 		draw_effect(effect)
 	juice.draw(self)
+	draw_impact()
 	world_offset = Vector2.ZERO
 	draw_set_transform(Vector2.ZERO)
-	var occupied: Array[Rect2] = []
-	for target in ordered:
-		draw_target_label(target,occupied)
-	draw_set_transform(Vector2.ZERO)
 	draw_top_status()
+	draw_target_labels()
+
+func draw_defeat_ghosts() -> void:
+	for ghost in defeat_ghosts:
+		var clips: ArcadeMotion = enemy_motion if ghost.kind=="goblin" else creature_clips.get(ghost.kind)
+		if clips==null:
+			continue
+		var frame := clips.texture("hit",ghost.age,false)
+		if frame==null:
+			continue
+		var phase: float = ghost.age/.42
+		var point: Vector2 = ghost.position+(ghost.position-CastleRun.KEEP).normalized()*phase*27
+		var facing := -1.0 if point.x>CastleRun.KEEP.x else 1.0
+		var bounds := 280.0 if ghost.kind=="boss" else 110.0 if ghost.kind=="goblin" else 130.0 if ghost.kind=="wolf" else 160.0
+		var top := -195.0 if ghost.kind=="boss" else -90.0 if ghost.kind=="goblin" else -92.0 if ghost.kind=="wolf" else -113.0
+		draw_set_transform(point+Vector2(0,18+phase*12)+world_offset,phase*.18*facing,Vector2(facing*(1-phase*.15),1-phase*.15))
+		draw_texture_rect(frame,Rect2(-bounds*.5,top,bounds,bounds),false,Color(1,1,1,1-phase))
+		draw_set_transform(world_offset)
 
 func draw_battlefield() -> void:
-	draw_texture_rect(ROYAL_MAP,Rect2(Vector2.ZERO,size),false)
+	draw_scene_background()
 	# Paths, movement, tower pads and damage remain gameplay data, independent of the backdrop.
 	return
 
@@ -220,14 +265,19 @@ func fortress(p: Vector2,s: float) -> void:
 func draw_pad(index: int) -> void:
 	var p: Vector2 = CastleRun.PADS[index]
 	var tower := battle.tower_at(index)
+	if tower.is_empty() and battle.phase!="build":
+		return
 	var selected := index == battle.selected_pad and battle.phase == "build"
 	if selected:
 		var reach: float = 230.0 if tower.is_empty() else float(CastleRun.TOWERS[tower.kind].range)+(tower.level-1)*22
 		draw_circle(p,reach,Color(0.6,0.79,0.64,0.035))
 		draw_arc(p,reach,0,TAU,80,Color(0.65,0.85,0.67,0.3),1,true)
 	draw_ellipse_shadow(p+Vector2(0,13),Vector2(39,16))
-	draw_colored_polygon(PackedVector2Array([p+Vector2(-30,4),p+Vector2(0,-14),p+Vector2(30,4),p+Vector2(0,22)]),Color("d8dfb6") if selected else Color("b7ce9c"))
-	draw_arc(p,37,0,TAU,40,GOLD if selected else Color("789c62"),2 if selected else 1,true)
+	draw_set_transform(p+world_offset,0,Vector2(1,.5))
+	draw_circle(Vector2.ZERO,36,Color("e9d7ad") if selected else Color("cbd6ae"),true,-1,true)
+	draw_set_transform(world_offset)
+	if selected:
+		SoftStroke.arc(self,p,38,0,TAU,Color("d5ab56"),2.0)
 	if tower.is_empty():
 		draw_line(p-Vector2(10,0),p+Vector2(10,0),GOLD if selected else MINT,2,true)
 		draw_line(p-Vector2(0,10),p+Vector2(0,10),GOLD if selected else MINT,2,true)
@@ -298,8 +348,8 @@ func draw_enemy(target: Dictionary) -> void:
 			var state := "hit" if enemy_reactions.has(target.id) else "idle"
 			var seconds: float = float(enemy_reactions.get(target.id,0)) if state=="hit" else clock+target.id*.23
 			var frame := clips.texture(state,seconds,reduced_motion)
-			var bounds := 280.0 if kind=="boss" else 130.0
-			var top := -195.0 if kind=="boss" else -92.0
+			var bounds := 280.0 if kind=="boss" else 130.0 if kind=="wolf" else 160.0
+			var top := -195.0 if kind=="boss" else -92.0 if kind=="wolf" else -113.0
 			draw_texture_rect(frame,Rect2(Vector2(-bounds*.5,top+bob),Vector2(bounds,bounds)),false,Color("fff0c2") if target.flash>0 else Color.WHITE)
 		else:
 			art.draw_sprite(self,kind,Vector2(0,-35+bob),Vector2(68,78)*s,Color("fff0c2") if target.flash>0 else Color.WHITE)
@@ -362,47 +412,6 @@ func draw_enemy(target: Dictionary) -> void:
 		if target.windup > 0:
 			draw_arc(p,67,-PI/2,-PI/2+TAU*minf(1,target.windup/4.5),60,Color("ffb170"),4,true)
 			write("蓄力中 · 输入打断",p+Vector2(0,81),16,Color("8f4a23"),true)
-
-func draw_target_label(target: Dictionary, occupied: Array[Rect2]) -> void:
-	var word: String = target.word
-	var font_size := 30 if word.length()==1 else 25 if word.length()<14 else 20
-	var width := maxf(60,FONT.get_string_size(word,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x+24)
-	var at: Vector2 = target.position-Vector2(width/2,79 if target.kind=="boss" else 63)
-	at.x = clampf(at.x,12,size.x-width-12)
-	var top_limit := 110.0 if battle.targets.any(func(t): return t.kind=="boss") else 72.0
-	at.y = clampf(at.y,top_limit,size.y-74)
-	var rect := Rect2(at+label_offsets.get(target.id,Vector2.ZERO),Vector2(width,50))
-	rect.position = rect.position.clamp(Vector2(12,top_limit),Vector2(size.x-width-12,size.y-64))
-	if occupied.any(func(r): return r.grow(5).intersects(rect)):
-		var found := false
-		for dy in [0,-56,56,-112,112,-168,168]:
-			for dx in [0,-width-12,width+12]:
-				var candidate := Rect2((at+Vector2(dx,dy)).clamp(Vector2(12,top_limit),Vector2(size.x-width-12,size.y-64)),rect.size)
-				if not occupied.any(func(r): return r.grow(5).intersects(candidate)):
-					rect = candidate
-					found = true
-					break
-			if found:
-				break
-	label_offsets[target.id] = rect.position-at
-	occupied.append(rect)
-	var suggested := battle.recommended_target()
-	var selected: bool = not suggested.is_empty() and target.id == suggested.id
-	draw_line(rect.get_center()+Vector2(0,18),target.position-Vector2(0,22),Color(.3,.6,.86,.65) if selected else Color(.55,.68,.55,.4),2 if selected else 1,true)
-	panel(rect,Color("effaff") if selected else Color.WHITE,9,PlayTheme.PRIMARY if selected else Color("adc593"))
-	if selected:
-		var tip := rect.get_center()+Vector2(0,-rect.size.y/2-6)
-		draw_colored_polygon(PackedVector2Array([tip+Vector2(-6,-6),tip+Vector2(6,-6),tip]),PlayTheme.PRIMARY)
-	write(word,rect.position+Vector2(12,29),font_size,Color("293c59"))
-	if target.typed>0:
-		write(word.substr(0,target.typed),rect.position+Vector2(12,29),font_size,MINT)
-	var bar_width: float = (width-14)*maxf(0,float(target.health)/target.max_health)
-	draw_rect(Rect2(rect.position+Vector2(7,36),Vector2(width-14,3)),Color("dfebd3"))
-	draw_rect(Rect2(rect.position+Vector2(7,36),Vector2(bar_width,3)),Color("dca86d") if target.kind=="boss" else MINT)
-	if selected:
-		var prefix := FONT.get_string_size(word.substr(0,target.typed),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
-		var next_width := FONT.get_string_size(word.substr(target.typed,1),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
-		draw_line(rect.position+Vector2(12+prefix,33),rect.position+Vector2(12+prefix+maxf(9,next_width),33),GOLD,2,true)
 
 func draw_effect(fx: Dictionary) -> void:
 	var t: float = 1-fx.life/fx.duration

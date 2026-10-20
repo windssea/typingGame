@@ -1,0 +1,42 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\bomber-motion-v10\\v001\\grok-raw.mp4",
+  "native": {
+    "width": 720,
+    "height": 720,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/bomber-walk-hd-v11/idle-atlas.png",
+    "cell": 256,
+    "columns": 8,
+    "rows": 6,
+    "frames": 48,
+    "fps": "24",
+    "interval": [
+      0.25,
+      2.25
+    ],
+    "decoded_rgba_bytes": 12582912
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #ff00ff",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "pending-native-scale-review",
+  "status": "native-source-hd-candidate",
+  "static_crop": null,
+  "animation": "idle",
+  "loop": true,
+  "chroma_key": "ff00ff",
+  "cell_safety_inset_px": 24,
+  "source_runtime_version": "bomber-walk-v10",
+  "color_detail_source": "original decoded video, not low-resolution atlas enlargement",
+  "alpha_reference": "assets/animations/bomber-walk-v10/idle-atlas.png",
+  "minimum_frame_margin_px": 76
+}

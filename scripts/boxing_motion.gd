@@ -1,17 +1,21 @@
 class_name BoxingMotion
 extends RefCounted
 
-const BLUE_IDLE = preload("res://assets/animations/boxing-blue-idle-v002/idle.tres")
-const CORAL_IDLE = preload("res://assets/animations/boxing-coral-idle-v001/idle.tres")
-const BLUE_PUNCH = preload("res://assets/animations/boxing-blue-punch-v003/idle.tres")
-const CORAL_PUNCH = preload("res://assets/animations/boxing-coral-punch-v001/idle.tres")
+const BLUE_IDLE = "res://assets/animations/boxing-blue-idle-hd-v11/idle.tres"
+const CORAL_IDLE = "res://assets/animations/boxing-coral-idle-hd-v11/idle.tres"
+const BLUE_PUNCH = "res://assets/animations/boxing-blue-punch-hd-v11/idle.tres"
+const CORAL_PUNCH = "res://assets/animations/boxing-coral-punch-hd-v11/idle.tres"
 
-static func texture(side: int, clock: float, attack_age: float, reduced: bool) -> Texture2D:
-	var frames: SpriteFrames = BLUE_IDLE if side==0 else CORAL_IDLE
+static func load_clips() -> Array[SpriteFrames]:
+	return [load(BLUE_IDLE),load(CORAL_IDLE),load(BLUE_PUNCH),load(CORAL_PUNCH)]
+
+static func texture(side: int, clock: float, attack_age: float, reduced: bool, loaded: Array[SpriteFrames] = []) -> Texture2D:
+	var clips := loaded if not loaded.is_empty() else load_clips()
+	var frames: SpriteFrames = clips[side]
 	var animation := "idle"
 	var seconds := clock
 	if not reduced and attack_age>=0:
-		var attack: SpriteFrames = BLUE_PUNCH if side==0 else CORAL_PUNCH
+		var attack: SpriteFrames = clips[side+2]
 		if attack_age<float(attack.get_frame_count("punch"))/attack.get_animation_speed("punch"):
 			frames = attack
 			animation = "punch"

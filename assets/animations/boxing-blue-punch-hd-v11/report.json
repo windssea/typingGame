@@ -1,0 +1,43 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\boxing-blue-solo\\v001\\grok-raw.mp4",
+  "native": {
+    "width": 960,
+    "height": 960,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/boxing-blue-punch-hd-v11/idle-atlas.png",
+    "cell": 384,
+    "columns": 8,
+    "rows": 2,
+    "frames": 10,
+    "fps": "24",
+    "interval": [
+      3.0,
+      3.4166666666666665
+    ],
+    "decoded_rgba_bytes": 9437184
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #00ff00",
+    "green despill",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "native-scale runtime reviewed; short idle loop has a visible reset; punch is one-shot",
+  "status": "native-source-hd-candidate",
+  "static_crop": null,
+  "animation": "punch",
+  "loop": false,
+  "chroma_key": "00ff00",
+  "cell_safety_inset_px": 0,
+  "source_runtime_version": "boxing-blue-punch-v003",
+  "color_detail_source": "original decoded video, not low-resolution atlas enlargement",
+  "alpha_reference": "assets/animations/boxing-blue-punch-v003/idle-atlas.png",
+  "minimum_frame_margin_px": 13
+}

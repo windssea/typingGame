@@ -3,21 +3,24 @@ extends RefCounted
 
 # Only the current arena's clips are loaded. The simulation owns hits and timing.
 const LIBRARY := {
-	"moles":{"idle":"mole-idle-v10","hit":"mole-hit-v10"},
-	"aliens":{"idle":"ufo-idle-v10","hit":"ufo-hit-v10"},
-	"racing":{"idle":"rally-drive-v10","boost":"rally-boost-v10"},
-	"castle":{"idle":"goblin-walk-v10","hit":"goblin-hit-v10"},
-	"castle_wolf":{"idle":"wolf-walk-v10","hit":"wolf-hit-v10"},
-	"castle_boss":{"idle":"boss-walk-v10b","hit":"boss-hit-v10b"},
-	"castle_guard":{"idle":"guard-walk-v10","hit":"guard-hit-v10"},
-	"castle_shaman":{"idle":"shaman-walk-v10","hit":"shaman-hit-v10"},
-	"castle_bomber":{"idle":"bomber-walk-v10","hit":"bomber-hit-v10"}
+	"coach":{"idle":"coach-idle-hd-v11","cheer":"coach-cheer-hd-v11","run":"coach-run-hd-v11"},
+	"moles":{"idle":"mole-idle-hd-v11","hit":"mole-hit-hd-v11"},
+	"aliens":{"idle":"ufo-idle-hd-v11","hit":"ufo-hit-hd-v11"},
+	"racing":{"idle":"rally-drive-hd-v11","boost":"rally-boost-hd-v11"},
+	"castle":{"idle":"goblin-walk-hd-v11","hit":"goblin-hit-hd-v11"},
+	"castle_wolf":{"idle":"wolf-walk-hd-v11","hit":"wolf-hit-hd-v11"},
+	"castle_boss":{"idle":"boss-walk-hd-v11","hit":"boss-hit-hd-v11"},
+	"castle_guard":{"idle":"guard-walk-hd-v11","hit":"guard-hit-hd-v11"},
+	"castle_shaman":{"idle":"shaman-walk-hd-v11","hit":"shaman-hit-hd-v11"},
+	"castle_bomber":{"idle":"bomber-walk-hd-v11","hit":"bomber-hit-hd-v11"}
 }
 var clips: Dictionary = {}
 
-func setup(mode: String) -> void:
+func setup(mode: String, idle_only := false) -> void:
 	clips.clear()
 	for state in LIBRARY.get(mode,{}):
+		if idle_only and state!="idle":
+			continue
 		var path := "res://assets/animations/"+str(LIBRARY[mode][state])+"/idle.tres"
 		if ResourceLoader.exists(path):
 			clips[state] = load(path)

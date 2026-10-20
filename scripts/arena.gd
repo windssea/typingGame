@@ -20,6 +20,100 @@ var key_beats: Array[Dictionary] = []
 var displayed_wpm := 0.0
 var world_offset := Vector2.ZERO
 var cannon_x := 680.0
+var label_rects: Dictionary = {}
+var label_layouts: Dictionary = {}
+var label_offsets: Dictionary = {}
+var label_order: Array[Dictionary] = []
+var impact_age := 1.0
+var impact_tier := 1
+var impact_point := Vector2.ZERO
+var backdrop: TextureRect
+var coach_motion := ArcadeMotion.new()
+var coach_age := -1.0
+const BREEZE = preload("res://shaders/scene_breeze.gdshader")
+
+func setup_backdrop(texture: Texture2D) -> void:
+	backdrop = TextureRect.new()
+	backdrop.name = "LivingBackdrop"
+	backdrop.texture = texture
+	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	backdrop.size = size
+	backdrop.show_behind_parent = true
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var shader_material := ShaderMaterial.new()
+	shader_material.shader = BREEZE
+	shader_material.set_shader_parameter("strength",0.0 if reduced_motion else 1.0)
+	shader_material.set_shader_parameter("world_kind",1 if run.mode in ["castle","moles"] else 2 if run.mode in ["aliens","rain"] else 3 if run.mode=="bubbles" else 4 if run.mode=="balloons" else 0)
+	backdrop.material = shader_material
+	add_child(backdrop)
+
+func draw_scene_background() -> void:
+	if is_instance_valid(backdrop):
+		backdrop.size = size
+		backdrop.material.set_shader_parameter("clock",clock)
+
+func layout_labels(candidates: Array[Dictionary], actors: Array[Rect2], blocked: Array[Rect2] = []) -> void:
+	var selected: int = run.recommended_target().get("id",-1)
+	candidates.sort_custom(func(a,b): return a.target.id==selected if (a.target.id==selected)!=(b.target.id==selected) else int(a.target.id)<int(b.target.id))
+	var occupied: Array[Rect2] = blocked.duplicate()
+	label_order = candidates
+	label_rects.clear()
+	label_layouts.clear()
+	for entry in candidates:
+		var target: Dictionary = entry.target
+		var active: bool = target.id==selected
+		var layout := TypingPrompt.measure(target.word,minf(390,size.x-32),36 if active else 29,25)
+		var extent: Vector2 = layout.size
+		var center: Vector2 = entry.center-Vector2(0,maxf(0,extent.y-58)*.5)
+		var rect := TypingPrompt.place(center,extent,Rect2(12,12,size.x-24,size.y-28),occupied,actors,label_offsets.get(target.id,Vector2.ZERO))
+		label_offsets[target.id] = rect.position-(center-extent*.5)
+		label_rects[target.id] = rect
+		label_layouts[target.id] = layout
+		occupied.append(rect)
+	for id in label_offsets.keys():
+		if not label_rects.has(id):
+			label_offsets.erase(id)
+	juice.protected_regions.clear()
+	for rect in label_rects.values():
+		juice.protected_regions.append(rect.grow(8))
+
+func draw_target_labels() -> void:
+	var selected: int = run.recommended_target().get("id",-1)
+	for i in range(label_order.size()-1,-1,-1):
+		var entry: Dictionary = label_order[i]
+		var target: Dictionary = entry.target
+		var active: bool = target.id==selected
+		var rect: Rect2 = label_rects[target.id]
+		var source: Vector2 = entry.source
+		if not rect.grow(6).has_point(source):
+			SoftStroke.line(self,source,source.clamp(rect.position,rect.end),Color(.2,.5,.7,.55) if active else Color(.35,.5,.6,.25),2.0 if active else 1.5)
+		var edge := Color("bb6256") if active and error_pulse>0 else PlayTheme.PRIMARY if active else Color("afc9d4")
+		if active:
+			draw_style_box(PlayTheme.surface(Color(.24,.58,.82,.18),Color.TRANSPARENT,16),rect.grow(5))
+		draw_style_box(PlayTheme.game_panel(Color("f3fcff") if active else Color("fffef9"),edge,12,4),rect)
+		TypingPrompt.paint(self,target.word,target.typed,rect,label_layouts[target.id],active,active and error_pulse>0)
+		if target.has("health"):
+			var fraction: float = clampf(float(target.health)/target.max_health,0,1)
+			draw_line(rect.position+Vector2(10,rect.size.y-4),rect.end-Vector2(10,4),Color("d5e7de"),3,true)
+			draw_line(rect.position+Vector2(10,rect.size.y-4),rect.position+Vector2(10+(rect.size.x-20)*fraction,rect.size.y-4),MINT,3,true)
+		elif target.has("remaining") and run.mode!="racing":
+			var fraction: float = clampf(target.remaining/target.duration,0,1)
+			draw_line(rect.position+Vector2(10,rect.size.y-4),rect.end-Vector2(10,4),Color("d9e7eb"),3,true)
+			draw_line(rect.position+Vector2(10,rect.size.y-4),rect.position+Vector2(10+(rect.size.x-20)*fraction,rect.size.y-4),PlayTheme.CORAL if fraction<.25 else MINT,3,true)
+
+func record_impact(point: Vector2, tier := 1) -> void:
+	impact_point = point
+	impact_tier = tier
+	impact_age = 0
+
+func draw_impact() -> void:
+	if impact_age>.28 or reduced_motion or impact_tier<2:
+		return
+	var phase := impact_age/.28
+	var color := Color("ffdc84") if impact_tier<3 else Color("a3e7fa")
+	for i in range(3):
+		var angle := i*TAU/3+.3
+		SoftStroke.arc(self,impact_point,22+phase*(45+impact_tier*7),angle,angle+.65,Color(color,(1-phase)*.7),2.5)
 
 func on_key_feedback(character: String, accepted: bool, point: Vector2) -> void:
 	recent_key = character
@@ -33,6 +127,7 @@ func on_key_feedback(character: String, accepted: bool, point: Vector2) -> void:
 		error_pulse = 0.24
 
 func step_feedback(delta: float) -> void:
+	impact_age += delta
 	key_pulse = maxf(0,key_pulse-delta)
 	error_pulse = maxf(0,error_pulse-delta)
 	displayed_wpm = lerpf(displayed_wpm,run.wpm(),1-exp(-delta*7))
@@ -54,22 +149,35 @@ func draw_key_beats() -> void:
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	if run != null:
 		art.setup(run.mode)
+		if run.mode in ["dojo","sprint"]:
+			coach_motion.setup("coach")
+		setup_backdrop(art.background)
 		clip_contents = true
 		juice.reduced_motion = reduced_motion
 		run.key_feedback.connect(on_key_feedback)
 		run.spell.connect(func(a, b, lightning):
-			var point: Vector2 = Vector2(1020,300) if run.mode=="dojo" else Vector2(680,510) if run.mode=="sprint" else b
+			var point: Vector2 = Vector2(1020,300) if run.mode=="dojo" else Vector2(340+680*fposmod(run.correct,20)/20,496) if run.mode=="sprint" else b
 			var origin: Vector2 = Vector2(cannon_x+24,544) if run.mode=="rain" else a
 			effects.append({"from":origin,"to":point,"lightning":lightning,"life":0.55})
-			juice.burst(point,PlayTheme.SKY if lightning else PlayTheme.YELLOW,2 if lightning else 1,"spark"))
+			juice.burst(point,PlayTheme.SKY if run.mode in ["bubbles","rain"] else PlayTheme.YELLOW,2 if lightning else 1,{"bubbles":"droplet","rain":"ember","dojo":"confetti","sprint":"speed"}.get(run.mode,"spark"))
+			juice.jet(point,Vector2.UP if run.mode=="bubbles" else Vector2.RIGHT,PlayTheme.SKY,1)
+			record_impact(point,3 if lightning else 1))
+		run.spell.connect(func(_a,_b,_l):
+			if coach_age<0:
+				coach_age = 0.0)
 
 func _process(delta: float) -> void:
 	if run == null or not run.paused:
 		clock += delta
 		if run!=null:
 			step_feedback(delta)
+			if coach_age>=0:
+				coach_age += delta
+				if coach_age>=coach_motion.duration("cheer"):
+					coach_age = -1
 		juice.step(delta)
 		for effect in effects.duplicate():
 			effect.life -= delta
@@ -101,32 +209,35 @@ func _draw() -> void:
 		return
 	if run == null:
 		return
-	panel(Rect2(Vector2.ZERO, size), Color("edf7ff"), 18, Color("cbdff0"))
-	draw_texture_rect(art.background,Rect2(Vector2.ZERO,size),false)
+	draw_scene_background()
 	if run.mode == "dojo":
+		juice.protected_regions = [Rect2(450,110,460,270)]
 		draw_dojo()
 		juice.draw(self)
+		draw_impact()
 		return
 	if run.mode == "bubbles":
 		draw_bubbles()
 		juice.draw(self)
+		draw_impact()
+		draw_target_labels()
 		return
 	if run.mode == "sprint":
+		juice.protected_regions = [Rect2(300,275,760,145)]
 		draw_sprint()
 		juice.draw(self)
+		draw_impact()
 		return
 	if run.mode == "castle":
 		draw_land(GameRun.CENTER, 1.0)
 		castle(GameRun.CENTER - Vector2(0, 12), 0.8)
 		write("键 之 城", GameRun.CENTER + Vector2(0, 93), 15, GOLD, true)
 	else:
-		for i in range(5):
-			var x := 150.0 + i * 260
-			draw_line(Vector2(x, 40), Vector2(x, 575), Color("d5e6f3"), 1)
-		draw_line(Vector2(50, 587), Vector2(1310, 587), GOLD, 2)
+		draw_style_box(PlayTheme.game_panel(Color("e9f6ff"),Color("aed1dd"),8,3),Rect2(50,582,1260,12))
 		write("防 线", Vector2(680, 620), 16, GOLD, true)
 		# A small interceptor visibly tracks the recommended threat.
-		var ship := Vector2(cannon_x,572)
+		var recoil := 0.0 if reduced_motion else sin(clampf(impact_age/.24,0,1)*PI)*9
+		var ship := Vector2(cannon_x,572+recoil)
 		draw_ellipse_shadow(ship+Vector2(0,14),Vector2(31,6))
 		if art.sprites.has("cannon"):
 			art.draw_sprite(self,"cannon",ship,Vector2(92,92))
@@ -134,6 +245,8 @@ func _draw() -> void:
 			draw_colored_polygon(PackedVector2Array([ship+Vector2(-25,10),ship+Vector2(0,-21),ship+Vector2(25,10),ship]),PlayTheme.PRIMARY)
 		if key_pulse>0:
 			draw_line(ship+Vector2(24,-30),input_point,Color(0.38,0.8,1,key_pulse*2),4,true)
+	var prompts: Array[Dictionary] = []
+	var actors: Array[Rect2] = []
 	for target in run.targets:
 		var pos: Vector2 = target.position
 		var suggested := run.recommended_target()
@@ -148,7 +261,8 @@ func _draw() -> void:
 			if art.sprites.is_empty():
 				draw_circle(pos,13,PlayTheme.SKY)
 			draw_arc(pos, 19, 0, TAU, 24, GOLD if selected else MINT, 1.5, true)
-		word_plate(target, pos + Vector2(0, -40), selected)
+		prompts.append({"target":target,"center":pos-Vector2(0,72),"source":pos-Vector2(0,20)})
+		actors.append(Rect2(pos-Vector2(28,30),Vector2(56,62)))
 	if not reduced_motion:
 		for effect in effects:
 			var t: float = 1.0 - effect.life / 0.55
@@ -165,8 +279,11 @@ func _draw() -> void:
 				draw_circle(p, 7, Color("ffbc69"))
 				draw_circle(p, 3, Color("fff0c1"))
 			draw_arc(effect.to, 10 + t * 32, 0, TAU, 24, Color(0.92, 0.76, 0.47, 1 - t), 2, true)
+	layout_labels(prompts,actors)
 	juice.draw(self)
+	draw_impact()
 	draw_key_beats()
+	draw_target_labels()
 
 func draw_land(center: Vector2, scale_value: float) -> void:
 	for i in range(3):
@@ -252,41 +369,17 @@ func monster(p: Vector2, kind: int, selected: bool) -> void:
 		draw_circle(p+Vector2(21,-22),6,Color("b9a2db"))
 
 func word_plate(target: Dictionary, at: Vector2, selected: bool) -> void:
-	var word: String = target.word
-	var font_size := 32 if word.length()==1 else 26 if word.length()<10 else 22
-	var text_width := FONT.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-	var width := maxf(60,text_width+32)
-	at.x = clampf(at.x, width / 2 + 12, size.x - width / 2 - 12)
-	at.y = maxf(at.y, 20)
-	if selected:
-		panel(Rect2(at - Vector2(width / 2+4, 34), Vector2(width+8,56)),Color(0.35,0.65,0.88,0.16),17)
-	var edge := PlayTheme.CORAL if selected and error_pulse>0 else PlayTheme.PRIMARY if selected else Color("bfd3e5")
-	draw_style_box(PlayTheme.game_panel(Color("effaff") if selected else Color.WHITE,edge,13,4),Rect2(at-Vector2(width/2,30),Vector2(width,48)))
-	var start := at+Vector2(-text_width/2,7)
-	write(word,start,font_size,Color("293c59"))
-	if target.typed > 0:
-		var part := word.substr(0,target.typed)
-		write(part,start,font_size,MINT)
-	if selected:
-		var prefix := FONT.get_string_size(word.substr(0,target.typed), HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
-		var next_width := FONT.get_string_size(word.substr(target.typed,1),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
-		draw_line(start+Vector2(prefix,6),start+Vector2(prefix+maxf(9,next_width),6),GOLD,3,true)
+	var layout := TypingPrompt.measure(target.word,minf(size.x-28,700),36 if selected else 29,25)
+	var rect := Rect2((at-layout.size*.5).clamp(Vector2(12,12),size-layout.size-Vector2(12,12)),layout.size)
+	draw_style_box(PlayTheme.game_panel(Color("f3fcff") if selected else Color.WHITE,PlayTheme.PRIMARY if selected else Color("bfd3e5"),13,4),rect)
+	TypingPrompt.paint(self,target.word,target.typed,rect,layout,selected,error_pulse>0)
 
 func training_word(target: Dictionary, at: Vector2, preferred_size: int, max_width: float) -> void:
-	var word: String = target.word
-	var font_size := preferred_size
-	while font_size>18 and FONT.get_string_size(word,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x>max_width:
-		font_size -= 2
-	var width := FONT.get_string_size(word,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
-	var start := at-Vector2(width/2,0)
-	write(word,start,font_size,INK)
-	write(word.substr(0,target.typed),start,font_size,MINT)
-	var prefix := FONT.get_string_size(word.substr(0,target.typed),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
-	var next_width := FONT.get_string_size(word.substr(target.typed,1),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
-	draw_line(start+Vector2(prefix,8),start+Vector2(prefix+maxf(9,next_width),8),GOLD,3,true)
+	var layout := TypingPrompt.measure(target.word,max_width,preferred_size,30)
+	var rect := Rect2(at-Vector2(layout.size.x*.5,layout.font+8),layout.size)
+	TypingPrompt.paint(self,target.word,target.typed,rect,layout,true,error_pulse>0)
 
 func draw_dojo() -> void:
-	panel(Rect2(275,22,810,62),Color(1,1,1,0.94),16)
 	var press := 0.0 if reduced_motion else key_pulse/0.22
 	art.draw_sprite(self,"key",Vector2(354,236+press*10),Vector2(140+press*9,140-press*9))
 	panel(Rect2(454,115,452,226),Color(1,1,1,0.94),32,PlayTheme.YELLOW)
@@ -295,22 +388,14 @@ func draw_dojo() -> void:
 	var target: Dictionary = run.targets[0]
 	var word: String = target.word
 	var next: String = word.substr(target.typed,1)
-	draw_arc(Vector2(680,235),102,0,TAU,96,Color("b4d5e9"),2,true)
-	draw_arc(Vector2(680,235),102,-PI/2,-PI/2+TAU*maxf(0.002,run.kills/18.0),96,PlayTheme.TEAL,5,true)
 	training_word(target,Vector2(680,255),64,400)
-	# A keyboard coach waves its jointed arms on every successful stroke.
-	var buddy := Vector2(1020,240)
-	var bounce := 0.0 if reduced_motion else sin(clock*2)*3-press*12
-	draw_ellipse_shadow(buddy+Vector2(0,70),Vector2(48,9))
-	buddy.y += bounce
-	panel(Rect2(buddy-Vector2(42,38),Vector2(84,81)),Color("d7f3ed"),24,PlayTheme.TEAL)
-	for sign_value in [-1,1]:
-		var elbow := buddy+Vector2(sign_value*57,12-press*26)
-		draw_line(buddy+Vector2(sign_value*36,8),elbow,PlayTheme.TEAL,7,true)
-		draw_line(elbow,buddy+Vector2(sign_value*64,-10-press*35),PlayTheme.TEAL,7,true)
-		draw_circle(buddy+Vector2(sign_value*16,-7),5,INK)
-		draw_line(buddy+Vector2(sign_value*20,44),buddy+Vector2(sign_value*26,61),PlayTheme.TEAL,7,true)
-	draw_arc(buddy+Vector2(0,6),13,0.15,PI-0.15,20,PlayTheme.TEAL,3,true)
+	# Genuine native-frame mascot animation, not a stick-figure proxy.
+	var buddy := Vector2(1020,225)
+	draw_ellipse_shadow(buddy+Vector2(0,95),Vector2(48,9))
+	var state := "cheer" if coach_age>=0 else "idle"
+	var coach := coach_motion.texture(state,coach_age if state=="cheer" else clock,reduced_motion)
+	if coach!=null:
+		draw_texture_rect(coach,Rect2(buddy-Vector2(145,145),Vector2(290,290)),false)
 	write("%d / 18" % run.kills,Vector2(1020,354),22,MINT,true)
 	write("下一个按键：" + ("空格" if next == " " else next),Vector2(680,376),20,MINT,true)
 	var rows := ["1234567890", "qwertyuiop", "asdfghjkl;'", "zxcvbnm,./"]
@@ -337,11 +422,12 @@ func draw_dojo() -> void:
 	write("SPACE",Vector2(700,628),15,INK if next == " " else Color("405a77"),true)
 
 func draw_bubbles() -> void:
-	panel(Rect2(277,22,806,65),Color(1,1,1,0.94),16)
 	panel(Rect2(420,533,520,65),Color(1,1,1,0.94),16)
 	for i in range(20):
 		var p := Vector2(70+fmod(i*173,1230),150+fmod(i*97,440))
 		draw_circle(p,3+(i%5),Color(0.5,0.8,0.8,0.08))
+	var prompts: Array[Dictionary] = []
+	var actors: Array[Rect2] = []
 	for target in run.targets:
 		var p: Vector2 = target.position
 		if not reduced_motion:
@@ -349,14 +435,14 @@ func draw_bubbles() -> void:
 		var suggested := run.recommended_target()
 		var selected: bool = not suggested.is_empty() and target.id==suggested.id
 		var radius := 75.0
-		var ripple := 0.0 if reduced_motion else sin(clock*2.2+target.id)*0.025
+		var ripple: float = 0.0 if reduced_motion else sin(clock*2.2+target.id)*0.025+(key_pulse/.22*.065 if selected else 0)
 		draw_set_transform(p,0,Vector2(1+ripple,1-ripple))
 		art.draw_sprite(self,"bubble",Vector2.ZERO,Vector2(166,166))
 		draw_set_transform(Vector2.ZERO)
 		draw_circle(p,radius,Color(0.4,0.8,0.75,0.08))
-		draw_arc(p,radius,0,TAU,64,GOLD if selected else Color("70b7ad"),2,true)
-		draw_arc(p,radius-10,PI*1.1,PI*1.4,18,Color(0.8,1,0.9,0.45),3,true)
-		word_plate(target,p+Vector2(0,6),selected)
+		prompts.append({"target":target,"center":target.position-Vector2(0,112),"source":p-Vector2(0,68)})
+		actors.append(Rect2(p-Vector2(60,60),Vector2(120,120)))
+	layout_labels(prompts,actors,[Rect2(420,533,520,65)])
 	for effect in effects:
 		var t: float = 1-effect.life/0.55
 		draw_arc(effect.to,75+t*35,0,TAU,40,Color(0.6,0.9,0.8,1-t),2,true)
@@ -388,17 +474,14 @@ func draw_sprint() -> void:
 		var target: Dictionary = run.targets[0]
 		training_word(target,Vector2(680,350),58,700)
 		write("接下来输入："+str(target.word).substr(target.typed,1),Vector2(680,415),22,MINT,true)
-		word_plate(target,Vector2(680,470),true)
 	# Per-character motion on a miniature track; the text itself stays fixed.
 	var track_y := 507.0
 	draw_line(Vector2(327,track_y),Vector2(1033,track_y),Color("ddeaf3"),4,true)
 	var progress := fposmod(run.correct,20)/20.0
 	var runner := Vector2(340+680*progress,track_y-11)
-	var stride := 0.0 if reduced_motion else sin(clock*(5+minf(displayed_wpm,50)*0.3))*7
-	draw_circle(runner-Vector2(0,21),8,PlayTheme.YELLOW)
-	draw_line(runner-Vector2(0,12),runner,PlayTheme.PRIMARY,7,true)
-	for sign_value in [-1,1]:
-		draw_line(runner,runner+Vector2(sign_value*stride,11),PlayTheme.PRIMARY,4,true)
+	var frame := coach_motion.texture("run",clock,reduced_motion)
+	if frame!=null:
+		draw_texture_rect(frame,Rect2(runner-Vector2(73,122),Vector2(146,146)),false)
 	for i in range(5):
 		write(str(i*5),Vector2(340+i*170,541),13,PlayTheme.MUTED,true)
 	write("已完成 %d 个目标   /   %.1f WPM" % [run.kills,run.wpm()],Vector2(680,563),23,GOLD,true)

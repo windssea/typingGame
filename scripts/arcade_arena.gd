@@ -9,6 +9,7 @@ var blue_attack_age := -1.0
 var coral_attack_age := -1.0
 var trail_clock := 0.0
 var motion := ArcadeMotion.new()
+var boxing_clips: Array[SpriteFrames] = []
 var reaction_echoes: Array[Dictionary] = []
 var nitro_age := -1.0
 var shield_pulse := 0.0
@@ -22,14 +23,21 @@ var visual_distance := 0.0
 var visual_rival := 0.0
 var visual_enemy_hp := 100.0
 var visual_player_hp := 100.0
+var pop_reactions: Array[Dictionary] = []
+const MOLE_HOLE = preload("res://assets/mole-hole-v11.svg")
+const MOLE_RIM = preload("res://assets/mole-rim-v11.svg")
 const CORAL := Color("e96b70")
 const BLUE := Color("448fce")
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	clip_contents = true
 	art.setup(run.mode)
+	setup_backdrop(art.background)
 	motion.setup(run.mode)
+	if run.mode=="fighter":
+		boxing_clips = BoxingMotion.load_clips()
 	juice.reduced_motion = reduced_motion
 	run.impact.connect(on_impact)
 	run.key_feedback.connect(on_key_feedback)
@@ -46,6 +54,10 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 			reaction_echoes.pop_front()
 	if kind=="racing":
 		nitro_age = 0.0
+	elif kind=="balloons" and not reduced_motion:
+		pop_reactions.append({"point":point,"age":0.0,"sprite":["balloon_coral","balloon_blue","balloon_gold"][clampi(roundi((point.x-200)/320),0,2)]})
+		if pop_reactions.size()>8:
+			pop_reactions.pop_front()
 	if kind==run.mode and run.context=="training" and run.kills>0 and run.kills%6==0 and run.kills<run.goal:
 		checkpoint_age = 1.6
 		checkpoint_label = "阶段完成 · 技能充满"
@@ -60,11 +72,17 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 			coral_attack_age = 0.0
 		else:
 			blue_attack_age = 0.0
+	elif kind=="racing":
+		point = Vector2(120+visual_distance*770,356)
+	var tier := 3 if power>0 and power%5==0 else 2 if kind in ["fighter","moles"] else 1
+	record_impact(point,tier)
 	bursts.append({"kind":kind,"point":point,"power":power,"life":0.7})
 	if bursts.size()>18:
 		bursts.pop_front()
 	var color: Color = {"aliens":Color("88eaff"),"balloons":Color("ffcb72"),"moles":Color("d5b079"),"fighter":Color("ffd574"),"miss":CORAL}.get(kind,Color("a1e8c1"))
-	juice.burst(point,color,3 if power>0 and power%5==0 else 1,"soil" if kind=="moles" else "confetti" if kind=="balloons" else "spark")
+	juice.burst(point,color,tier,"soil" if kind=="moles" else "petal" if kind=="balloons" else "speed" if kind=="racing" else "spark")
+	if kind in ["fighter","aliens","racing"]:
+		juice.jet(point,Vector2.RIGHT if kind=="fighter" else Vector2.LEFT if kind=="racing" else Vector2.UP,color,tier)
 	strike = 0.5
 	last_impact = kind
 	if kind in ["fighter", "aliens", "miss"]:
@@ -96,6 +114,10 @@ func _process(delta: float) -> void:
 			echo.age += visual_delta
 			if echo.age>=maxf(0.6,motion.duration("hit")):
 				reaction_echoes.erase(echo)
+		for remnant in pop_reactions.duplicate():
+			remnant.age += delta
+			if remnant.age>=.28:
+				pop_reactions.erase(remnant)
 		juice.step(delta)
 		if blue_attack_age>=0:
 			blue_attack_age += visual_delta
@@ -123,8 +145,8 @@ func _draw() -> void:
 	if run == null:
 		return
 	var backgrounds := {"balloons":Color("e9f7ff"),"aliens":Color("eef0ff"),"moles":Color("e9f5d9"),"racing":Color("eef7fe"),"fighter":Color("f5edff")}
-	panel(Rect2(Vector2.ZERO,size),backgrounds[run.mode],24,Color("cbdff0"))
-	draw_texture_rect(art.background,Rect2(Vector2.ZERO,size),false)
+	draw_scene_background()
+	prepare_prompts()
 	draw_atmosphere()
 	world_offset = Vector2.ZERO if reduced_motion else Vector2(sin(clock*45),cos(clock*38))*trauma*trauma*7
 	draw_set_transform(world_offset)
@@ -142,34 +164,58 @@ func _draw() -> void:
 	for burst in bursts:
 		draw_burst(burst)
 	if checkpoint_age>0:
-		panel(Rect2(242,77,560,33),Color(1,0.96,0.82,0.96),12)
-		write(checkpoint_label,Vector2(522,100),17,PlayTheme.ORANGE,true)
+		panel(Rect2(242,575,560,33),Color(1,0.96,0.82,0.96),12)
+		write(checkpoint_label,Vector2(522,598),17,PlayTheme.ORANGE,true)
 	juice.draw(self)
+	draw_impact()
 	world_offset = Vector2.ZERO
 	draw_set_transform(Vector2.ZERO)
 	# Words stay still and above feedback; readability takes priority over particles.
 	for target in run.targets:
-		var p: Vector2 = target.position
-		if run.mode in ["balloons", "moles"]:
-			p += Vector2(0,-65)
-			p.y = maxf(100,p.y)
-		elif run.mode == "aliens":
-			p += Vector2(0,-55)
-		var suggested := run.recommended_target()
-		var active: bool = not suggested.is_empty() and suggested.id==target.id
-		word_plate(target,p,active)
-		if active:
-			draw_colored_polygon(PackedVector2Array([p+Vector2(-6,-45),p+Vector2(6,-45),p+Vector2(0,-37)]),PlayTheme.PRIMARY)
-		if run.mode != "racing":
-			var fraction: float = clampf(target.remaining/target.duration,0,1)
-			panel(Rect2(p+Vector2(-42,20),Vector2(84,4)),Color("d4e3ee"),2)
-			panel(Rect2(p+Vector2(-42,20),Vector2(84*fraction,4)),CORAL if fraction<0.25 else MINT,2)
 		var feature: String = target.get("feature","")
 		if not feature.is_empty():
 			var badge: Vector2 = target.position+Vector2(0,52 if run.mode=="aliens" else 63)
 			var color: Color = MINT if feature=="supply" else CORAL if feature=="scout" else PlayTheme.ORANGE
 			panel(Rect2(badge-Vector2(54,18),Vector2(108,25)),Color(1,1,1,0.94),10)
 			write({"supply":"补给 +8 盾","scout":"快速侦察舰","bonus":"奖励 +40 分"}[feature],badge,14,color,true)
+	draw_target_labels()
+
+func prepare_prompts() -> void:
+	var prompts: Array[Dictionary] = []
+	var actors: Array[Rect2] = []
+	var blocked: Array[Rect2] = []
+	if run.mode in ["aliens","fighter"]:
+		blocked.append(Rect2(20,18,570,48))
+	if run.mode=="fighter":
+		actors.assign([Rect2(240,270,240,300),Rect2(575,270,245,300)])
+		blocked.append(Rect2(50,105,380,65))
+		blocked.append(Rect2(610,105,380,65))
+		blocked.append(Rect2(220,198,250,44))
+	elif run.mode=="racing":
+		actors.assign([Rect2(55+visual_distance*770,310,150,94),Rect2(55+visual_rival*770,465,150,94)])
+		blocked.append(Rect2(330,204,380,44))
+	for target in run.targets:
+		var p: Vector2 = target.position
+		var center := p
+		var source := p
+		if run.mode=="balloons":
+			center -= Vector2(0,103)
+			source -= Vector2(0,43)
+			actors.append(Rect2(p-Vector2(57,50),Vector2(114,138)))
+		elif run.mode=="aliens":
+			center -= Vector2(0,92)
+			source -= Vector2(0,28)
+			actors.append(Rect2(p-Vector2(72,42),Vector2(144,92)))
+		elif run.mode=="moles":
+			center -= Vector2(0,110)
+			source -= Vector2(0,40)
+			actors.append(Rect2(p-Vector2(61,65),Vector2(122,102)))
+			actors.append(Rect2(p+Vector2(45,-124),Vector2(96,105)))
+		elif run.mode=="fighter":
+			center = Vector2(700,219)
+			source = Vector2(690,320)
+		prompts.append({"target":target,"center":center,"source":source})
+	layout_labels(prompts,actors,blocked)
 
 func draw_anticipation() -> void:
 	var target := run.recommended_target()
@@ -188,9 +234,8 @@ func draw_anticipation() -> void:
 				draw_circle(dot,2,Color(.4,.8,1,.2+fraction*.5))
 	elif run.mode=="balloons" and fraction>0:
 		# A visible tether leads from the typed letters to the balloon being inflated.
-		draw_arc(p,52+fraction*8,PI*.7,PI*2.3,48,Color(.3,.7,.9,.4),2,true)
+		SoftStroke.arc(self,p,52+fraction*8,PI*.7,PI*2.3,Color(.3,.7,.9,.25),2.0)
 	elif run.mode=="moles":
-		draw_arc(p+Vector2(0,27),64,0,PI,32,Color(.3,.65,.5,.35),3,true)
 		if fraction>0:
 			var ready := p+Vector2(73,-80-fraction*14)
 			sprite_pose("mallet",ready,Vector2(90,90),-.65-fraction*.4,Vector2.ONE)
@@ -213,8 +258,7 @@ func draw_mole(texture: Texture2D, point: Vector2, emergence: float, tint := Col
 	var height := clampf(point.y+27-full.position.y,0,182)
 	if height>0:
 		draw_texture_rect_region(texture,Rect2(full.position,Vector2(182,height)),Rect2(0,0,texture.get_width(),texture.get_height()*height/182),tint)
-	draw_set_transform(point+Vector2(0,27)+world_offset,0,Vector2(1,.22))
-	draw_arc(Vector2.ZERO,56,0,PI,40,Color("b69362"),9,true)
+	draw_texture_rect(MOLE_RIM,Rect2(point+Vector2(-80,27),Vector2(160,34)),false)
 	draw_set_transform(world_offset)
 
 func draw_atmosphere() -> void:
@@ -261,11 +305,13 @@ func banner(title: String, subtitle: String) -> void:
 	write(title,Vector2(54,49),21,INK)
 	write(subtitle,Vector2(227,48),14,PlayTheme.MUTED)
 
-func motion_sprite(state: String, seconds: float, center: Vector2, bounds: Vector2, tint := Color.WHITE) -> bool:
+func motion_sprite(state: String, seconds: float, center: Vector2, bounds: Vector2, tint := Color.WHITE, angle := 0.0, stretch := Vector2.ONE) -> bool:
 	var texture := motion.texture(state,seconds,reduced_motion)
 	if texture==null:
 		return false
-	draw_texture_rect(texture,Rect2(center-bounds/2,bounds),false,tint)
+	draw_set_transform(center+world_offset,angle,stretch)
+	draw_texture_rect(texture,Rect2(-bounds/2,bounds),false,tint)
+	draw_set_transform(world_offset)
 	return true
 
 func draw_generated_game() -> void:
@@ -276,10 +322,7 @@ func draw_generated_game() -> void:
 	if run.mode == "moles":
 		for i in range(6):
 			var hole := Vector2(240+(i%3)*280,326+(i/3)*170)
-			draw_set_transform(hole+world_offset,0,Vector2(1,0.32))
-			draw_circle(Vector2.ZERO,61,Color("ad8756"))
-			draw_circle(Vector2.ZERO,52,Color("574839"))
-			draw_set_transform(world_offset)
+			draw_texture_rect(MOLE_HOLE,Rect2(hole-Vector2(80,34),Vector2(160,68)),false)
 	for target in run.targets:
 		var p: Vector2 = target.position
 		var bob := 0.0 if reduced_motion else sin(clock*2+target.id)*5
@@ -297,6 +340,12 @@ func draw_generated_game() -> void:
 				var reacting := reaction_echoes.any(func(e): return e.point.distance_to(p)<65 and e.age<0.65)
 				if not reacting:
 					draw_mole(motion.texture("idle",pose_clock+target.id*.41,reduced_motion),p,emergence)
+	for remnant in pop_reactions:
+		var phase: float = remnant.age/.28
+		var point: Vector2 = remnant.point+Vector2(phase*12,-phase*35)
+		draw_set_transform(point+world_offset,phase*.3,Vector2(1+phase*.3,1-phase*.8))
+		art.draw_sprite(self,remnant.sprite,Vector2.ZERO,Vector2(117,155),Color(1,1,1,1-phase))
+		draw_set_transform(world_offset)
 	var drawn_points: Array[Vector2] = []
 	for index in range(reaction_echoes.size()-1,-1,-1):
 		var echo: Dictionary = reaction_echoes[index]
@@ -309,7 +358,7 @@ func draw_generated_game() -> void:
 		if echo.kind=="moles":
 			draw_mole(motion.texture("hit",echo.age,reduced_motion),echo.point,1-clampf((echo.age-.25)/.5,0,1),Color(1,1,1,alpha))
 		else:
-			motion_sprite("hit",echo.age,point,bounds,Color(1,1,1,alpha))
+			motion_sprite("hit",echo.age,point,bounds,Color(1,1,1,alpha),0.0 if reduced_motion else echo.age*.5)
 		if echo.kind=="moles" and not reduced_motion:
 			for i in range(3):
 				var angle: float = echo.age*7+i*TAU/3
@@ -330,7 +379,8 @@ func draw_generated_game() -> void:
 		panel(Rect2(40,540,185,9),Color("d3e6f3"),4)
 		panel(Rect2(40,540,185*run.shield/60.0,9),BLUE,4)
 	elif run.mode == "racing":
-		var player := Vector2(120+visual_distance*770,356)
+		var suspension := 0.0 if reduced_motion else sin(clampf(impact_age/.3,0,1)*PI)
+		var player := Vector2(120+visual_distance*770,356-suspension*7)
 		var rival := Vector2(120+visual_rival*770,510)
 		for y in [305,458]:
 			for row in range(6):
@@ -339,7 +389,7 @@ func draw_generated_game() -> void:
 		if run.boost>0 and run.combo>=3:
 			art.draw_sprite(self,"impact",player-Vector2(65,0),Vector2(96,62))
 		var state := "boost" if nitro_age>=0 and nitro_age<motion.duration("boost") else "idle"
-		if not motion_sprite(state,nitro_age if state=="boost" else pose_clock,player,Vector2(205,205)):
+		if not motion_sprite(state,nitro_age if state=="boost" else pose_clock,player,Vector2(205,205),Color.WHITE,-suspension*.035,Vector2(1+suspension*.045,1-suspension*.04)):
 			sprite_pose("car_mint",player,Vector2(136,88),0,Vector2.ONE)
 		sprite_pose("car_coral",rival,Vector2(136,88),0.0 if reduced_motion else sin(clock*13)*0.012,Vector2.ONE)
 		panel(Rect2(player-Vector2(52,71),Vector2(104,29)),Color.WHITE,9)
@@ -350,12 +400,12 @@ func draw_generated_game() -> void:
 		write("三连击 · 氮气加速" if run.boost>0 and run.combo>=3 else "连续输入为赛车充能",Vector2(520,234),22,GOLD,true)
 	elif run.mode == "fighter":
 		var punch := 0.0 if reduced_motion else sin(clampf(strike/0.5,0,1)*PI)
-		var left := Vector2(350,440)+Vector2(punch*(0 if last_impact=="block" else -16 if last_impact=="miss" else 55),0)
-		var right := Vector2(690,440)+Vector2(punch*(-55 if last_impact in ["miss","block"] else 16),0)
+		var left := Vector2(350,440)+Vector2(punch*(0 if last_impact=="block" else -32 if last_impact=="miss" else 72),-punch*6)
+		var right := Vector2(690,440)+Vector2(punch*(-72 if last_impact in ["miss","block"] else 36),-punch*3)
 		draw_ellipse_shadow(Vector2(350,560),Vector2(67,16))
 		draw_ellipse_shadow(Vector2(690,560),Vector2(67,16))
-		draw_texture_rect(BoxingMotion.texture(0,pose_clock,blue_attack_age,reduced_motion),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
-		draw_texture_rect(BoxingMotion.texture(1,pose_clock,coral_attack_age,reduced_motion),Rect2(right-Vector2(160,175),Vector2(320,320)),false)
+		draw_texture_rect(BoxingMotion.texture(0,pose_clock,blue_attack_age,reduced_motion,boxing_clips),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
+		draw_texture_rect(BoxingMotion.texture(1,pose_clock,coral_attack_age,reduced_motion,boxing_clips),Rect2(right-Vector2(160,175),Vector2(320,320)),false)
 		for side in range(2):
 			var x := 50+side*560
 			var health: int = run.hp if side==0 else run.enemy_hp
@@ -540,8 +590,8 @@ func draw_burst(burst: Dictionary) -> void:
 		p = Vector2(120+visual_distance*770,350)
 	if not reduced_motion:
 		if burst.kind=="aliens":
-			draw_line(Vector2(520,478),p,Color(0.5,0.85,1,(1-t)*0.7),9*(1-t)+1,true)
-			draw_line(Vector2(520,478),p,Color(1,1,1,(1-t)*0.9),2,true)
+			SoftStroke.line(self,Vector2(520,478),p,Color(0.5,0.85,1,(1-t)*.22),12*(1-t)+1)
+			SoftStroke.line(self,Vector2(520,478),p,Color(1,1,1,(1-t)*.9),2.5)
 			draw_circle(Vector2(520,478),25*(1-t),Color(0.6,0.9,1,(1-t)*0.3))
 		elif burst.kind=="miss" and run.mode=="aliens":
 			draw_line(p,Vector2(520,518),Color(1,0.5,0.45,1-t),5,true)
@@ -549,24 +599,12 @@ func draw_burst(burst: Dictionary) -> void:
 			var swing := sin(minf(1,t*4)*PI/2)
 			var hammer := p+Vector2(70-swing*25,-90+swing*52-25*maxf(0,t-.3))
 			sprite_pose("mallet",hammer,Vector2(110,110),-1.1+swing*1.2,Vector2.ONE)
-		if burst.kind=="balloons":
-			# Short curled ribbons sell the pop without a full-screen flash.
-			for i in range(6):
-				var angle := i*TAU/6+0.2
-				var tip := p+Vector2.from_angle(angle)*(18+70*t)
-				draw_arc(tip,6+8*t,angle,angle+PI*1.2,12,Color([PlayTheme.CORAL,PlayTheme.SKY,PlayTheme.YELLOW][i%3],1-t),2,true)
 		if burst.kind=="racing":
 			for i in range(3):
 				var trail_at := Vector2(90+visual_distance*770-i*23,356)
 				draw_line(trail_at-Vector2(35,12+i*3),trail_at+Vector2(4,-8+i*3),Color(0.45,0.86,1,(1-t)*0.6),3,true)
 		if burst.kind=="fighter":
 			art.draw_sprite(self,"impact",p,Vector2(160,130)*(1-t),Color(1,1,1,1-t))
-		var radius := 100 if burst.power>0 and burst.power%5==0 else 65
-		draw_arc(p,12+t*radius,0,TAU,32,Color(color,1-t),3*(1-t)+1,true)
-		for i in range(12):
-			var direction := Vector2.from_angle(i*TAU/12)
-			var end := p+direction*(16+90*t)+Vector2(0,t*t*35)
-			draw_line(end,end-direction*9,Color(color,1-t),3,true)
 	var caption := "格挡！" if burst.kind=="block" else "漏过" if burst.kind=="miss" else ("重击！" if burst.kind=="fighter" else "推进！" if burst.kind=="racing" else "+ 命中")
 	var caption_at := p+Vector2(0,-15-(0 if reduced_motion else t*42))
 	if burst.kind=="aliens":

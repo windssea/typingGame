@@ -1,0 +1,45 @@
+{
+  "tool": "reference_to_video",
+  "request_id": null,
+  "model": null,
+  "requested": {
+    "first_frame": "pinned source image",
+    "aspect_ratio": "1:1",
+    "duration_seconds": 8,
+    "resolution_name": "720p"
+  },
+  "actual": {
+    "width": 960,
+    "height": 960,
+    "display_aspect_ratio": "1:1",
+    "video_codec": "h264",
+    "video_fps": 24,
+    "video_frame_rate": "24/1",
+    "frame_count": 193,
+    "video_duration_seconds": 8.041667,
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "audio_duration_seconds": 8.0,
+    "container_duration_seconds": 8.041667,
+    "size_bytes": 4056135,
+    "sha256": "940A8695463901A7F5733C182CD1655EC8DF927B9A21FDFCCA1EF61B7364D6EB"
+  },
+  "limitations": [
+    "image_to_video accepts duration 6 or 10 only. reference_to_video was used because its schema accepts 1-15 seconds and a pinned first_frame. One submission.",
+    "No fps parameter in the schema. The saved file is native 24 fps (193 frames, 24/1). It was copied byte-for-byte and was not interpolated or frame-duplicated.",
+    "No audio-disable parameter. Voices were omitted. The raw file still has an AAC stereo 48 kHz track, left intact.",
+    "resolution_name 720p was requested. The file is 960x960. Source still is 768x768. Aspect stayed 1:1.",
+    "The tool blocked until the file existed and returned path, filename, and session_folder only. No request id and no model name were returned, so there was no separate handle to poll.",
+    "Container duration is 8.041667 s (193/24). The audio stream duration is 8.000 s."
+  ],
+  "archive": "source-silent.mp4",
+  "runtime_clips": {
+    "idle": 48,
+    "cheer": 42,
+    "run": 48
+  },
+  "runtime_cell": 384,
+  "interpolation": false,
+  "image_source": "assets/generated/coach-mint-v11.png"
+}

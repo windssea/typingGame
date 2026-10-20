@@ -645,7 +645,7 @@ func start_game(mode: String, purpose := "training") -> void:
 	pause_button = button("暂停  Esc",Vector2(1230,28),Vector2(170,48),toggle_pause)
 	pause_button.focus_mode = Control.FOCUS_NONE
 	var arena: GameArena = CastleArena.new() if mode == "castle" else (ArcadeArena.new() if run is ArcadeRun else GameArena.new())
-	arena.position = Vector2(40,130)
+	arena.position = Vector2(40,120)
 	arena.size = Vector2(1040,650) if mode=="castle" or run is ArcadeRun else Vector2(1360,650)
 	if not run is CastleRun and not run is ArcadeRun:
 		arena.scale = Vector2.ONE * (1040.0/1360.0)
@@ -654,17 +654,17 @@ func start_game(mode: String, purpose := "training") -> void:
 	layer.add_child(arena)
 	if mode != "castle":
 		typing_guide = TypingGuide.new()
-		typing_guide.position = Vector2(1100,130)
+		typing_guide.position = Vector2(1100,120)
 		typing_guide.run = run
 		layer.add_child(typing_guide)
 		if not run is ArcadeRun:
 			var ledger := TrainingLedger.new()
-			ledger.position = Vector2(40,650)
+			ledger.position = Vector2(40,630)
 			ledger.run = run
 			layer.add_child(ledger)
 	if mode == "castle":
 		castle_panel = CastlePanel.new()
-		castle_panel.position = Vector2(1110,130)
+		castle_panel.position = Vector2(1110,120)
 		castle_panel.app = self
 		castle_panel.battle = run
 		layer.add_child(castle_panel)
@@ -677,13 +677,16 @@ func start_game(mode: String, purpose := "training") -> void:
 		sound_button = button("F2 声音开" if castle_audio.enabled else "F2 声音关",Vector2(1318,82),Vector2(82,34),toggle_sound)
 		sound_button.add_theme_font_size_override("font_size",14)
 		sound_button.focus_mode = Control.FOCUS_NONE
-	var guide_button := button("F1 帮助" if mode=="castle" else "F1 指法与规则",Vector2(1230,82) if mode=="castle" else Vector2(1100,735),Vector2(80,44) if mode=="castle" else Vector2(300,44),show_game_guide)
+	var guide_button := button("F1 帮助" if mode=="castle" else "F1 指法与规则",Vector2(1230,82) if mode=="castle" else Vector2(1100,720),Vector2(80,44) if mode=="castle" else Vector2(300,44),show_game_guide)
 	guide_button.add_theme_font_size_override("font_size",14)
 	guide_button.focus_mode = Control.FOCUS_NONE
 	hint = label("",Vector2(42,798),20,MINT)
 	hint.visible = false
 	var cue := ActionCue.new()
-	cue.position = Vector2(40,795)
+	cue.position = Vector2(40,780)
+	cue.reduced_motion = store.data.settings.reduced_motion
+	cue.name = "InputDock"
+	cue.size = Vector2(1360,108)
 	cue.run = run
 	layer.add_child(cue)
 	update_hud()

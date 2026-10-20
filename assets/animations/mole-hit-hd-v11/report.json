@@ -1,0 +1,42 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\mole-motion-v08\\v001\\grok-raw.mp4",
+  "native": {
+    "width": 720,
+    "height": 720,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/mole-hit-hd-v11/idle-atlas.png",
+    "cell": 256,
+    "columns": 8,
+    "rows": 3,
+    "frames": 24,
+    "fps": "24",
+    "interval": [
+      2.25,
+      3.25
+    ],
+    "decoded_rgba_bytes": 6291456
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #ff00ff",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "Source contact sheets and actual Godot arena reviewed; short idle seam may remain. No interpolation.",
+  "status": "native-source-hd-candidate",
+  "static_crop": "96:96:528:528",
+  "animation": "hit",
+  "loop": false,
+  "chroma_key": "ff00ff",
+  "cell_safety_inset_px": 0,
+  "source_runtime_version": "mole-hit-v10",
+  "color_detail_source": "original decoded video, not low-resolution atlas enlargement",
+  "alpha_reference": "assets/animations/mole-hit-v10/idle-atlas.png",
+  "minimum_frame_margin_px": 46
+}
