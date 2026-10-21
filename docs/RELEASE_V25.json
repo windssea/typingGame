@@ -37,5 +37,7 @@
   "limits": [
     "This release redesigns the home scene. The broader requirement to polish every game and secondary page remains active.",
     "Menu animation and entrance props add about2.97MB to the compressed bootstrap; individual game packs remain on demand."
-  ]
+  ],
+  "deployment": "https://1a366a78.typinggame-cl5.pages.dev",
+  "production_validation": "docs/ui-review-v25/production-validation.json"
 }

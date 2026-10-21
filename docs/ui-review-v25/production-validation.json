@@ -1,0 +1,26 @@
+{
+  "url": "https://typing.nanokid.win/?qa=1&qa_profile=1&release=v25",
+  "deployment": "https://1a366a78.typinggame-cl5.pages.dev",
+  "method": "Real click and keyboard actions, read-only DOM QA state, separate QA save",
+  "verified": {
+    "home_default_focus": "StartTraining",
+    "tab_tab_focus": "StartChallenge",
+    "return_opens": "challenges",
+    "course_selector_opens": "lessons",
+    "course_selector_focus": "Course5",
+    "training_entry_opens": "balloons",
+    "on_demand_loading": {
+      "loaded_modes": [
+        "balloons"
+      ],
+      "mode": "",
+      "phase": "ready",
+      "progress": 1
+    }
+  },
+  "console_errors": [],
+  "screenshots": [
+    "production-home-a.jpg",
+    "production-home-b.jpg"
+  ]
+}
