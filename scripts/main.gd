@@ -860,11 +860,10 @@ func start_game(mode: String, purpose := "training") -> void:
 	var shell := GameShell.new()
 	shell.wide_stage = mode!="castle"
 	layer.add_child(shell)
-	var title_label := UiLayout.text(shell.heading,title,28)
+	var title_label := GameHudTitle.new()
+	title_label.title=title
 	title_label.name = "GameTitle"
-	title_label.add_theme_color_override("font_color",Color("fff1cd"))
-	title_label.add_theme_color_override("font_outline_color",Color("1e3b4d"))
-	title_label.add_theme_constant_override("outline_size",4)
+	shell.heading.add_child(title_label)
 	live_hud = LiveHud.new()
 	live_hud.reduced_motion = store.data.settings.reduced_motion
 	live_hud.custom_minimum_size = Vector2(560,80)
@@ -887,6 +886,7 @@ func start_game(mode: String, purpose := "training") -> void:
 	arena.reduced_motion = store.data.settings.reduced_motion
 	shell.field.add_child(arena)
 	chrome.world=arena.backdrop
+	chrome.full_world=mode!="castle" or run.phase!="build"
 	if run is ArcadeRun:
 		# Keep the simulation/actor proportions intact; the scenery fills the wider stage.
 		arena.position.x = 160
@@ -906,6 +906,7 @@ func start_game(mode: String, purpose := "training") -> void:
 		run.phase_changed.connect(func():
 			var combat: bool=run.phase!="build"
 			shell.sidebar.visible=not combat
+			chrome.full_world=combat
 			shell.field.custom_minimum_size.x=1360 if combat else 1040
 			arena.position.x=160 if combat else 0
 			if combat and not arena.backdrop_external:
@@ -947,14 +948,15 @@ func start_bridge_stage() -> void:
 	safe.offset_top = 24
 	safe.offset_bottom = 80
 	var header := UiLayout.row(safe,12)
-	var title := UiLayout.text(header,"星桥快跑",32)
-	title.add_theme_constant_override("outline_size",4)
-	title.add_theme_color_override("font_outline_color",Color("d7eff5"))
+	var title:=GameHudTitle.new()
+	title.title="星桥快跑"
+	header.add_child(title)
 	UiLayout.space(header,0,true)
 	var help := button("F1 指法",Vector2.ZERO,Vector2(100,48),show_game_guide,false,header)
 	help.theme_type_variation="HudButton"
 	help.focus_mode = Control.FOCUS_NONE
 	pause_button = button("暂停 Esc",Vector2.ZERO,Vector2(126,48),toggle_pause,false,header)
+	pause_button.theme_type_variation="HudButton"
 	pause_button.focus_mode = Control.FOCUS_NONE
 	castle_audio = CastleAudio.new()
 	castle_audio.battle = run

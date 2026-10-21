@@ -295,7 +295,7 @@ func draw_pad(index: int) -> void:
 	if tower.is_empty():
 		draw_line(p-Vector2(10,0),p+Vector2(10,0),GOLD if selected else MINT,2,true)
 		draw_line(p-Vector2(0,10),p+Vector2(0,10),GOLD if selected else MINT,2,true)
-		write(str(index+1),p+Vector2(0,49),15,GOLD,true)
+		GameHudSkin.caption(self,str(index+1),Rect2(p+Vector2(-19,33),Vector2(38,32)),20,1)
 		return
 	var tint: Color = {"fire":Color("ffb96d"),"ice":Color("a2e6ec"),"storm":Color("c7b5ff")}[tower.kind]
 	if art.sprites.has("tower_"+str(tower.kind)):
@@ -314,7 +314,7 @@ func draw_pad(index: int) -> void:
 		art.draw_grounded(self,"tower_"+str(tower.kind),p+Vector2(0,20),Vector2(104,132)*level_scale,Vector2(1+kick*.25,1-kick*.35))
 		for i in range(tower.level):
 			draw_circle(p+Vector2((i-(tower.level-1)/2.0)*10,29),3,tint)
-		write(str(index+1),p+Vector2(0,51),14,GOLD,true)
+		GameHudSkin.caption(self,str(index+1),Rect2(p+Vector2(-19,35),Vector2(38,32)),20,1)
 		return
 	draw_rect(Rect2(p+Vector2(-17,-32),Vector2(34,43)),Color("65766e"))
 	draw_rect(Rect2(p+Vector2(0,-32),Vector2(17,43)),Color("425751"))
@@ -333,7 +333,7 @@ func draw_pad(index: int) -> void:
 		draw_arc(p-Vector2(0,66),22,clock,clock+TAU*0.8,30,Color("826cae"),3,true)
 	for i in range(tower.level):
 		draw_circle(p+Vector2((i-(tower.level-1)/2.0)*10,29),3,tint)
-	write(str(index+1),p+Vector2(0,51),14,GOLD,true)
+	GameHudSkin.caption(self,str(index+1),Rect2(p+Vector2(-19,35),Vector2(38,32)),20,1)
 
 func draw_enemy_intent(target: Dictionary) -> void:
 	var intent: String = target.get("intent", "")
@@ -343,7 +343,7 @@ func draw_enemy_intent(target: Dictionary) -> void:
 		var charge := 1-clampf(float(target.intent_left)/maxf(.01,float(target.intent_duration)),0,1)
 		draw_line(p+Vector2(-24,26),p+Vector2(24,26),Color(tint,.3),4,true)
 		draw_line(p+Vector2(-24,26),p+Vector2(-24+48*charge,26),tint,4,true)
-		write("拆弹！" if intent=="arming" else "治疗中",p+Vector2(0,66),20,tint.darkened(.38),true)
+		GameHudSkin.caption(self,"拆弹！" if intent=="arming" else "治疗中",Rect2(p+Vector2(-64,44),Vector2(128,36)),20,1)
 		if intent=="casting":
 			var ally := battle.target_by_id(int(target.get("ally",-1)))
 			if not ally.is_empty():
@@ -393,7 +393,7 @@ func draw_enemy(target: Dictionary) -> void:
 				draw_arc(p,61,clock,clock+TAU*0.9,50,Color("d67c59"),2,true)
 			if target.windup>0:
 				draw_arc(p,67,-PI/2,-PI/2+TAU*minf(1,target.windup/4.5),60,Color("ffb170"),4,true)
-				write("蓄力中 · 输入打断",p+Vector2(0,81),16,Color("8f4a23"),true)
+				GameHudSkin.caption(self,"蓄力中",Rect2(p+Vector2(-64,59),Vector2(128,36)),20,1)
 		return
 	if kind == "wolf":
 		var fur := Color("8c9c9c") if target.flash <= 0 else Color("fff5ce")
@@ -445,7 +445,7 @@ func draw_enemy(target: Dictionary) -> void:
 			draw_arc(p,61,clock,clock+TAU*0.9,50,Color("d67c59"),2,true)
 		if target.windup > 0:
 			draw_arc(p,67,-PI/2,-PI/2+TAU*minf(1,target.windup/4.5),60,Color("ffb170"),4,true)
-			write("蓄力中 · 输入打断",p+Vector2(0,81),16,Color("8f4a23"),true)
+			GameHudSkin.caption(self,"蓄力中",Rect2(p+Vector2(-64,59),Vector2(128,36)),20,1)
 
 func spell_origin(point: Vector2) -> Vector2:
 	if point.distance_to(CastleRun.KEEP)<1: return point-Vector2(0,60)
@@ -487,19 +487,18 @@ func draw_effect(fx: Dictionary) -> void:
 				draw_circle(p,3*(1-t)+1,tint)
 	if fx.amount>0 and kind not in ["wave"]:
 		var text_value := "+%d G" % fx.amount if kind=="defeat" else ("+%d" if kind=="heal" else "-%d") % fx.amount
-		write(text_value,dest+Vector2(45,16-t*28),17,tint,true)
+		TypingPrompt.glyph(self,text_value,dest+Vector2(32,16-t*28),22,tint,.15)
 	if kind == "interrupt":
-		write("已打断",dest-Vector2(0,55+t*20),22,MINT,true)
+		GameHudSkin.caption(self,"已打断",Rect2(dest-Vector2(66,80+t*20),Vector2(132,38)),22,1)
 
 func draw_top_status() -> void:
 	if battle.phase=="assault" and banner_time>0:
-		panel(Rect2(16,14,320,38),Color(.81,.93,.95,.95),12)
-		write(battle.banner,Vector2(28,40),17,GOLD)
+		GameHudSkin.caption(self,battle.banner,Rect2(16,14,320,38),20,0)
 	for target in battle.targets:
 		if target.kind == "boss":
-			panel(Rect2(260,64,520,40),Color("fff3e5"),12,Color("e0c7a9"))
-			write("灰烬之王" if battle.wave==6 else "裂岩统领",Vector2(277,90),17,GOLD)
+			GameHudSkin.panel(self,Rect2(260,64,520,40),3)
+			GameHudSkin.text(self,"灰烬之王" if battle.wave==6 else "裂岩统领",Rect2(277,70,104,28),20)
 			draw_rect(Rect2(390,80,250,9),Color("e8d8d2"))
 			draw_rect(Rect2(390,80,250*maxf(0,float(target.health)/target.max_health),9),Color("cb8761"))
-			write("%d / %d" % [maxi(0,target.health),target.max_health],Vector2(663,91),15,Color("714b39"))
+			GameHudSkin.text(self,"%d / %d"%[maxi(0,target.health),target.max_health],Rect2(661,70,96,28),18,Color("fff0d0"),true)
 

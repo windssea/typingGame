@@ -99,4 +99,6 @@ func draw_guests(canvas: GameArena, run: AdventureRun) -> void:
 		canvas.art.draw_sprite(canvas,"customer"+str(moment.guest),p,Vector2(100,110),Color(1,1,1,fade))
 		if moment.kind=="serve":
 			var offset:=0.0 if canvas.reduced_motion else sin(minf(1,moment.age*3)*PI)*8
-			canvas.write("满意！",p+Vector2(0,-70-offset),25,Color("fff2bd",fade),true)
+			var stamp:=Rect2(p+Vector2(-64,-99-offset),Vector2(128,38))
+			GameHudSkin.panel(canvas,stamp,2,Color(1,1,1,fade))
+			GameHudSkin.text(canvas,"满意！",stamp.grow(-8),24,Color(.1,.4,.32,fade),true,false)

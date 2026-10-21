@@ -124,7 +124,7 @@ func draw_beacons() -> void:
 		else:
 			draw_circle(at,21,Color("82a5ae"))
 		GameGlyph.draw(self,"star",at,14,Color("fff5b9") if lit else Color("bedce4"))
-	write("%d / 18" % run.kills,Vector2(720,70),32,PlayTheme.TEXT,true)
+	GameHudSkin.caption(self,"%d / 18"%run.kills,Rect2(600,24,240,68),30,1)
 
 func draw_runner() -> void:
 	var jump := 0.0 if reduced_motion or not moving else sin(fposmod(bridge.travel,1)*PI)*28
@@ -155,7 +155,7 @@ func draw_comets() -> void:
 func draw_prompt() -> void:
 	var target := run.recommended_target()
 	if target.is_empty():
-		write("星桥修好了！",Vector2(720,270),64,PlayTheme.TEXT,true)
+		GameHudSkin.caption(self,"星桥修好了！",Rect2(460,210,520,100),50,0)
 		return
 	var word: String = target.word
 	var next := word.substr(target.typed,1)
@@ -165,18 +165,16 @@ func draw_prompt() -> void:
 		var caption := "空格" if next==" " else next
 		TypingPrompt.key(self,rect,caption,68 if next==" " else 144,true,error_pulse>0,clock)
 		if shift:
-			write("Shift +",Vector2(720,178),22,PlayTheme.TEXT,true)
+			GameHudSkin.caption(self,"Shift +",Rect2(620,106,200,36),22,1)
 	else:
 		var layout := TypingPrompt.measure(word,1080,88,52)
 		var rect := Rect2(Vector2(720,250)-layout.size*.5,layout.size)
 		TypingPrompt.paint(self,word,target.typed,rect,layout,true,error_pulse>0,true,clock,key_pulse,reduced_motion,run.mode)
 		var meaning := Vocabulary.meaning(run.lesson,word)
 		if not meaning.is_empty() and layout.rows.size()==1:
-			write(meaning,Vector2(720,350),28,PlayTheme.TEAL,true)
+			GameHudSkin.caption(self,meaning,Rect2(500,330,440,48),26,2)
 	if error_pulse>0:
-		write("再试一次",Vector2(720,402),28,Color("9d3e3a"),true)
-	elif run.correct==0 and int(target.typed)==0:
-		write("敲下它，修好脚下的桥",Vector2(720,402),28,PlayTheme.TEXT,true)
+		GameHudSkin.caption(self,"再试一次",Rect2(600,640,240,44),25,2)
 
 func draw_practice_keys() -> void:
 	var target := run.recommended_target()
@@ -187,7 +185,7 @@ func draw_practice_keys() -> void:
 	var keys: String = run.lesson.get("keys","")
 	# Teach just today's keys. The full keyboard and hand diagram are available with F1.
 	if keys.length()>10:
-		write(TypingGuide.NAMES[mapping.finger]+(" + "+mapping.shift_hand+" Shift" if mapping.shift else ""),Vector2(720,790),28,PlayTheme.TEXT,true)
+		GameHudSkin.caption(self,TypingGuide.NAMES[mapping.finger]+(" + "+mapping.shift_hand+" Shift" if mapping.shift else ""),Rect2(470,750,500,72),28,1)
 		return
 	var width := 100.0 if keys.length()<=4 else 76.0
 	var left := 720-keys.length()*(width+16)*.5
@@ -198,4 +196,4 @@ func draw_practice_keys() -> void:
 		var at := Vector2(left+i*(width+16),751+press)
 		TypingPrompt.key(self,Rect2(at,Vector2(width,80)),key.to_upper(),44,active,false,clock)
 		var finger: int = TypingGuide.mapping(key).finger
-		write(TypingGuide.NAMES[finger].replace("手",""),at+Vector2(width/2,109),21,PlayTheme.TEXT,true)
+		GameHudSkin.caption(self,TypingGuide.NAMES[finger].replace("手",""),Rect2(at+Vector2(0,84),Vector2(width,32)),19,1)

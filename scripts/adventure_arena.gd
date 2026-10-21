@@ -85,7 +85,7 @@ func _draw() -> void:
 			if boss:
 				panel(Rect2(p+Vector2(-67,78),Vector2(134,12)),Color("193847"),4)
 				panel(Rect2(p+Vector2(-64,81),Vector2(128*float(target.health)/target.max_health,6)),Color("ffbb64"),3)
-				write("统领  %d / %d"%[target.health,target.max_health],p+Vector2(0,112),21,Color("254454"),true)
+				GameHudSkin.caption(self,"统领 %d / %d"%[target.health,target.max_health],Rect2(p+Vector2(-90,93),Vector2(180,34)),21,1)
 		elif run.mode=="submarine":
 			if p.x>1460: continue
 			dive.draw_target(self,target)

@@ -15,6 +15,7 @@ var seen_knockouts := 0
 var combat_contact_count := 0
 var trail_clock := 0.0
 var motion := ArcadeMotion.new()
+var rival_motion := ArcadeMotion.new()
 var boxing_clips: Array[SpriteFrames] = []
 var reaction_echoes: Array[Dictionary] = []
 var nitro_age := -1.0
@@ -44,6 +45,7 @@ func _ready() -> void:
 	art.setup(run.mode)
 	setup_backdrop(art.background)
 	motion.setup(run.mode)
+	if run.mode=="racing": rival_motion.setup("racing_rival")
 	if run.mode=="balloons": pop_motion.setup("balloon_pop")
 	if run.mode=="fighter":
 		boxing_clips = BoxingMotion.load_clips()
@@ -55,8 +57,11 @@ func _ready() -> void:
 func on_impact(kind: String, point: Vector2, power: int) -> void:
 	var knockout_event := false
 	if kind=="skill":
+		if run.mode=="racing":
+			nitro_age=0.0
+			return
 		shield_pulse = 0.65
-		var location := Vector2(350,410) if run.mode=="fighter" else Vector2(120+run.rival*770,510) if run.mode=="racing" else Vector2(520,480)
+		var location := Vector2(350,410) if run.mode=="fighter" else track_point(visual_distance,0)-Vector2(65,0) if run.mode=="racing" else Vector2(520,480)
 		record_impact(location,3)
 		juice.burst(location,Color("8ae3eb"),2,"spark")
 		return
@@ -66,6 +71,7 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 			reaction_echoes.pop_front()
 	if kind=="racing":
 		nitro_age = 0.0
+		return
 	elif kind=="balloons" and not reduced_motion:
 		juice.burst(point,PlayTheme.CORAL,3,"petal")
 		juice.burst(point,PlayTheme.YELLOW,2,"confetti")
@@ -92,8 +98,6 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 			seen_knockouts = run.knockout_serial
 			knockout_age = 0.0
 			knockout_event = true
-	elif kind=="racing":
-		point = Vector2(120+visual_distance*770,356)
 	var tier := 3 if knockout_event else GameFeel.tier(power if kind==run.mode else 0,kind in ["fighter","moles","miss","block"])
 	impact_freeze = 0.0 if reduced_motion or tier==1 else .04 if tier==2 else .065
 	record_impact(point,tier,CORAL if kind=="miss" else BLUE if kind=="block" else PlayTheme.YELLOW)
@@ -177,11 +181,8 @@ func _process(delta: float) -> void:
 			trail_clock = 0.05
 			if run.mode=="aliens":
 				juice.trail(Vector2(520+sin(clock*3)*7,560),Vector2(0,65),Color("7ae2ff"),8)
-			elif run.mode=="racing":
-				var p := track_point(visual_distance,0)-Vector2(65,0)
-				juice.trail(p,Vector2(-120,15),Color("d9e3f2"),7)
-				if run.boost>0 and run.combo>=3:
-					juice.trail(p,Vector2(-220,0),Color("67e5ff"),11)
+			# Racing exhaust belongs to the engine's bounded emitters, not circles
+			# stamped into the scene every frame.
 		strike = maxf(0,strike-visual_delta)
 		for burst in bursts.duplicate():
 			burst.life -= delta
@@ -212,9 +213,6 @@ func _draw() -> void:
 	draw_anticipation()
 	for burst in bursts:
 		draw_burst(burst)
-	if checkpoint_age>0:
-		panel(Rect2(242,575,560,33),Color(1,0.96,0.82,0.96),12)
-		write(checkpoint_label,Vector2(522,598),17,PlayTheme.ORANGE,true)
 	juice.draw(self)
 	draw_impact()
 	world_offset = Vector2.ZERO
@@ -233,8 +231,7 @@ func prepare_prompts() -> void:
 		blocked.append(Rect2(20,20,1000,110))
 		blocked.append(Rect2(220,198,250,44))
 	elif run.mode=="racing":
-		actors.assign([Rect2(55+visual_distance*770,310,150,94),Rect2(55+visual_rival*770,465,150,94)])
-		blocked.append(Rect2(330,204,380,44))
+		actors.assign([Rect2(track_point(visual_distance,0)-Vector2(90,58),Vector2(180,116)),Rect2(track_point(visual_rival,1)-Vector2(90,58),Vector2(180,116))])
 	for target in run.targets:
 		var p: Vector2 = target.position
 		var center := p
@@ -262,7 +259,7 @@ func draw_enemy_intentions() -> void:
 	# Only imminent actions receive a short, local cue. No rings or tracking arrows.
 	for target in run.targets:
 		if target.get("intent","")=="windup" and run.mode=="fighter":
-			write("!",Vector2(785,310),42,CORAL,true)
+			TypingPrompt.glyph(self,"!",Vector2(773,310),42,CORAL,.2)
 
 func draw_anticipation() -> void:
 	var target := run.recommended_target()
@@ -305,11 +302,6 @@ func draw_skill_field() -> void:
 				for i in range(3):
 					var angle := clock*1.3+i*TAU/3
 					draw_circle(p+Vector2.from_angle(angle)*radius,3,Color("c6f4ed"))
-	elif run.mode=="racing" and run.skill_time>3:
-		var point := Vector2(120+visual_rival*770,510)
-		draw_arc(point,65,0,TAU,40,Color(0.4,0.8,1,run.skill_time-3),3,true)
-		panel(Rect2(point+Vector2(-66,50),Vector2(132,29)),Color("deedf5"),10)
-		write("干扰成功 -8%",point+Vector2(0,70),15,BLUE,true)
 
 func sprite_pose(id: String, center: Vector2, bounds: Vector2, angle: float, stretch: Vector2) -> void:
 	draw_set_transform(center+world_offset,angle,stretch)
@@ -321,13 +313,12 @@ func track_point(fraction: float, lane: int) -> Vector2:
 	var source:=art.background.get_size()
 	var factor:=maxf(backdrop.size.x/source.x,backdrop.size.y/source.y)
 	var crop_offset: Vector2=(backdrop.size-source*factor)*.5
-	var uv:=Vector2(.18+.62*fraction,.545 if lane==0 else .781)
+	var uv:=Vector2(.22+.54*fraction,.545 if lane==0 else .781)
 	var global_point: Vector2=backdrop.get_global_transform()*(crop_offset+source*uv*factor)
 	return get_global_transform().affine_inverse()*global_point
 
 func banner(title: String, _subtitle: String) -> void:
-	panel(Rect2(20,18,220,48),Color(.81,.93,.95,.95),16)
-	write(title,Vector2(36,50),24,INK)
+	GameHudSkin.caption(self,title,Rect2(20,18,220,48),24,0)
 
 func motion_sprite(state: String, seconds: float, center: Vector2, bounds: Vector2, tint := Color.WHITE, angle := 0.0, stretch := Vector2.ONE) -> bool:
 	var texture := motion.texture(state,seconds,reduced_motion)
@@ -395,8 +386,8 @@ func draw_generated_game() -> void:
 			draw_arc(Vector2(520,518),84+(0 if reduced_motion else pulse*30),PI,TAU,48,Color(0.45,0.9,1,1-pulse),4,true)
 		if charge_flash>0:
 			draw_circle(Vector2(520,471),8+charge_flash*45,Color(0.8,0.95,1,charge_flash*2))
-		panel(Rect2(26,499,215,64),Color(.81,.93,.95,.95),12)
-		write("护盾 %d / 60" % run.shield,Vector2(40,525),17,BLUE)
+		GameHudSkin.panel(self,Rect2(26,499,215,64),1)
+		GameHudSkin.text(self,"护盾 %d / 60"%run.shield,Rect2(42,507,180,27),20,Color("bfefff"))
 		panel(Rect2(40,540,185,9),Color("d3e6f3"),4)
 		panel(Rect2(40,540,185*run.shield/60.0,9),BLUE,4)
 	elif run.mode == "racing":
@@ -404,18 +395,21 @@ func draw_generated_game() -> void:
 		var player := track_point(visual_distance,0)-Vector2(0,suspension*3)
 		var rival := track_point(visual_rival,1)
 		for lane in range(2):
-			var finish:=track_point(1.07,lane)
+			var finish:=track_point(1.0,lane)
 			for row in range(8):
 				for col in range(2):
-					draw_rect(Rect2(finish+Vector2(col*11-11,row*12-48),Vector2(11,12)),Color.WHITE if (row+col)%2==0 else INK)
-		if run.boost>0 and run.combo>=3:
-			art.draw_sprite(self,"impact",player-Vector2(65,0),Vector2(96,62))
+					draw_rect(Rect2(finish+Vector2(col*11-11,row*12-48),Vector2(11,12)),Color("fff6dc") if (row+col)%2==0 else Color("294453"))
+			for end in [-1,1]:
+				draw_line(finish+Vector2(-14,end*51),finish+Vector2(14,end*51),Color("d69d45"),5,true)
 		var state := "boost" if nitro_age>=0 and nitro_age<motion.duration("boost") else "idle"
-		if not motion_sprite(state,nitro_age if state=="boost" else pose_clock,player,Vector2(205,205),Color.WHITE,-suspension*.035,Vector2(1+suspension*.045,1-suspension*.04)):
+		if not motion_sprite(state,nitro_age if state=="boost" else pose_clock,player,Vector2(256,256),Color.WHITE,-suspension*.025,Vector2(1+suspension*.025,1-suspension*.02)):
 			sprite_pose("car_mint",player,Vector2(136,88),0,Vector2.ONE)
-		sprite_pose("car_coral",rival,Vector2(160,106),0.0 if reduced_motion else sin(clock*13)*0.012,Vector2.ONE)
-		write("你  %d%%" % roundi(run.distance*100),player-Vector2(33,50),17,MINT)
-		write("陪练车" if run.context=="training" else "对手",rival-Vector2(29,50),17,CORAL)
+		var rival_texture:=rival_motion.texture("idle",pose_clock+.7,reduced_motion)
+		if rival_texture!=null:
+			draw_texture_rect(rival_texture,Rect2(rival-Vector2(128,128),Vector2(256,256)),false)
+		else: sprite_pose("car_coral",rival,Vector2(160,106),0,Vector2.ONE)
+		GameHudSkin.caption(self,"你",Rect2(player-Vector2(34,91),Vector2(68,30)),20,1)
+		GameHudSkin.caption(self,"陪练" if run.context=="training" else "对手",Rect2(rival-Vector2(42,91),Vector2(84,30)),20,1)
 
 	elif run.mode == "fighter":
 		var recoil_left := 0.0 if reduced_motion or blue_reaction_age<0 else sin(clampf(blue_reaction_age/.28,0,1)*PI)*18
@@ -433,23 +427,18 @@ func draw_generated_game() -> void:
 			opponent_alpha = 1.0-smoothstep(.08,.42,knockout_age) if knockout_age<.55 else smoothstep(.55,.75,knockout_age)
 		draw_texture_rect(BoxingMotion.texture(1,pose_clock,coral_attack_age,reduced_motion,boxing_clips,coral_reaction_age),Rect2(right-Vector2(160,175),Vector2(320,320)),false,Color(1,1,1,opponent_alpha))
 		if knockout_age>=0 and knockout_age<.65:
-			var ko_width := TypingPrompt.FONT.get_string_size("击倒！",HORIZONTAL_ALIGNMENT_LEFT,-1,45).x
-			TypingPrompt.glyph(self,"击倒！",Vector2(520-ko_width*.5,175),45,PlayTheme.YELLOW,.4)
+			GameHudSkin.caption(self,"击倒！",Rect2(440,120,160,64),40,0)
 		for side in range(2):
 			var x := 50+side*560
 			var health: int = run.hp if side==0 else run.enemy_hp
 			if side==1 and knockout_age>=0 and knockout_age<.75:
 				health=roundi(health*smoothstep(.55,.75,knockout_age))
 			FightMeter.paint(self,Rect2(x,35,380,34),health,visual_player_hp if side==0 else 0.0 if knockout_age>=0 and knockout_age<.75 else visual_enemy_hp,side)
-			var name_at := Vector2(x,92)
-			draw_string_outline(FONT,name_at,"蓝拳 · 你" if side==0 else "红拳 · 对手",HORIZONTAL_ALIGNMENT_LEFT,-1,21,3,Color("18394d"))
-			write("蓝拳 · 你" if side==0 else "红拳 · 对手",name_at,21,Color("fff0cf"))
-			var number_at := Vector2(x+380-FONT.get_string_size(str(health),HORIZONTAL_ALIGNMENT_LEFT,-1,23).x,92)
-			draw_string_outline(FONT,number_at,str(health),HORIZONTAL_ALIGNMENT_LEFT,-1,23,3,Color("18394d"))
-			write(str(health),number_at,23,Color("fff0cf"))
-		write("VS",Vector2(520,63),34,Color("a65d2b"),true)
+			GameHudSkin.caption(self,"蓝拳 · 你" if side==0 else "红拳 · 对手",Rect2(x,75,160,34),20,1)
+			GameHudSkin.caption(self,str(health),Rect2(x+304,75,76,34),22,1)
+		GameHudSkin.caption(self,"VS",Rect2(473,27,94,65),32,0)
 		if run.combo>1 or (strike>0 and run.last_tactic=="counter"):
-			write("破招！双倍重拳" if strike>0 and run.last_tactic=="counter" else "%d HIT COMBO" % run.combo,Vector2(345,230),25,GOLD,true)
+			GameHudSkin.caption(self,"破招！双倍重拳" if strike>0 and run.last_tactic=="counter" else "%d 连击"%run.combo,Rect2(220,198,250,44),25,0)
 
 func balloons() -> void:
 	banner("风起气球节", "看清一个目标，让字母变成一场小小的烟花。")
@@ -508,7 +497,7 @@ func aliens() -> void:
 		draw_arc(ship,84,PI,TAU,48,Color(0.5,0.8,1,0.25+run.shield/100.0),3,true)
 	panel(Rect2(32,544,200,10),Color("d3e6f3"),4)
 	panel(Rect2(32,544,200*run.shield/60.0,10),BLUE,4)
-	write("护盾 %d / 60" % run.shield,Vector2(32,531),16,BLUE)
+	GameHudSkin.caption(self,"护盾 %d / 60"%run.shield,Rect2(24,499,220,44),22,1)
 
 func moles() -> void:
 	banner("地鼠的午后", "六个洞口，找准举牌的小家伙。")
@@ -564,11 +553,8 @@ func racing() -> void:
 	var rival := Vector2(120+run.rival*770,519)
 	car(player,PlayTheme.MINT,run.boost>0)
 	car(rival,CORAL,false)
-	write("你  %d%%" % roundi(run.distance*100),player-Vector2(32,46),18,MINT)
-	write("陪练车" if run.context=="training" else "对手",rival-Vector2(30,46),18,CORAL)
-	write("连续输入为赛车充能",Vector2(520,225),20,GOLD,true)
-	if run.combo>=3:
-		write("NITRO  × %d" % run.combo,Vector2(520,266),26,MINT,true)
+	GameHudSkin.caption(self,"你",Rect2(player-Vector2(34,85),Vector2(68,32)),20,1)
+	GameHudSkin.caption(self,"陪练" if run.context=="training" else "对手",Rect2(rival-Vector2(42,85),Vector2(84,32)),20,1)
 
 func boxer(p: Vector2, tint: Color, facing: int, attack: float) -> void:
 	draw_ellipse_shadow(p+Vector2(0,98),Vector2(60,18))
@@ -605,12 +591,13 @@ func fighter() -> void:
 	panel(Rect2(65,110,350*run.hp/100.0,12),MINT,5)
 	panel(Rect2(625,110,350,12),Color("deddee"),5)
 	panel(Rect2(625,110,350*run.enemy_hp/100.0,12),CORAL,5)
-	write("你 · 体力 %d" % run.hp,Vector2(65,150),17,MINT)
-	write("对手 · 体力 %d" % run.enemy_hp,Vector2(625,150),17,CORAL)
+	GameHudSkin.caption(self,"你 · %d"%run.hp,Rect2(65,125,200,38),22,1)
+	GameHudSkin.caption(self,"对手 · %d"%run.enemy_hp,Rect2(625,125,200,38),22,1)
 	if run.combo>1:
-		write("%d HIT COMBO" % run.combo,Vector2(340,230),27,GOLD,true)
+		GameHudSkin.caption(self,"%d 连击"%run.combo,Rect2(220,198,250,44),25,0)
 
 func draw_burst(burst: Dictionary) -> void:
+	if burst.kind=="racing": return
 	var t: float = 1-burst.life/0.7
 	var p: Vector2 = burst.point
 	var color: Color = CORAL if burst.kind=="miss" else PlayTheme.YELLOW
@@ -618,16 +605,12 @@ func draw_burst(burst: Dictionary) -> void:
 		# Native contact particles already sell the hit. A second giant star and
 		# a floating pale caption used to hide both the glove and the reaction.
 		if burst.kind=="block" and t<.6:
-			var at := Vector2(285,230)
-			draw_string_outline(FONT,at,"格挡！",HORIZONTAL_ALIGNMENT_LEFT,-1,28,3,Color("15364b"))
-			write("格挡！",at,28,Color("a9eeff"))
+			GameHudSkin.caption(self,"格挡！",Rect2(248,200,150,48),28,1)
 		return
 	if burst.kind=="fighter":
 		p = Vector2(650,400)
 	elif burst.kind=="miss" and run.mode=="fighter":
 		p = Vector2(390,400)
-	elif burst.kind=="racing":
-		p = Vector2(120+visual_distance*770,350)
 	if not reduced_motion:
 		if burst.kind=="aliens":
 			SoftStroke.line(self,Vector2(520,478),p,Color(0.5,0.85,1,(1-t)*.22),12*(1-t)+1)
@@ -639,19 +622,7 @@ func draw_burst(burst: Dictionary) -> void:
 			var swing := sin(minf(1,t*4)*PI/2)
 			var hammer := p+Vector2(70-swing*25,-90+swing*52-25*maxf(0,t-.3))
 			sprite_pose("mallet",hammer,Vector2(110,110),-1.1+swing*1.2,Vector2.ONE)
-		if burst.kind=="racing":
-			for i in range(3):
-				var trail_at := Vector2(90+visual_distance*770-i*23,356)
-				draw_line(trail_at-Vector2(35,12+i*3),trail_at+Vector2(4,-8+i*3),Color(0.45,0.86,1,(1-t)*0.6),3,true)
 		if burst.kind=="fighter":
 			art.draw_sprite(self,"impact",p,Vector2(160,130)*(1-t),Color(1,1,1,1-t))
-	if burst.kind not in ["block","miss"] and (burst.power<=0 or burst.power%5!=0):
-		return
-	var caption := "格挡！" if burst.kind=="block" else "漏过" if burst.kind=="miss" else "%d 连击" % burst.power
-	var caption_at := p+Vector2(0,-15-(0 if reduced_motion else t*42))
-	if burst.kind=="aliens":
-		caption_at = p+Vector2(0,100-t*12)
-	elif burst.kind=="moles":
-		caption_at = p+Vector2(79,-5-t*22)
-	panel(Rect2(caption_at-Vector2(54,25),Vector2(108,35)),Color(.85,.95,.91,(1-t)*0.92),12)
-	write(caption,caption_at,23,Color(PlayTheme.ORANGE if burst.kind!="miss" else Color("b13b4e"),1-t),true)
+	# Combo and remaining health already have stable HUD widgets. Repeating them
+	# as floating pale captions used to hide the balloon, mallet or ship hit.

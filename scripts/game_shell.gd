@@ -33,6 +33,7 @@ func _ready() -> void:
 	var body := UiLayout.row(stack,20)
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	field = Control.new()
+	field.clip_contents = true
 	field.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	field.name = "PlayfieldSlot"
 	field.custom_minimum_size = Vector2(1360 if wide_stage else 1040,650)

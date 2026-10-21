@@ -62,7 +62,8 @@ func exercise() -> void:
 			for i in range(180):
 				if not arena.feel.events.is_empty(): break
 				app.run.step(.025);arena._process(.025)
-		check(app.run.correct>0 and not arena.feel.events.is_empty(),"actual completion triggers feedback: "+definition.id)
+		var responded: bool=arena.nitro_age>=0 and arena.native_vfx.event_count>0 if definition.id=="racing" else not arena.feel.events.is_empty()
+		check(app.run.correct>0 and responded,"actual completion triggers native propulsion or contact feedback: "+definition.id)
 		var before: int=app.run.correct
 		if app.run.recommended_target().is_empty():
 			if app.run is CastleRun: app.run.spawn_enemy("goblin")

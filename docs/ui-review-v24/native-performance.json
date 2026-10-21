@@ -1,0 +1,38 @@
+{
+  "active_seconds": 3.15865299999999,
+  "cpu": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+  "draw_calls_p95": 109.0,
+  "fps": 57.1149886547421,
+  "frame_p50_ms": 16.623,
+  "frame_p95_ms": 17.676,
+  "gpu": "AMD Radeon(TM) 890M Graphics",
+  "native_vfx": {
+    "active_bursts": 1,
+    "active_dive_wakes": 0,
+    "active_lights": 0,
+    "active_racing_exhaust": 3,
+    "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+    "burst_pool": 10,
+    "clock": 7.51297566666665,
+    "cooking_stoves": 0,
+    "dive_wake_pool": 0,
+    "events": 5,
+    "launches": 0,
+    "light_pool": 5,
+    "meteor_trails": 0,
+    "paused": false,
+    "protected_regions": 1,
+    "racing_exhaust_pool": 3,
+    "reduced": false,
+    "shake": [
+      0.0,
+      0.0
+    ],
+    "tower_auras": 0,
+    "trail_pool": 6,
+    "wave_pool": 6
+  },
+  "samples": 180,
+  "scope": "local native release resources, two animated drivers with ongoing typing/sonar-free nitro; not browser/mobile or all-hardware guarantee",
+  "texture_mib": 150.782695770264
+}

@@ -126,8 +126,9 @@ func exercise() -> void:
 				run.step(.025)
 				arena()._process(.025)
 				if run.mode=="restaurant": break
-		check(run.correct>0 and arena().impact_age<.2,"real keyboard completion triggers visual impact: "+mode)
-		check(not arena().juice.particles.is_empty(),"material particles emitted: "+mode)
+		var responded: bool=arena().nitro_age>=0 if mode=="racing" else arena().impact_age<.2
+		check(run.correct>0 and responded,"real keyboard completion triggers propulsion or impact: "+mode)
+		check(arena().native_vfx.event_count>0 if mode=="racing" else not arena().juice.particles.is_empty(),"native exhaust or material particles emitted: "+mode)
 		if run is CastleRun:
 			check(arena().defeat_ghosts.size()==1,"defeated castle enemy finishes its hit motion before fading")
 		elif mode=="balloons":

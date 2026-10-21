@@ -1,0 +1,55 @@
+{
+  "version": "2.4",
+  "date": "2026-10-21",
+  "production_url": "https://typing.nanokid.win/",
+  "objects": [
+    {
+      "key": "keybound/game-7979a0ca5090f026b71b.pck",
+      "raw_bytes": 4766744,
+      "upload_bytes": 4178347,
+      "sha256": "7979a0ca5090f026b71b3a7ee9fe785b172850d7a8ad419c132668d66cc00930"
+    },
+    {
+      "key": "keybound/content-racing-67c64499a3a4a2870166.pck",
+      "raw_bytes": 4052252,
+      "upload_bytes": 4008898,
+      "sha256": "67c64499a3a4a28701665650fb2ac38c5c81da2d3238d16dd25adc75ea20e624"
+    }
+  ],
+  "changes": {
+    "glyph_alignment": "Keys use visible glyph ink bounds from TextServer, excluding the cyan base. Word rows use full unchanged ink bounds; active key background is drawn before all letters so its bevel cannot hide the next letter. Font cache is bounded at512 entries.",
+    "world_framing": "All combat stages and HUD scenery share full-viewport aspect-preserving cover and the same animated shader. Playfield clips scenery to its bounds so the full image cannot cover HUD buttons. Castle build view keeps its own framing until combat.",
+    "racing": "Two original robot drivers use three HD native Grok clips. Cars, finish marks and native exhaust use one track mapping. Space gives four seconds of35% extra word advance; no rival teleport. Legacy interference ring and caption removed. Three bounded exhaust emitters and one scenery-only nitro light respect pause/reduced motion.",
+    "delivery": "Racing imagery is only in the on-demand racing pack; no source video in the export. Superseded rally HD atlas files excluded.",
+    "hud": "All thirteen games share physical enamel title/stat/command plates and a cream definition panel. Meaning, finger and Space ability have protected material groups. Mode-specific wave, opponent, shield and feedback stamps use the same skin; redundant floating instructions removed. Native glyph-ink centering is shared with HUD captions."
+  },
+  "validation": {
+    "regression_suites": 20,
+    "regression_checks": 31057,
+    "regression_failures": 0,
+    "rally_and_framing_checks": 172,
+    "minimum_card_checks": 96,
+    "keycap_checks_including_native_raster": 534,
+    "worst_keycap_raster_center_error_px": 1.12,
+    "ui_states": 116,
+    "isolated_games": 13,
+    "rendered_modes": [
+      "racing",
+      "submarine",
+      "restaurant",
+      "castle",
+      "royal",
+      "fighter",
+      "dojo"
+    ],
+    "hud_material_checks": 982,
+    "ui_audit_checks": 5572
+  },
+  "animation_provenance": "docs/ANIMATION_V24.json",
+  "api_reference": "https://docs.godotengine.org/en/stable/classes/class_textserver.html#class-textserver-method-font-get-glyph-offset",
+  "native_performance": "docs/ui-review-v24/native-performance.json",
+  "limits": [
+    "Native local GPU measurements are not browser/mobile or all-hardware guarantees.",
+    "Broader product-polish objective remains active; this release does not claim every game is finished."
+  ]
+}

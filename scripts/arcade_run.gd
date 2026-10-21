@@ -35,9 +35,10 @@ var guard_ready := false
 var previous_hole := -1
 var counters := 0
 var last_tactic := ""
+var rival_lap_seconds := 1.0
 
 func skill_name() -> String:
-	return {"balloons":"微风减速","aliens":"护盾脉冲","moles":"专注时刻","racing":"干扰对手","fighter":"准备格挡"}.get(mode,"")
+	return {"balloons":"微风减速","aliens":"护盾脉冲","moles":"专注时刻","racing":"氮气冲刺","fighter":"准备格挡"}.get(mode,"")
 
 func activate_skill() -> bool:
 	if paused or done or skill_charge<3 or skill_time>0:
@@ -48,11 +49,11 @@ func activate_skill() -> bool:
 	if mode=="aliens":
 		shield = mini(60,shield+12)
 	elif mode=="racing":
-		rival = maxf(0,rival-0.08)
+		boost = maxf(boost,skill_time)
 	elif mode=="fighter":
 		guard_ready = true
 	impact.emit("skill",Vector2(520,350),3)
-	feedback = skill_name()+"！"+("对手退后 8%" if mode=="racing" else "专注输入，目标时间暂缓" if mode in ["moles","balloons","aliens"] else "下一次反击被格挡")
+	feedback = skill_name()+"！"+("四秒内完成单词，推进额外增加 35%" if mode=="racing" else "专注输入，目标时间暂缓" if mode in ["moles","balloons","aliens"] else "下一次反击被格挡")
 	return true
 
 func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 0) -> void:
@@ -60,6 +61,10 @@ func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 
 	goal = (24 if mode=="racing" else 18) if context == "training" else 30
 	if context=="challenge":
 		goal += SessionOptions.rank_index(challenge_rank)*6
+	if mode=="racing":
+		var total:=0.0
+		for word in lesson.words: total+=time_budget(word)
+		rival_lap_seconds=total/maxi(1,lesson.words.size())*goal*.7
 	feedback = "输入目标文字；先找准手指，再追求连击"
 	var initials: Array[String] = []
 	for word in lesson.words:
@@ -131,11 +136,7 @@ func advance(delta: float) -> void:
 	boost = maxf(0, boost - delta)
 	if mode == "racing":
 		# Rival pace is based on this lesson's target lengths, not a fixed WPM gate.
-		var average := 0.0
-		for word in lesson.words:
-			average += time_budget(word)
-		average /= lesson.words.size()
-		rival = minf(1, rival + delta / (average * goal * 0.7))
+		rival = minf(1, rival + delta / rival_lap_seconds)
 		if context == "challenge" and rival >= 1:
 			finish(false)
 			return
@@ -227,8 +228,8 @@ func on_word_completed(target: Dictionary) -> void:
 			wave = 1 + kills / 8
 			feedback = "激光命中！三连击恢复护盾 · 当前护盾 %d" % shield
 		"racing":
-			distance = minf(1, distance + (1.15 if combo>=3 else 1.0) / goal)
-			boost = 0.9 if combo < 3 else 1.5
+			distance = minf(1, distance + (1.15 if combo>=3 else 1.0)*(1.35 if skill_time>0 else 1.0) / goal)
+			boost = maxf(boost,0.9 if combo < 3 else 1.5)
 			feedback = "氮气加速！三连击后每次推进距离增加 15%" if combo>=3 else "稳定推进！连续准确输入三次可获得氮气加速"
 		"fighter":
 			feedback = "破招出拳！" if counter else "出拳！"

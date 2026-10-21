@@ -1,0 +1,7 @@
+Use case: precise-object-edit
+Asset type: high-resolution source for original child-friendly 2D racing game, to be animated later.
+Input image: existing mint kart is the edit target. Preserve its exact RIGHT-facing orthographic overhead camera, wheel placement, white racing stripe, mint-green enamel and warm upper-left shading.
+Primary request: refine this mint kart into a premium American cartoon game character vehicle. Add one small friendly cream-and-teal robot driver seated INSIDE the existing black cockpit, with a rounded head, two clearly readable dark expressive eyes on a small teal face display, tiny hands on a steering wheel. The driver must fit the vehicle and not cover the nose or tires. Make the chunky tires and glossy panels clean, sharply resolved and beautifully shaded. A playful original toy-like kart, no brand.
+Composition: one kart centered on square canvas, nose RIGHT, entire silhouette contained in central 62% with generous untouched empty margins for animation. Preserve top-down view, horizontal alignment, no perspective rotation. The driver is seen from above with a slight readable face tilt to camera.
+Background: EXACT solid flat chroma magenta #ff00ff, no ground, no cast shadow, no glow, no particles, no smoke.
+Constraints: one vehicle and one driver only. No text, logo, UI, speed streaks, motion blur, duplicate wheels, surrounding scenery or cropped extremities. This is a production animation seed, not a scene or poster.

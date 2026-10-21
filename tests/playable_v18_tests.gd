@@ -92,11 +92,16 @@ func exercise() -> void:
 			game.challenge_rank="hard" if context=="challenge" else "normal"
 			game.setup(mode,lesson,1.35 if context=="challenge" else 1,42)
 			var before:=game.correct
+			if mode=="submarine":
+				game.type_character("~")
+				check(game.correct==before and game.attempts==0,"offscreen submarine entry ignores spare input")
+				while game.recommended_target().is_empty(): game.step(.1)
 			game.type_character("~")
 			check(game.correct==before and game.attempts==1,"wrong key cannot advance "+mode+context)
 			game.paused=true
+			var paused_at:=game.elapsed
 			game.step(1)
-			check(game.elapsed==0,"pause freezes new mode "+mode+context)
+			check(game.elapsed==paused_at,"pause freezes new mode "+mode+context)
 			game.paused=false
 			for i in range(8000):
 				if game.done: break

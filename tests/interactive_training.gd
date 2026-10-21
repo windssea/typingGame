@@ -101,7 +101,7 @@ func exercise() -> void:
 		await key(KEY_SPACE)
 		check(app.run.skill_uses==1,"skill reachable by actual keyboard: "+mode)
 		if mode=="racing":
-			check(app.run.rival<before,"rally ability actually moves rival back")
+			check(app.run.rival>=before and app.run.boost>0,"rally nitro powers the player without teleporting the rival")
 		elif mode=="aliens":
 			check(app.run.shield>before,"alien ability actually restores shield")
 		elif mode=="fighter":

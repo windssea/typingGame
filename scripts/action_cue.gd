@@ -1,8 +1,6 @@
 class_name ActionCue
 extends Control
 
-const FONT = preload("res://assets/ui-font.ttf")
-const VERBS := {"dojo":"点亮定位键","bubbles":"点亮泡泡","rain":"击碎陨石","sprint":"推进计时任务","castle":"施法攻击标记敌人","balloons":"击破气球","aliens":"发射激光","moles":"挥锤命中","racing":"推进赛车","fighter":"出拳打断"}
 var run: GameRun
 var cache := ""
 var key_pulse := 0.0
@@ -34,54 +32,49 @@ func _process(delta: float) -> void:
 		cache = value
 		queue_redraw()
 
-func text(value: String, at: Vector2, font_size: int, tint := Color("fff1cd")) -> void:
-	draw_string_outline(FONT,at,value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,2,Color("244153"))
-	draw_string(FONT,at,value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,tint)
-
 func _draw() -> void:
-	if run==null:
-		return
-	var target := run.recommended_target()
+	if run==null:return
+	var target:=run.recommended_target()
 	if run is CastleRun and run.phase=="build":
-		text(build_title,Vector2(24,46),28)
-		text(build_hint,Vector2(24,83),24,PlayTheme.TEAL)
+		GameHudSkin.panel(self,Rect2(8,8,size.x-16,92),0)
+		GameHudSkin.text(self,build_title,Rect2(28,16,size.x-56,34),27)
+		GameHudSkin.text(self,build_hint,Rect2(28,54,size.x-56,28),21,Color("bae8df"))
 		return
 	if target.is_empty():
-		text("准备下一击",Vector2(24,64),24)
-		draw_skill()
-		return
-	var word: String = target.word
-	var next := word.substr(target.typed,1)
-	var data := TypingGuide.mapping(next)
-	var key_label := "空格" if next==" " else next
-	var press := 0.0
-	var key_rect := Rect2(14,16+press,78,74)
-	TypingPrompt.key(self,key_rect,key_label,28 if next==" " else 48,true,not run.last_input_ok,clock)
-	text(TypingGuide.NAMES[data.finger],Vector2(116,45),23)
-	text(data.shift_hand+" Shift + " + data.key.to_upper() if data.shift else "回到 "+TypingGuide.HOMES[data.finger],Vector2(116,78),19,Color("a7e6db"))
-	var meaning := Vocabulary.meaning(run.lesson,word)
-	if not run.last_input_ok:
-		text("再试一次，进度保留",Vector2(500,63),24,Color("a3433a"))
-	elif not meaning.is_empty():
-		# Definitions support the in-world word; do not repeat a second complete prompt.
-		var shaped := TextParagraph.new()
-		shaped.add_string(meaning,FONT,24)
-		shaped.width = 450
-		shaped.draw(get_canvas_item(),Vector2(470,35),Color("fff1cd"))
+		draw_skill();return
+	var word:String=target.word
+	var next:=word.substr(target.typed,1)
+	var data:=TypingGuide.mapping(next)
+	var key_label:="空格" if next==" " else next
+	GameHudSkin.panel(self,Rect2(8,8,416,92),1)
+	TypingPrompt.key(self,Rect2(20,16,78,74),key_label,28 if next==" " else 48,true,not run.last_input_ok,clock)
+	GameHudSkin.text(self,TypingGuide.NAMES[data.finger],Rect2(116,18,284,30),23)
+	GameHudSkin.text(self,data.shift_hand+" Shift + "+data.key.to_upper() if data.shift else "回到 "+TypingGuide.HOMES[data.finger],Rect2(116,54,284,24),19,Color("b7e6df"))
+	var meaning:=Vocabulary.meaning(run.lesson,word)
+	if not run.last_input_ok:meaning="再试一次，进度保留"
+	if not meaning.is_empty():
+		GameHudSkin.panel(self,Rect2(446,8,440,92),2)
+		GameGlyph.draw(self,"book",Vector2(478,54),14,Color("517a7d"))
+		var shaped:=TextParagraph.new()
+		for font_size in range(24,17,-1):
+			shaped.clear();shaped.add_string(meaning,GameHudSkin.FONT,font_size);shaped.width=356
+			if shaped.get_size().y<=66:break
+		shaped.draw(get_canvas_item(),Vector2(506,21+(66-shaped.get_size().y)*.5),Color("973d35") if not run.last_input_ok else Color("274657"))
 	draw_skill()
 
 func draw_skill() -> void:
 	if run is ArcadeRun or run is AdventureRun:
-		var ready: bool = run.skill_charge>=3 and run.skill_time<=0
-		draw_style_box(PlayTheme.game_panel(Color("ffdf84") if ready else Color("244c63"),Color("d8bc76"),9,3),Rect2(988,22,106,48))
-		text("空格",Vector2(1017,54),22,PlayTheme.TEXT if ready else Color("fff1cd"))
-		text(run.skill_name(),Vector2(1114,45),23,Color("ffdc86") if ready else Color("d5e9ec"))
+		var ready:bool=run.skill_charge>=3 and run.skill_time<=0
+		GameHudSkin.panel(self,Rect2(960,8,392,92),3)
+		TypingPrompt.key(self,Rect2(974,20,94,62),"空格",24,ready)
+		GameHudSkin.text(self,run.skill_name(),Rect2(1084,18,246,30),23,Color("ffe1a0") if ready else Color("e1f0f0"))
 		for i in range(3):
-			var tint := PlayTheme.TEAL if i<run.skill_charge else Color("d9e5ed")
-			var at := Vector2(1120+i*22,77)
-			draw_colored_polygon(PackedVector2Array([at-Vector2(0,6),at+Vector2(5,0),at+Vector2(0,6),at-Vector2(5,0)]),tint)
-		var skill_note := "格挡就绪" if run is ArcadeRun and run.mode=="fighter" and run.guard_ready else "就绪" if ready else "%ds" % ceili(run.skill_time) if run.skill_time>0 else "%d / 3" % run.skill_charge
-		text(skill_note,Vector2(1203,82),18,Color("ffdc86") if ready else Color("b0c4d0"))
+			var at:=Vector2(1095+i*24,72)
+			draw_style_box(PlayTheme.surface(Color("14384d"),Color("4d7782"),4),Rect2(at-Vector2(8,8),Vector2(16,16)))
+			if i<run.skill_charge:
+				draw_colored_polygon(PackedVector2Array([at-Vector2(0,6),at+Vector2(5,0),at+Vector2(0,6),at-Vector2(5,0)]),Color("ffdc8a"))
+		var note:="格挡就绪" if run is ArcadeRun and run.mode=="fighter" and run.guard_ready else "就绪" if ready else "%ds"%ceili(run.skill_time) if run.skill_time>0 else "%d / 3"%run.skill_charge
+		GameHudSkin.text(self,note,Rect2(1180,57,150,28),20,Color("ffe1a0") if ready else Color("b8d2da"),true)
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index==MOUSE_BUTTON_LEFT and event.position.x>=980:

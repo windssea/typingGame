@@ -28,6 +28,9 @@ func exercise() -> void:
 		for library in [arena.dive.scout,arena.dive.armored]:
 			for state in ["idle","alert","hit"]: require(library.texture(state,.2)!=null,"exported submarine native action: "+state)
 		for prop in ["supply_pod","friendly_torpedo","enemy_torpedo","fish_school"]: require(arena.art.sprites.has(prop),"exported underwater prop: "+prop)
+	if mode=="racing":
+		for state in ["idle","boost"]: require(arena.motion.texture(state,.2)!=null,"exported player kart action: "+state)
+		require(arena.rival_motion.texture("idle",.2)!=null,"exported rival driver action")
 	if run is CastleRun:
 		run.wave=6
 		arena.prepare_creatures()

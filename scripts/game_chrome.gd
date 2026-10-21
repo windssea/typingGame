@@ -6,6 +6,7 @@ var top_shade: GradientTexture2D
 var bottom_shade: GradientTexture2D
 var world: TextureRect
 var scenery: TextureRect
+var full_world := true
 
 func _ready() -> void:
 	mouse_filter=Control.MOUSE_FILTER_IGNORE
@@ -13,12 +14,11 @@ func _ready() -> void:
 	texture_filter=CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	scenery=TextureRect.new();scenery.texture=background
 	scenery.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+	scenery.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	scenery.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	scenery.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	scenery.show_behind_parent=true
-	var shader:=ShaderMaterial.new();shader.shader=preload("res://shaders/game_chrome.gdshader")
-	shader.set_shader_parameter("source_size",background.get_size())
-	scenery.material=shader;add_child(scenery)
+	add_child(scenery)
 	for bottom in [false,true]:
 		var gradient:=Gradient.new()
 		gradient.colors=PackedColorArray([Color(.035,.12,.19,.88),Color(.035,.12,.19,.62),Color(.035,.12,.19,0)])
@@ -38,7 +38,14 @@ func _draw() -> void:
 
 func _process(_delta: float) -> void:
 	if not is_instance_valid(world): return
-	var bounds:=world.get_global_rect()
-	scenery.material.set_shader_parameter("canvas_size",size)
-	scenery.material.set_shader_parameter("world_origin",bounds.position)
-	scenery.material.set_shader_parameter("world_size",bounds.size)
+	# The stage and the HUD share one aspect-preserving image frame. Sampling a
+	# smaller stage outside its UVs used to stretch edge pixels into long stripes.
+	scenery.material=world.material
+	if full_world:
+		world.set_meta("viewport_backdrop",true)
+		world.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		var to_parent: Transform2D=world.get_parent().get_global_transform().affine_inverse()*get_global_transform()
+		world.position=to_parent*Vector2.ZERO
+		world.size=size*to_parent.get_scale().abs()
+	else:
+		if world.has_meta("viewport_backdrop"): world.remove_meta("viewport_backdrop")

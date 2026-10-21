@@ -62,7 +62,7 @@ func setup_backdrop(texture: Texture2D) -> void:
 
 func draw_scene_background() -> void:
 	if is_instance_valid(backdrop):
-		if not backdrop_external:
+		if not backdrop_external and not backdrop.has_meta("viewport_backdrop"):
 			backdrop.size = size
 		backdrop.material.set_shader_parameter("clock",clock)
 		if run.mode=="submarine": backdrop.material.set_shader_parameter("sonar",run.skill_time/4.0)
@@ -451,8 +451,7 @@ func draw_dojo() -> void:
 	var coach := coach_motion.texture(state,coach_age if state=="cheer" else clock,reduced_motion)
 	if coach!=null:
 		draw_texture_rect(coach,Rect2(buddy-Vector2(145,145),Vector2(290,290)),false)
-	write("%d / 18" % run.kills,Vector2(1020,354),22,MINT,true)
-	write("下一个按键：" + ("空格" if next == " " else next),Vector2(680,376),20,MINT,true)
+	GameHudSkin.caption(self,"%d / 18"%run.kills,Rect2(950,325,140,40),24,1)
 	var rows := ["1234567890", "qwertyuiop", "asdfghjkl;'", "zxcvbnm,./"]
 	var finger_hint := TypingGuide.mapping(next)
 	var physical_key: String = finger_hint.key

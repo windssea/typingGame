@@ -34,6 +34,8 @@ var meteor_trails: Array[Dictionary] = []
 var stoves: Array[Dictionary] = []
 var dive_wakes: Array[Dictionary] = []
 var dive_lamps: Array[PointLight2D] = []
+var racing_exhaust: Array[CPUParticles2D] = []
+var nitro_light: PointLight2D
 
 func radial_texture(extent: int, for_light := false) -> GradientTexture2D:
 	var gradient := Gradient.new()
@@ -92,6 +94,21 @@ func _ready() -> void:
 	ambient.scale_amount_min=.10;ambient.scale_amount_max=.24
 	ambient.color=Color(.7,.91,1,.38) if arena.run.mode in ["submarine","bubbles","rain","aliens"] else Color(1,.9,.5,.35)
 	ambient.emitting=not arena.reduced_motion
+	if arena.run.mode=="racing":
+		ambient.emitting=false
+		for i in range(3):
+			var exhaust:=make_emitter("KartExhaust%d"%i)
+			exhaust.one_shot=false;exhaust.explosiveness=0;exhaust.local_coords=false
+			exhaust.amount=24 if i<2 else 40;exhaust.lifetime=.42 if i<2 else .26
+			exhaust.direction=Vector2.LEFT;exhaust.spread=15 if i<2 else 5
+			exhaust.gravity=Vector2.ZERO;exhaust.initial_velocity_min=45 if i<2 else 180
+			exhaust.initial_velocity_max=80 if i<2 else 270
+			exhaust.scale_amount_min=.10 if i<2 else .18;exhaust.scale_amount_max=.22 if i<2 else .36
+			exhaust.color=Color(.81,.89,.93,.30) if i<2 else Color(.25,.85,1,.8)
+			racing_exhaust.append(exhaust)
+		nitro_light=PointLight2D.new();nitro_light.name="NitroLight";nitro_light.texture=light_texture
+		nitro_light.color=Color("7eeaff");nitro_light.range_item_cull_mask=2
+		nitro_light.texture_scale=.6;nitro_light.enabled=false;add_child(nitro_light)
 	if arena.run.mode in ["balloons","moles","royal","castle"]:
 		ambient.position.y=24;ambient.direction=Vector2(.3,1)
 		ambient.gravity=Vector2(4,8);ambient.color=Color(.96,.83,.42,.32)
@@ -305,7 +322,18 @@ func _process(delta: float) -> void:
 	apply_mask()
 	for emitter in bursts: emitter.speed_scale=0.0 if paused else 1.0
 	ambient.speed_scale=0.0 if paused else 1.0
-	ambient.visible=not reduced;ambient.emitting=not reduced
+	ambient.visible=not reduced;ambient.emitting=not reduced and arena.run.mode!="racing"
+	if not racing_exhaust.is_empty():
+		var moving: bool=arena.run.boost>0
+		var nitro: bool=moving and (arena.run.combo>=3 or arena.run.skill_time>0)
+		for i in range(racing_exhaust.size()):
+			var exhaust:=racing_exhaust[i]
+			exhaust.speed_scale=0.0 if paused else 1.0;exhaust.visible=not reduced
+			exhaust.position=arena.track_point(arena.visual_rival if i==1 else arena.visual_distance,1 if i==1 else 0)-Vector2(65,0)
+			exhaust.emitting=not reduced and not arena.run.done and (nitro if i==2 else moving if i==0 else arena.run.rival<1)
+		nitro_light.position=racing_exhaust[2].position
+		nitro_light.enabled=nitro and not reduced and not arena.run.done
+		nitro_light.energy=.22+.04*sin(clock*18)
 	for slot in trails: slot.emitter.speed_scale=0.0 if paused else 1.0
 	for slot in meteor_trails:
 		slot.emitter.speed_scale=0.0 if paused else 1.0
@@ -407,4 +435,4 @@ func update_meteor_trails(delta: float) -> void:
 				break
 
 func snapshot() -> Dictionary:
-	return {"backend":"CPUParticles2D + PointLight2D + Tween + canvas shaders","events":event_count,"launches":launch_count,"burst_pool":bursts.size(),"trail_pool":trails.size(),"meteor_trails":meteor_trails.filter(func(slot): return slot.emitter.emitting).size(),"light_pool":lights.size(),"wave_pool":waves.size(),"tower_auras":auras.filter(func(p): return p.emitting).size(),"dive_wake_pool":dive_wakes.size(),"active_dive_wakes":dive_wakes.filter(func(s): return s.emitter.emitting).size(),"cooking_stoves":stoves.filter(func(s): return s.fire.emitting).size(),"active_bursts":bursts.filter(func(p): return p.emitting).size(),"active_lights":lights.filter(func(p): return p.node.enabled).size(),"protected_regions":protected_regions.size(),"clock":clock,"paused":paused,"reduced":reduced,"shake":[shake.x,shake.y]}
+	return {"backend":"CPUParticles2D + PointLight2D + Tween + canvas shaders","events":event_count,"launches":launch_count,"burst_pool":bursts.size(),"trail_pool":trails.size(),"meteor_trails":meteor_trails.filter(func(slot): return slot.emitter.emitting).size(),"light_pool":lights.size(),"wave_pool":waves.size(),"tower_auras":auras.filter(func(p): return p.emitting).size(),"dive_wake_pool":dive_wakes.size(),"active_dive_wakes":dive_wakes.filter(func(s): return s.emitter.emitting).size(),"racing_exhaust_pool":racing_exhaust.size(),"active_racing_exhaust":racing_exhaust.filter(func(p):return p.emitting).size(),"cooking_stoves":stoves.filter(func(s): return s.fire.emitting).size(),"active_bursts":bursts.filter(func(p): return p.emitting).size(),"active_lights":lights.filter(func(p): return p.node.enabled).size(),"protected_regions":protected_regions.size(),"clock":clock,"paused":paused,"reduced":reduced,"shake":[shake.x,shake.y]}

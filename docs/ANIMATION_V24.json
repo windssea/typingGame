@@ -1,0 +1,136 @@
+{
+  "version": "2.4",
+  "sources": [
+    {
+      "id": "rally-mint-v24",
+      "generator": "Local Grok Build",
+      "tool": "not returned by interrupted CLI receipt",
+      "request_id": null,
+      "model": null,
+      "raw_sha256": "33d53a6b1a46d63090ac5ef3d60415a87c58b1f43119e37f8acf70a225c69e97",
+      "actual": {
+        "width": 960,
+        "height": 960,
+        "fps": "24/1",
+        "frames": 193,
+        "duration_seconds": 8.041667,
+        "audio": true
+      },
+      "source_image": "assets/animation-sources/rally-mint-v24/seed.png",
+      "image_generator": "built-in ImageGen edit",
+      "source_sha256": "c8c216fdc549a131de9ae6b3f78c8d2d4b5c1f8fa6cbf968f7f04e89f9623c0c",
+      "normalized_image_brief": "assets/animation-sources/rally-mint-v24/seed-prompt.txt",
+      "motion_prompt": "assets/animation-sources/rally-mint-v24/motion.txt",
+      "limitations": [
+        "Both raw videos existed and were independently probed. The CLI later returned usage balance exhausted (402); no generation was resubmitted and no credits purchased.",
+        "The mint CLI receipt did not preserve a successful video-tool receipt. Video model, request ID and exact tool name cannot be verified and are not invented.",
+        "Requested 720p, measured 960x960 at native 24fps. Raw audio preserved; only visual frames used in game.",
+        "Later than 4 seconds the video changes driver head and tire perspective. Runtime excludes those frames."
+      ]
+    },
+    {
+      "id": "rally-coral-v24",
+      "generator": "Local Grok Build",
+      "tool": "reference_to_video",
+      "request_id": null,
+      "model": null,
+      "raw_sha256": "4b5b81303b7a0b9e4241775195d06ee497d489ab63bee42575ee9cdf26c28268",
+      "actual": {
+        "width": 960,
+        "height": 960,
+        "fps": "24/1",
+        "frames": 193,
+        "duration_seconds": 8.041667,
+        "audio": true
+      },
+      "source_image": "assets/animation-sources/rally-coral-v24/seed.png",
+      "image_generator": "built-in ImageGen edit",
+      "source_sha256": "d8848addb5d8fb175e020866aa2c2a71f69556d982dab3b44469038f7714e1b7",
+      "normalized_image_brief": "assets/animation-sources/rally-coral-v24/seed-prompt.txt",
+      "motion_prompt": "assets/animation-sources/rally-coral-v24/motion.txt",
+      "limitations": [
+        "Both raw videos existed and were independently probed. The CLI later returned usage balance exhausted (402); no generation was resubmitted and no credits purchased.",
+        "The mint CLI receipt did not preserve a successful video-tool receipt. Video model, request ID and exact tool name cannot be verified and are not invented.",
+        "Requested 720p, measured 960x960 at native 24fps. Raw audio preserved; only visual frames used in game.",
+        "Later than 4 seconds the video changes driver head and tire perspective. Runtime excludes those frames."
+      ]
+    }
+  ],
+  "runtime_clips": [
+    {
+      "resource": "assets/animations/rally-coral-idle-v24/idle.tres",
+      "frames": 48,
+      "cell_px": 384,
+      "fps": 24,
+      "source_interval": [
+        0.5,
+        2.5
+      ],
+      "minimum_alpha_margin_px": 72
+    },
+    {
+      "resource": "assets/animations/rally-mint-boost-v24/idle.tres",
+      "frames": 24,
+      "cell_px": 384,
+      "fps": 24,
+      "source_interval": [
+        2.5,
+        3.5
+      ],
+      "minimum_alpha_margin_px": 80
+    },
+    {
+      "resource": "assets/animations/rally-mint-idle-v24/idle.tres",
+      "frames": 48,
+      "cell_px": 384,
+      "fps": 24,
+      "source_interval": [
+        0.5,
+        2.5
+      ],
+      "minimum_alpha_margin_px": 82
+    }
+  ],
+  "frame_interpolation": false,
+  "frame_duplication": false,
+  "review": "native scale contacts and actual Godot render",
+  "hud_art": {
+    "generator": "built-in ImageGen",
+    "transparent_background": true,
+    "source": "assets/generated/v24/ui-hud-plates.png",
+    "source_sha256": "df6d91b9fe47674134e8d354dd1459d3bc84408f2107f6a8a644d49e9971ba92",
+    "source_size": [
+      2098,
+      750
+    ],
+    "normalized_prompt": "assets/generated/v24/hud-plates-prompt.txt",
+    "regions": {
+      "title": [
+        34,
+        88,
+        1020,
+        278
+      ],
+      "stat": [
+        1082,
+        90,
+        982,
+        274
+      ],
+      "definition": [
+        34,
+        408,
+        1010,
+        266
+      ],
+      "ability": [
+        1078,
+        408,
+        986,
+        266
+      ]
+    },
+    "command_sprite": "assets/generated/v24/ui-hud-command.png",
+    "command_derivation": "Deterministic nine-slice normalization of stat plate; source margins96x48 to destination12x10. No generated lettering."
+  }
+}

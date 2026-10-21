@@ -21,8 +21,15 @@ static func draw(canvas: CanvasItem, kind: String, at: Vector2, radius: float, t
 			else:
 				canvas.draw_line(at-Vector2(radius*.3,0),at+Vector2(radius*.3,0),tint,stroke,true)
 				canvas.draw_line(at-Vector2(0,radius*.3),at+Vector2(0,radius*.3),tint,stroke,true)
-		"combo", "skill", "speed":
+		"combo", "skill":
 			canvas.draw_colored_polygon(PackedVector2Array([at+Vector2(.12,-1)*radius,at+Vector2(-.65,.12)*radius,at+Vector2(-.05,.12)*radius,at+Vector2(-.2,1)*radius,at+Vector2(.72,-.25)*radius,at+Vector2(.15,-.25)*radius]),tint)
+		"speed":
+			canvas.draw_arc(at+Vector2(0,radius*.3),radius,PI,TAU,24,tint,stroke,true)
+			canvas.draw_line(at+Vector2(0,radius*.3),at+Vector2(.6,-.5)*radius,tint,stroke,true)
+			canvas.draw_circle(at+Vector2(0,radius*.3),stroke,tint)
+		"book":
+			for side in [-1,1]:
+				canvas.draw_polyline(PackedVector2Array([at+Vector2(0,-.65)*radius,at+Vector2(side*.8,-.9)*radius,at+Vector2(side*.8,.7)*radius,at+Vector2(0,.95)*radius,at+Vector2(0,-.65)*radius]),tint,stroke,true)
 		"key", "training":
 			var rect := Rect2(at-Vector2.ONE*radius,Vector2.ONE*radius*2)
 			canvas.draw_style_box(PlayTheme.game_panel(tint.lightened(.75),tint,6,3),rect)

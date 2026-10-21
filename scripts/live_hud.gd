@@ -79,22 +79,24 @@ func _exit_tree() -> void:
 			tween.kill()
 
 func _draw() -> void:
-	# Keep only actionable in-run values. Score and detailed labels belong in the result.
-	var width := size.x
-	var cell := width/3.0
+	var width:=size.x
+	var cell:=width/3.0
 	for slot in range(3):
-		var i := slot+1
-		if values.size()<=i:
-			return
-		var x := slot*cell
-		var tint: Color = [Color("a7f0d9"),Color("ffdd80"),Color("ffb4ad")][slot]
-		var glyph: String = ["accuracy","combo","speed" if values[i][0]=="速度 WPM" else "health"][slot]
-		if mode_id=="fighter" and slot==2: glyph="star"
-		GameGlyph.draw(self,glyph,Vector2(x+22,27),12,tint)
-		var value: String = values[i][1]+(" 连击" if i==2 else " WPM" if values[i][0]=="速度 WPM" else "")
-		if mode_id=="fighter" and slot==2: value="ROUND %02d"%round_number
-		draw_string(FONT,Vector2(x+44,38),value,HORIZONTAL_ALIGNMENT_LEFT,-1,30,tint)
-	draw_string(FONT,Vector2(14,70),note,HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("fff1cd"))
-	draw_line(Vector2(14,78),Vector2(width-14,78),Color(.75,.84,.88,.25),3,true)
+		var i:=slot+1
+		if values.size()<=i:return
+		var x:=slot*cell
+		var tint:Color=[Color("b9f4df"),Color("ffe3a1"),Color("b8e9ff") if values[i][0]=="速度 WPM" else Color("ffc1b2")][slot]
+		var icon:String=["accuracy","combo","speed" if values[i][0]=="速度 WPM" else "health"][slot]
+		if mode_id=="fighter" and slot==2:icon="star"
+		GameHudSkin.panel(self,Rect2(x+3,0,cell-6,50),1)
+		GameGlyph.draw(self,icon,Vector2(x+26,25),12,tint)
+		var value:String=values[i][1]+(" 连击" if i==2 else " WPM" if values[i][0]=="速度 WPM" else "")
+		if mode_id=="fighter" and slot==2:value="ROUND %02d"%round_number
+		GameHudSkin.text(self,value,Rect2(x+48,4,cell-62,42),29,tint)
+	var note_width:=minf(width*.7,FONT.get_string_size(note,HORIZONTAL_ALIGNMENT_LEFT,-1,17).x+28)
+	GameHudSkin.caption(self,note,Rect2(3,54,note_width,26),17,2)
+	var meter:=Rect2(note_width+12,58,maxf(20,width-note_width-18),18)
+	GameHudSkin.panel(self,meter,1)
+	var inside:=meter.grow(-5)
 	if shown_progress>0:
-		draw_line(Vector2(14,78),Vector2(14+(width-28)*shown_progress,78),Color("ffdb83"),3,true)
+		draw_style_box(PlayTheme.surface(Color("ffd78b"),Color("ffeac0"),3),Rect2(inside.position,Vector2(inside.size.x*shown_progress,inside.size.y)))
