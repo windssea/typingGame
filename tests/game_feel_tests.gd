@@ -58,7 +58,7 @@ func exercise() -> void:
 			app.run.paused=false
 			var key:=InputEventKey.new();key.pressed=true;key.unicode=character.unicode_at(0)
 			Input.parse_input_event(key);await process_frame
-		if definition.id in ["rain","castle","royal","submarine"]:
+		if definition.id in ["rain","castle","royal","submarine","fighter"]:
 			for i in range(180):
 				if not arena.feel.events.is_empty(): break
 				app.run.step(.025);arena._process(.025)

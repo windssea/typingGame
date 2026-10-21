@@ -119,7 +119,7 @@ func exercise() -> void:
 		if run is CastleRun:
 			run.recommended_target().health = 1
 		await type_word()
-		if run.mode in ["rain","castle"] or run is AdventureRun:
+		if run.mode in ["rain","castle","fighter"] or run is AdventureRun:
 			# Damage and impact now wait for physical contact, rather than the last key.
 			for i in range(260):
 				if arena().impact_age<.15 or run.done: break

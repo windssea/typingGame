@@ -6,6 +6,13 @@ var strike := 0.0
 var last_impact := ""
 var blue_attack_age := -1.0
 var coral_attack_age := -1.0
+var blue_reaction_age := -1.0
+var coral_reaction_age := -1.0
+var blue_start_approach := 0.0
+var enemy_lean := 0.0
+var knockout_age := -1.0
+var seen_knockouts := 0
+var combat_contact_count := 0
 var trail_clock := 0.0
 var motion := ArcadeMotion.new()
 var boxing_clips: Array[SpriteFrames] = []
@@ -40,11 +47,13 @@ func _ready() -> void:
 	if run.mode=="balloons": pop_motion.setup("balloon_pop")
 	if run.mode=="fighter":
 		boxing_clips = BoxingMotion.load_clips()
+		run.punch_started.connect(on_punch_started)
 	juice.reduced_motion = reduced_motion
 	run.impact.connect(on_impact)
 	run.key_feedback.connect(on_key_feedback)
 
 func on_impact(kind: String, point: Vector2, power: int) -> void:
+	var knockout_event := false
 	if kind=="skill":
 		shield_pulse = 0.65
 		var location := Vector2(350,410) if run.mode=="fighter" else Vector2(120+run.rival*770,510) if run.mode=="racing" else Vector2(520,480)
@@ -70,14 +79,22 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 	if kind=="aliens" and power%3==0:
 		shield_pulse = 0.65
 	if run.mode=="fighter":
-		point = Vector2(420,410) if kind in ["miss","block"] else Vector2(635,410)
+		point = Vector2(392,390) if kind in ["miss","block"] else Vector2(662,390)
+		combat_contact_count += 1
 		if kind in ["miss","block"]:
-			coral_attack_age = 0.0
+			coral_attack_age = maxf(coral_attack_age,ArcadeRun.PUNCH_CONTACT)
+			blue_reaction_age = 0.0
 		else:
-			blue_attack_age = 0.0
+			blue_attack_age = maxf(blue_attack_age,ArcadeRun.PUNCH_CONTACT)
+			coral_reaction_age = 0.0
+			coral_attack_age = -1.0
+		if seen_knockouts!=run.knockout_serial:
+			seen_knockouts = run.knockout_serial
+			knockout_age = 0.0
+			knockout_event = true
 	elif kind=="racing":
 		point = Vector2(120+visual_distance*770,356)
-	var tier := GameFeel.tier(power if kind==run.mode else 0,kind in ["fighter","moles","miss","block"])
+	var tier := 3 if knockout_event else GameFeel.tier(power if kind==run.mode else 0,kind in ["fighter","moles","miss","block"])
 	impact_freeze = 0.0 if reduced_motion or tier==1 else .04 if tier==2 else .065
 	record_impact(point,tier,CORAL if kind=="miss" else BLUE if kind=="block" else PlayTheme.YELLOW)
 	bursts.append({"kind":kind,"point":point,"power":power,"life":0.7})
@@ -90,6 +107,28 @@ func on_impact(kind: String, point: Vector2, power: int) -> void:
 	strike = 0.5
 	last_impact = kind
 
+func on_punch_started(attack: Dictionary) -> void:
+	if attack.side==0:
+		blue_start_approach = approach
+		blue_attack_age = 0.0
+		blue_reaction_age = -1.0
+		if knockout_age>=0 and knockout_age<.55: knockout_age=.55
+	else:
+		coral_attack_age = 0.0
+		coral_reaction_age = -1.0
+	queue_redraw()
+
+# Feet move through a short eased step before contact and settle afterward.
+# The word layer never inherits this transform.
+func punch_step(age: float, start := 0.0, reach := 128.0) -> float:
+	if reduced_motion or age<0: return 0.0
+	if age<ArcadeRun.PUNCH_CONTACT:
+		return lerpf(start,reach,smoothstep(0.0,ArcadeRun.PUNCH_CONTACT,age))
+	return lerpf(reach,0.0,smoothstep(ArcadeRun.PUNCH_CONTACT,ArcadeRun.PUNCH_CONTACT+.28,age))
+
+func visual_reaction_delta(delta: float) -> float:
+	return delta if reduced_motion else GameFeel.pose_step(delta,impact_freeze)
+
 func _process(delta: float) -> void:
 	if run != null and not run.paused:
 		clock += delta
@@ -98,7 +137,12 @@ func _process(delta: float) -> void:
 		if run.mode=="fighter":
 			var target := run.recommended_target()
 			var preparation := float(target.get("typed",0))/maxi(1,str(target.get("word","")).length())
-			approach = 0.0 if reduced_motion else lerpf(approach,preparation*80,follow)
+			approach = 0.0 if reduced_motion else lerpf(approach,preparation*44,follow)
+			var intent: String = target.get("intent","")
+			enemy_lean = lerpf(enemy_lean,14.0 if intent=="windup" else -10.0 if intent=="exposed" else 0.0,follow)
+			if blue_reaction_age>=0: blue_reaction_age += visual_reaction_delta(delta)
+			if coral_reaction_age>=0: coral_reaction_age += visual_reaction_delta(delta)
+			if knockout_age>=0: knockout_age += delta
 		visual_distance = lerpf(visual_distance,run.distance,follow)
 		visual_rival = lerpf(visual_rival,run.rival,follow)
 		visual_enemy_hp = lerpf(visual_enemy_hp,run.enemy_hp,1-exp(-delta*4))
@@ -252,12 +296,7 @@ func draw_atmosphere() -> void:
 			draw_circle(p,1.5+i%3,Color(1,0.96,0.7,0.24+sin(clock*2+i)*0.12))
 
 func draw_skill_field() -> void:
-	if run.mode=="fighter" and run.guard_ready:
-		var alpha := 0.6 if reduced_motion else 0.5+sin(clock*3)*0.1
-		draw_arc(Vector2(350,430),80,-PI/2,PI/2,40,Color(0.4,0.85,1,alpha),5,true)
-		panel(Rect2(250,275,196,33),Color(0.92,0.98,1,0.94),12)
-		write("格挡已准备 · 抵挡一次反击",Vector2(348,297),14,BLUE,true)
-	elif run.skill_time>0 and run.mode in ["moles","balloons"]:
+	if run.skill_time>0 and run.mode in ["moles","balloons"]:
 		for target in run.targets:
 			var p: Vector2 = target.position
 			var radius := 63.0 if reduced_motion else 63+sin(clock*3)*5
@@ -379,24 +418,35 @@ func draw_generated_game() -> void:
 		write("陪练车" if run.context=="training" else "对手",rival-Vector2(29,50),17,CORAL)
 
 	elif run.mode == "fighter":
-		var punch := 0.0 if reduced_motion else GameFeel.kick(.5-strike,.34)
-		var left := Vector2(350,440)+Vector2((-punch*12 if last_impact=="miss" else 0.0 if last_impact=="block" else approach+punch*(200-approach)),-punch*6)
-		var enemy_intent: String = run.recommended_target().get("intent","")
-		var lean := 0.0 if reduced_motion else 14.0 if enemy_intent=="windup" else -10.0 if enemy_intent=="exposed" else 0.0
-		var right := Vector2(690+lean,440)+Vector2(punch*(-200 if last_impact in ["miss","block"] else 12),-punch*3)
-		draw_ellipse_shadow(Vector2(350,560),Vector2(67,16))
-		draw_ellipse_shadow(Vector2(690,560),Vector2(67,16))
-		draw_texture_rect(BoxingMotion.texture(0,pose_clock,blue_attack_age,reduced_motion,boxing_clips),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
-		draw_texture_rect(BoxingMotion.texture(1,pose_clock,coral_attack_age,reduced_motion,boxing_clips),Rect2(right-Vector2(160,175),Vector2(320,320)),false)
+		var recoil_left := 0.0 if reduced_motion or blue_reaction_age<0 else sin(clampf(blue_reaction_age/.28,0,1)*PI)*18
+		var recoil_right := 0.0 if reduced_motion or coral_reaction_age<0 else sin(clampf(coral_reaction_age/.28,0,1)*PI)*22
+		var blue_active := blue_attack_age>=0 and blue_attack_age<.5
+		var coral_active := coral_attack_age>=0 and coral_attack_age<.5
+		var left := Vector2(350+(punch_step(blue_attack_age,blue_start_approach) if blue_active else approach)-recoil_left,440)
+		var right := Vector2(690+enemy_lean-(punch_step(coral_attack_age,0,152) if coral_active else 0.0)+recoil_right,440)
+		draw_ellipse_shadow(Vector2(left.x,560),Vector2(67,16))
+		draw_ellipse_shadow(Vector2(right.x,560),Vector2(67,16))
+		var blocking: bool = run.guard_ready or (last_impact=="block" and blue_reaction_age>=0 and blue_reaction_age<.38)
+		draw_texture_rect(BoxingMotion.texture(0,pose_clock,blue_attack_age,reduced_motion,boxing_clips,blue_reaction_age if last_impact!="block" else -1.0,blocking),Rect2(left-Vector2(134,180),Vector2(340,340)),false)
+		var opponent_alpha := 1.0
+		if not reduced_motion and knockout_age>=0 and knockout_age<.75:
+			opponent_alpha = 1.0-smoothstep(.08,.42,knockout_age) if knockout_age<.55 else smoothstep(.55,.75,knockout_age)
+		draw_texture_rect(BoxingMotion.texture(1,pose_clock,coral_attack_age,reduced_motion,boxing_clips,coral_reaction_age),Rect2(right-Vector2(160,175),Vector2(320,320)),false,Color(1,1,1,opponent_alpha))
+		if knockout_age>=0 and knockout_age<.65:
+			var ko_width := TypingPrompt.FONT.get_string_size("击倒！",HORIZONTAL_ALIGNMENT_LEFT,-1,45).x
+			TypingPrompt.glyph(self,"击倒！",Vector2(520-ko_width*.5,175),45,PlayTheme.YELLOW,.4)
 		for side in range(2):
 			var x := 50+side*560
 			var health: int = run.hp if side==0 else run.enemy_hp
-			panel(Rect2(x,35,380,28),Color("203c52"),7,Color("e7c07b"))
-			var delayed := visual_player_hp if side==0 else visual_enemy_hp
-			panel(Rect2(x+5,40,370*delayed/100.0,18),PlayTheme.YELLOW,4)
-			panel(Rect2(x+5,40,370*health/100.0,18),MINT if side==0 else CORAL,4)
-			write("蓝拳 · 你" if side==0 else "红拳 · 对手",Vector2(x,91),21,Color("26475b"))
-			write(str(health),Vector2(x+380,91),23,Color("26475b"),true)
+			if side==1 and knockout_age>=0 and knockout_age<.75:
+				health=roundi(health*smoothstep(.55,.75,knockout_age))
+			FightMeter.paint(self,Rect2(x,35,380,34),health,visual_player_hp if side==0 else 0.0 if knockout_age>=0 and knockout_age<.75 else visual_enemy_hp,side)
+			var name_at := Vector2(x,92)
+			draw_string_outline(FONT,name_at,"蓝拳 · 你" if side==0 else "红拳 · 对手",HORIZONTAL_ALIGNMENT_LEFT,-1,21,3,Color("18394d"))
+			write("蓝拳 · 你" if side==0 else "红拳 · 对手",name_at,21,Color("fff0cf"))
+			var number_at := Vector2(x+380-FONT.get_string_size(str(health),HORIZONTAL_ALIGNMENT_LEFT,-1,23).x,92)
+			draw_string_outline(FONT,number_at,str(health),HORIZONTAL_ALIGNMENT_LEFT,-1,23,3,Color("18394d"))
+			write(str(health),number_at,23,Color("fff0cf"))
 		write("VS",Vector2(520,63),34,Color("a65d2b"),true)
 		if run.combo>1 or (strike>0 and run.last_tactic=="counter"):
 			write("破招！双倍重拳" if strike>0 and run.last_tactic=="counter" else "%d HIT COMBO" % run.combo,Vector2(345,230),25,GOLD,true)
@@ -564,6 +614,14 @@ func draw_burst(burst: Dictionary) -> void:
 	var t: float = 1-burst.life/0.7
 	var p: Vector2 = burst.point
 	var color: Color = CORAL if burst.kind=="miss" else PlayTheme.YELLOW
+	if run.mode=="fighter":
+		# Native contact particles already sell the hit. A second giant star and
+		# a floating pale caption used to hide both the glove and the reaction.
+		if burst.kind=="block" and t<.6:
+			var at := Vector2(285,230)
+			draw_string_outline(FONT,at,"格挡！",HORIZONTAL_ALIGNMENT_LEFT,-1,28,3,Color("15364b"))
+			write("格挡！",at,28,Color("a9eeff"))
+		return
 	if burst.kind=="fighter":
 		p = Vector2(650,400)
 	elif burst.kind=="miss" and run.mode=="fighter":

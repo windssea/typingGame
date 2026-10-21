@@ -31,6 +31,7 @@ func exercise() -> void:
 		check(target.intent=="windup","fighter enters a visible windup at all frame rates")
 		var hp:=fighter.hp
 		word(fighter,target)
+		advance(fighter,.2,fps)
 		check(fighter.hp==hp and fighter.enemy_hp==50 and fighter.counters==1,"typing interrupts windup and deals double damage")
 		check(fighter.correct==str(target.word).length(),"tactical bonus never fabricates typing credit")
 		var alien:=arcade("aliens")
@@ -50,6 +51,7 @@ func exercise() -> void:
 		target.remaining=.01;fighter.step(.02)
 		check(fighter.hp==100 and fighter.targets[0].intent=="exposed" and not fighter.guard_ready,"earned guard creates an actionable opening")
 		word(fighter,fighter.targets[0])
+		fighter.step(.2)
 		check(fighter.enemy_hp==50,"counterattack after a block deals double damage")
 	var run:=castle()
 	var shaman:=run.spawn_enemy("shaman")

@@ -54,7 +54,7 @@ func refresh(run: GameRun) -> void:
 		last = "%.0f" % run.wpm()
 	values = [["得分",str(run.score)],["准确率","%d%%" % roundi(run.accuracy()*100)],["连击",str(run.combo)],[status,last]]
 	progress = clampf(fraction,0,1)
-	var key := str(values)+note+str(snappedf(progress,0.005))
+	var key := str(values)+note+str(snappedf(progress,0.005))+str(round_number)
 	if key!=snapshot:
 		snapshot = key
 		if progress_tween and progress_tween.is_valid():

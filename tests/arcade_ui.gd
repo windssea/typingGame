@@ -82,6 +82,9 @@ func exercise() -> void:
 				arena._process(0.8)
 				check(arena.bursts.is_empty() and arena.feel.trauma==0 and arena.strike==0,"impact feedback returns to rest without blocking input")
 		while not app.run.done:
+			if app.run.recommended_target().is_empty():
+				app.run.step(.2)
+				continue
 			var target: Dictionary = app.run.recommended_target()
 			for character in str(target.word).substr(target.typed):
 				app.run.type_character(character)

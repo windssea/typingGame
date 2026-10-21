@@ -28,6 +28,7 @@ func exercise() -> void:
 	normal.miss_target(normal.targets[0])
 	hard.miss_target(hard.targets[0])
 	expert.miss_target(expert.targets[0])
+	for battle in [normal,hard,expert]: battle.step(.2)
 	check(normal.hp==80 and hard.hp==75 and expert.hp==70,"challenge ranks have distinct failure tolerance")
 	var slow := arcade(0.65,"normal","training")
 	var fast := arcade(1.6,"normal","training")
@@ -110,7 +111,9 @@ func exercise() -> void:
 		if child is ArcadeArena:
 			arena=child
 	app.run.type_character(app.run.targets[0].word)
-	check(arena.blue_attack_age==0 and not arena.juice.particles.is_empty(),"real hit starts native punch and particles")
+	check(arena.blue_attack_age==0 and arena.combat_contact_count==0,"typing starts the native punch before contact")
+	app.run.step(.2)
+	check(arena.combat_contact_count==1 and not arena.juice.particles.is_empty(),"contact triggers particles after the jab begins")
 	app.run.paused=true
 	var frame_clock: float = arena.clock
 	var count: int = arena.juice.particles.size()

@@ -1,0 +1,40 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\boxing-coral-reaction-v21\\grok-raw.mp4",
+  "native": {
+    "width": 960,
+    "height": 960,
+    "fps": "24",
+    "duration": 10.041667,
+    "frames": "241",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/boxing-coral-hit-v21/idle-atlas.png",
+    "cell": 384,
+    "columns": 8,
+    "rows": 5,
+    "frames": 33,
+    "fps": "24",
+    "interval": [
+      1.875,
+      3.25
+    ],
+    "decoded_rgba_bytes": 23592960
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #00ff00",
+    "green despill",
+    "shared whole-canvas scale and padding",
+    "atlas packing"
+  ],
+  "interpolation": false,
+  "loop_review": "pending-native-scale-review",
+  "status": "approved-native-capture",
+  "static_crop": null,
+  "animation": "hit",
+  "loop": false,
+  "chroma_key": "00ff00",
+  "cell_safety_inset_px": 0,
+  "runtime_review": "Native contact, recovery and guarding captures reviewed at 1440x900. Source poses sampled on combat clock; no interpolated images."
+}

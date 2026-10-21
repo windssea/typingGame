@@ -2,6 +2,13 @@ class_name ArcadeRun
 extends GameRun
 
 signal impact(kind: String, point: Vector2, power: int)
+signal punch_started(attack: Dictionary)
+
+# Contact is a simulation event shared by animation, sound, damage and particles.
+const PUNCH_CONTACT := 4.0/24.0
+var punches: Array[Dictionary] = []
+var knockout_serial := 0
+var punch_serial := 0
 
 const MODES := ["balloons", "aliens", "moles", "racing", "fighter"]
 var goal := 24
@@ -117,6 +124,9 @@ func step(delta: float) -> void:
 
 func advance(delta: float) -> void:
 	elapsed += delta
+	if mode=="fighter":
+		step_punches(delta)
+		if done: return
 	skill_time = maxf(0,skill_time-delta)
 	boost = maxf(0, boost - delta)
 	if mode == "racing":
@@ -169,8 +179,11 @@ func miss_target(target: Dictionary) -> void:
 	# Moles retreat in training: repetition without a failure countdown.
 	if mode == "moles" and context == "training":
 		damage = 0
-	hp = maxi(0, hp - damage)
-	impact.emit("block" if mode=="fighter" and damage==0 else "miss", target.position, damage)
+	if mode=="fighter":
+		queue_punch(1,"block" if damage==0 else "miss",damage,damage)
+	else:
+		hp = maxi(0, hp - damage)
+		impact.emit("miss",target.position,damage)
 	feedback = "地鼠藏起来了，下一只慢慢找准键位" if damage == 0 and mode == "moles" else "错过目标！优先输入计时条最短的目标"
 	targets.erase(target)
 	if hp <= 0:
@@ -184,8 +197,9 @@ func miss_target(target: Dictionary) -> void:
 func on_word_completed(target: Dictionary) -> void:
 	var point: Vector2 = target.position
 	last_tactic = ""
-	var counter: bool = mode=="fighter" and target.intent in ["windup","exposed"]
+	var counter: bool = mode=="fighter" and (target.intent in ["windup","exposed"] or punches.any(func(attack): return attack.side==1 and attack.kind=="miss"))
 	if counter:
+		punches = punches.filter(func(attack): return attack.side!=1 or attack.kind=="block")
 		counters += 1
 		last_tactic = "counter"
 		score += 25
@@ -202,7 +216,10 @@ func on_word_completed(target: Dictionary) -> void:
 	defeat(target, combo % 5 == 0)
 	if context=="training" and kills%6==0 and kills<goal:
 		skill_charge = 3
-	impact.emit(mode, point, combo)
+	if mode=="fighter":
+		queue_punch(0,"fighter",50 if counter else 25,combo)
+	else:
+		impact.emit(mode, point, combo)
 	match mode:
 		"aliens":
 			if combo % 3 == 0:
@@ -214,18 +231,39 @@ func on_word_completed(target: Dictionary) -> void:
 			boost = 0.9 if combo < 3 else 1.5
 			feedback = "氮气加速！三连击后每次推进距离增加 15%" if combo>=3 else "稳定推进！连续准确输入三次可获得氮气加速"
 		"fighter":
-			enemy_hp = maxi(0, enemy_hp - (50 if counter else 25))
-			feedback = "打断攻击！%d 连击 · 重拳命中" % combo
-			if enemy_hp == 0:
-				round_number += 1
-				enemy_hp = 100
-				feedback = "击倒对手！下一位拳手登场"
+			feedback = "破招出拳！" if counter else "出拳！"
 		"balloons": feedback = "气球爆开！%d 连击" % combo
 		"moles": feedback = "敲中了！%d 连击" % combo
-	if (mode == "racing" and distance >= 1) or kills >= goal:
+	if (mode == "racing" and distance >= 1) or (kills >= goal and mode!="fighter"):
 		finish(true)
 	elif kills + targets.size() < goal:
 		spawn_target()
+
+func queue_punch(side: int, kind: String, damage: int, power: int) -> void:
+	var attack := {"id":punch_serial,"side":side,"kind":kind,"damage":damage,"power":power,"age":0.0}
+	punch_serial += 1
+	punches.append(attack)
+	punch_started.emit(attack)
+
+func step_punches(delta: float) -> void:
+	for attack in punches.duplicate():
+		attack.age += delta
+		if attack.age+0.000001<PUNCH_CONTACT: continue
+		punches.erase(attack)
+		if attack.side==0:
+			enemy_hp = maxi(0,enemy_hp-attack.damage)
+			if enemy_hp==0:
+				knockout_serial += 1
+				round_number += 1
+				enemy_hp = 100
+				feedback = "击倒！下一回合"
+		else:
+			hp = maxi(0,hp-attack.damage)
+		hud_changed.emit()
+		impact.emit(attack.kind,Vector2(420,410) if attack.side==1 else Vector2(635,410),attack.power)
+		if hp<=0:
+			punches.clear();finish(false);return
+	if kills>=goal and punches.is_empty(): finish(true)
 
 func status_text() -> String:
 	match mode:

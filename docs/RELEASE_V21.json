@@ -1,0 +1,43 @@
+{
+  "version": "2.1",
+  "date": "2026-10-21",
+  "production_url": "https://typing.nanokid.win/",
+  "pages_project": "typinggame",
+  "objects": [
+    {
+      "key": "keybound/game-3bfa0604ea2d936b1dbf.pck",
+      "raw_bytes": 4419252,
+      "upload_bytes": 3925747,
+      "sha256": "3bfa0604ea2d936b1dbf8081f4397032acade181c8717d5e00ad039e8cc61d9f"
+    },
+    {
+      "key": "keybound/content-fighter-98e3776f015aba4299b3.pck",
+      "raw_bytes": 8972524,
+      "upload_bytes": 8919779,
+      "sha256": "98e3776f015aba4299b3cae67f5049a8ad2a4e477236cf4b17273b4bcba5c481"
+    }
+  ],
+  "validation": {
+    "regression_suites": 20,
+    "regression_checks": 31055,
+    "regression_failures": 0,
+    "contact_checks": 27,
+    "contact_failures": 0,
+    "animation_checks": 470,
+    "animation_failures": 0,
+    "isolated_games": 13
+  },
+  "animation_provenance": "docs/ANIMATION_V21.json",
+  "review": "docs/COMBAT_POLISH_V21.md",
+  "browser_validation": {
+    "mode": "fighter",
+    "attempts": 12,
+    "correct": 12,
+    "kills": 3,
+    "enemy_hp": 25,
+    "hp": 100,
+    "guard_ready": true,
+    "skill_uses": 1,
+    "console_errors": 0
+  }
+}

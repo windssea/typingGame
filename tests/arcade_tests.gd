@@ -20,6 +20,7 @@ func complete_word(battle: ArcadeRun) -> void:
 	var target: Dictionary = battle.recommended_target()
 	for character in str(target.word).substr(target.typed):
 		battle.type_character(character)
+	if battle.mode=="fighter": battle.step(.2)
 
 func _initialize() -> void:
 	for mode in ArcadeRun.MODES:
@@ -75,7 +76,7 @@ func _initialize() -> void:
 	check(practice.distance-previous>1.0/practice.goal,"three-hit nitro increases actual race progress")
 	var fighter := make_run("fighter")
 	complete_word(fighter)
-	check(fighter.enemy_hp==75 and fighter.targets[0].remaining==fighter.targets[0].duration,"punch damages opponent and interrupts attack timer")
+	check(fighter.enemy_hp==75 and fighter.targets[0].remaining>fighter.targets[0].duration-.21,"punch damages opponent and interrupts attack timer")
 	for i in range(3):
 		complete_word(fighter)
 	check(fighter.round_number==2 and fighter.enemy_hp==100,"four punches knock out opponent and start new round")
