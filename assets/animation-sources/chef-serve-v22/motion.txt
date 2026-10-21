@@ -1,0 +1,6 @@
+Production full-body sprite animation for a premium bright American cartoon children's cooking game. Exact supplied child chef identity, costume, brown ponytail, toque, apron, shoes and oval pasta plate must remain identical. Locked orthographic camera, absolutely no pan, zoom, cuts or traveling across canvas. Pure uniform flat MAGENTA #ff00ff background throughout. No ground shadow, no steam, no sparkles, no UI or text. All limbs, plate, hat and both shoes must remain safely inside central 74 percent of frame. Entire body stays the same size and root position.
+0-2 seconds: friendly ready-to-serve idle, visible blink and natural breathing, two hands hold plate at waist.
+2-4 seconds: a clearly articulated presentation gesture. Bend elbows, lift the plate smoothly toward chest, extend both forearms slightly forward toward the viewer-right customer, face smiles and eyes follow plate. Keep plate level, food remains on it.
+4-5 seconds: small satisfied nod and brief hold with plate presented, no exaggerated head bob.
+5-6 seconds: bend elbows back, bring plate gently back to waist.
+6-8 seconds: return exactly to the original stance, blink and smile. Preserve feet placement, hands, fingers and identity. No new objects, clones or extra limbs. This is real articulated character motion, not transforming a static image. No interpolation.

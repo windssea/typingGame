@@ -8,6 +8,9 @@ const THEME_INDEX := {"castle":0,"royal":0,"dojo":0,"rain":1,"aliens":1,"bubbles
 const THEME_REGIONS := [Rect2(14,239,401,143),Rect2(433,237,388,146),Rect2(842,240,397,142),Rect2(16,552,394,141),Rect2(426,551,402,143),Rect2(841,552,398,141),Rect2(14,865,396,139),Rect2(430,867,394,138),Rect2(841,866,398,139)]
 const KEYCAP = preload("res://assets/generated/v20/ui-keycap.png")
 static var measurements: Dictionary = {}
+const MIN_CARD_WIDTH := 184.0
+const MIN_CARD_HEIGHT := 88.0
+const CARD_PADDING := 24.0
 
 # Source-space slices and destination-space bevels are separate: a one-letter
 # key keeps the same slim edge as a long phrase, without stretching the corners.
@@ -62,14 +65,14 @@ static func measure(word: String, maximum: float, preferred := 34, minimum := 25
 	if measurements.has(key):
 		return measurements[key]
 	var font_size := preferred
-	while font_size>minimum and FONT.get_string_size(word,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x>maximum-32:
+	while font_size>minimum and FONT.get_string_size(word,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x>maximum-CARD_PADDING*2:
 		font_size -= 1
 	var rows: Array[Dictionary] = []
 	var start := 0
 	var widest := 0.0
 	while start<word.length():
 		var end := start+1
-		while end<word.length() and FONT.get_string_size(word.substr(start,end-start+1),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x<=maximum-32:
+		while end<word.length() and FONT.get_string_size(word.substr(start,end-start+1),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x<=maximum-CARD_PADDING*2:
 			end += 1
 		if end<word.length():
 			var space := word.rfind(" ",end-1)
@@ -81,7 +84,10 @@ static func measure(word: String, maximum: float, preferred := 34, minimum := 25
 		widest = maxf(widest,width)
 		start = end
 	var line_height := ceilf(font_size*1.3)
-	var result := {"font":font_size,"rows":rows,"line_height":line_height,"size":Vector2(maxf(64,widest+32),rows.size()*line_height+16)}
+	# Short combinations must remain horizontal plaques, even for narrow glyphs
+	# such as jf / ill. Size comes from the font scale, never selection or input.
+	var floor_width:=minf(maximum,maxf(MIN_CARD_WIDTH,font_size*3.2))
+	var result := {"font":font_size,"rows":rows,"line_height":line_height,"size":Vector2(maxf(floor_width,widest+CARD_PADDING*2),maxf(MIN_CARD_HEIGHT,rows.size()*line_height+24))}
 	if measurements.size()>=512:
 		measurements.erase(measurements.keys()[0])
 	measurements[key] = result
@@ -94,7 +100,8 @@ static func paint(canvas: CanvasItem, word: String, typed: int, rect: Rect2, lay
 	var breath := .5 if reduced else .5+.5*sin(phase*3.4)
 	for i in range(layout.rows.size()):
 		var row: Dictionary = layout.rows[i]
-		var point := rect.position+Vector2((rect.size.x-row.width)*.5 if centered else 16,8+font_size+i*layout.line_height)
+		var content_height: float=layout.rows.size()*layout.line_height
+		var point := rect.position+Vector2((rect.size.x-row.width)*.5 if centered else CARD_PADDING,(rect.size.y-content_height)*.5+font_size+i*layout.line_height)
 		var count := clampi(typed-int(row.start),0,str(row.text).length())
 		var prefix := FONT.get_string_size(str(row.text).substr(0,count),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
 		var next_width := FONT.get_string_size(str(row.text).substr(count,1),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
@@ -103,7 +110,7 @@ static func paint(canvas: CanvasItem, word: String, typed: int, rect: Rect2, lay
 		if count>0:
 			glyph(canvas,str(row.text).substr(0,count),point,font_size,Color("126d60") if light else Color("8cf4ce"),minf(1,pulse*5),light)
 		if current:
-			var key_rect := Rect2(point+Vector2(prefix-3,-font_size+2),Vector2(maxf(13,next_width)+6,font_size+7))
+			var key_rect := Rect2(point+Vector2(prefix-4,-font_size+1),Vector2(maxf(13,next_width)+8,font_size*1.25+5))
 			material_frame(canvas,key_rect,true,true,error,phase)
 			var character := str(row.text).substr(count,1)
 			glyph(canvas,character,point+Vector2(prefix,0),font_size,Color("81362e") if error else Color("17384e"),.3+breath*.5,true)

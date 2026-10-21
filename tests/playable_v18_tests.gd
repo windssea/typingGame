@@ -167,7 +167,8 @@ func exercise() -> void:
 		var arena: GameArena=app.layer.find_children("*","GameArena",true,false)[0]
 		check(arena.backdrop.stretch_mode==TextureRect.STRETCH_KEEP_ASPECT_COVERED,"background preserves image proportions: "+mode)
 		if mode in AdventureRun.MODES:
-			check(arena.motion.texture("idle",0)!=null,"real Grok clip is connected: "+mode)
+			var native_clip: Texture2D=arena.kitchen.texture(false) if mode=="restaurant" else arena.motion.texture("idle",0)
+			check(native_clip!=null,"real Grok clip is connected: "+mode)
 		if mode=="royal":
 			var active: Dictionary=app.run.recommended_target()
 			check(arena.label_rects[active.id].get_center().distance_to(active.position)<160,"royal word stays attached to its actual enemy")

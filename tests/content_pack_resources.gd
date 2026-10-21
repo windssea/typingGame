@@ -20,6 +20,10 @@ func exercise() -> void:
 	await process_frame
 	require(arena.art.background!=null,"background: "+mode)
 	require(not arena.art.sprites.is_empty(),"sprites: "+mode)
+	if mode=="restaurant":
+		for state in ["idle","stir","toss","serve","walk"]:
+			require(arena.kitchen.clips.texture(state,.25)!=null,"exported kitchen action: "+state)
+		require(arena.art.sprites.has("dessert"),"exported comfort dessert")
 	if run is CastleRun:
 		run.wave=6
 		arena.prepare_creatures()

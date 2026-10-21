@@ -35,6 +35,7 @@ def group_for(path):
   raise ValueError('Unclassified animation '+s)
  if s in backgrounds:return backgrounds[s]
  if s=='assets/generated/v20/kitchen-props.png':return 'restaurant'
+ if s=='assets/generated/v22/comfort-tart.png':return 'restaurant'
  if s=='assets/generated/learning-sprites-v10.png':return 'learning'
  if s=='assets/generated/arcade-sprites.png':return 'arcade'
  if s=='assets/generated/castle-sprites.png' or s.startswith('assets/generated/v17/'):return 'castle'

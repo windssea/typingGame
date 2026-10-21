@@ -6,15 +6,24 @@ var enemy_motion := ArcadeMotion.new()
 var boss_motion:=ArcadeMotion.new()
 var reaction_age := 10.0
 var reaction_point := Vector2.ZERO
-var chef_x := 500.0
+var kitchen := KitchenMotion.new()
 
 func _ready() -> void:
 	super._ready()
-	motion.setup({"royal":"knight","submarine":"sub","restaurant":"chef"}[run.mode])
+	if run.mode=="restaurant": kitchen.setup()
+	else: motion.setup({"royal":"knight","submarine":"sub"}[run.mode])
 	if run.mode=="royal":
 		enemy_motion.setup("castle")
 		boss_motion.setup("castle_boss")
 	run.action.connect(func(kind,point):
+		if run.mode=="restaurant":
+			kitchen.react(kind,point,run)
+			if kind in ["deliver","skill"]: return
+			var at:=Vector2(point.x,175 if kind in ["serve","miss"] else 395)
+			var color:=PlayTheme.CORAL if kind=="miss" else Color("ffd58d")
+			juice.burst(at,color,1,"confetti" if kind=="serve" else "spark")
+			record_impact(at,1,color)
+			return
 		if kind in ["deploy","launch"]: return
 		reaction_age=0.0
 		reaction_point=point
@@ -26,9 +35,7 @@ func _process(delta: float) -> void:
 	super._process(delta)
 	if run!=null and not run.paused:
 		reaction_age+=delta
-		if run.mode=="restaurant" and reaction_age<3.0:
-			var aisle: float=reaction_point.x-180 if reaction_point.x>400 else reaction_point.x+180
-			chef_x=aisle if reduced_motion else lerpf(chef_x,aisle,1-exp(-delta*9))
+		if run.mode=="restaurant": kitchen.step(delta,reduced_motion)
 
 func actor(id: String, point: Vector2, bounds: Vector2, seconds: float, flip := false, animated := true) -> void:
 	var frame := boss_motion.texture("idle",seconds,reduced_motion) if id=="boss" else enemy_motion.texture("idle",seconds,reduced_motion) if id=="goblin" else motion.texture("idle",seconds,reduced_motion) if animated else null
@@ -56,6 +63,7 @@ func _draw() -> void:
 	elif run.mode=="submarine":
 		actor("sub",Vector2(175,490),Vector2(240,240),clock)
 		draw_flights()
+	if run.mode=="restaurant": kitchen.draw_guests(self,run)
 	for target in run.targets:
 		var p: Vector2=target.position
 		if run.mode=="royal":
@@ -72,16 +80,7 @@ func _draw() -> void:
 			if target.kind=="supply":
 				write("+",p+Vector2(-8,8),32,PlayTheme.TEAL)
 		else:
-			# A dish changes with the actual order state; it is never part of the backdrop.
-			var at := Vector2(p.x,408)
-			var bob := 0.0 if reduced_motion else sin(clock*2+target.id)*2
-			art.draw_sprite(self,"customer"+str(target.id%3),Vector2(p.x,120+bob),Vector2(100,110))
-			var toss:=sin(clampf(1-target.cook_left/1.5,0,1)*PI)*22 if target.cook_left>0 and not reduced_motion else 0.0
-			art.draw_sprite(self,"prep%d_%d"%[target.stage,target.id%3],at-Vector2(0,12+toss),Vector2(180,150))
-			panel(Rect2(p.x-58,453,116,36),Color(.08,.25,.28,.9),10)
-			write(["备料","翻锅","出餐"][target.stage],Vector2(p.x,480),24,Color("fff1cb"),true)
-			for i in range(3):
-				panel(Rect2(p.x-52+i*38,496,30,5),PlayTheme.TEAL if i<=target.stage else Color(.8,.85,.8,.7),2)
+			kitchen.draw_station(self,target)
 		if run.target_available(target):
 			var center := p-Vector2(0,182 if target.kind=="boss" else 100) if run.mode!="restaurant" else p-Vector2(0,55)
 			prompts.append({"target":target,"center":center,"source":p})
@@ -90,12 +89,15 @@ func _draw() -> void:
 		else: actors.append(Rect2(p-Vector2(95,135),Vector2(190,255)) if target.kind=="boss" else Rect2(p-Vector2(50,60),Vector2(100,95)))
 	var blocked: Array[Rect2]=[]
 	if run.mode=="restaurant":
-		blocked.append(Rect2(chef_x-100,350,200,280))
-		var frame := motion.texture("idle",reaction_age if reaction_age<3.0 else clock*.45,reduced_motion)
+		blocked.append(Rect2(kitchen.chef_x-110,310,220,320))
+		var frame:=kitchen.texture(reduced_motion)
 		if frame!=null:
-			draw_ellipse_shadow(Vector2(chef_x,625),Vector2(55,12))
-			draw_texture_rect(frame,Rect2(chef_x-140,350,280,280),false)
+			draw_ellipse_shadow(Vector2(kitchen.chef_x,622),Vector2(55,10))
+			draw_set_transform(Vector2(kitchen.chef_x,468),0,Vector2(-1 if kitchen.walking and kitchen.facing_left else 1,1))
+			draw_texture_rect(frame,Rect2(-180,-180,360,360),false)
+			draw_set_transform(Vector2.ZERO)
 	layout_labels(prompts,actors,blocked)
+	if run.mode=="restaurant": kitchen.draw_desserts(self)
 	juice.draw(self)
 	draw_impact()
 	draw_target_labels()

@@ -36,6 +36,7 @@ func setup(mode: String) -> void:
 		for id in {"royal":["knight","goblin"],"submarine":["sub"],"restaurant":["chef"]}[mode]:
 			sprites[id] = load_texture("res://assets/generated/v18/"+id+".png")
 		if mode=="restaurant":
+			sprites.dessert=load_texture("res://assets/generated/v22/comfort-tart.png")
 			var kitchen: Texture2D=load_texture("res://assets/generated/v20/kitchen-props.png")
 			for row in range(3):
 				for col in range(3):

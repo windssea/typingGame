@@ -1,0 +1,41 @@
+{
+  "version": "2.2",
+  "date": "2026-10-21",
+  "production_url": "https://typing.nanokid.win/",
+  "objects": [
+    {
+      "key": "keybound/game-98481aaed4827f6bcfb5.pck",
+      "raw_bytes": 4459924,
+      "upload_bytes": 3934556,
+      "sha256": "98481aaed4827f6bcfb5f76c45bea7332c2069fcc33412154babc1dc53e69849"
+    },
+    {
+      "key": "keybound/content-restaurant-7f1c20958e79db445d22.pck",
+      "raw_bytes": 10406268,
+      "upload_bytes": 10347418,
+      "sha256": "7f1c20958e79db445d22fbc23390ad71d1a2c9097f6f30741cdd6247e2b598f6"
+    }
+  ],
+  "validation": {
+    "regression_suites": 20,
+    "regression_checks_before_minimum_fix": 31055,
+    "regression_failures": 0,
+    "minimum_card_checks": 96,
+    "stability_checks": 27,
+    "readability_checks": 224,
+    "ui_checks_after_minimum_fix": 5572,
+    "ui_states": 116,
+    "kitchen_checks": 440,
+    "isolated_games": 13
+  },
+  "local_browser": {
+    "correct": 11,
+    "attempts": 11,
+    "served": 1,
+    "hp": 100,
+    "cooking_stoves": 1,
+    "console_errors": 0
+  },
+  "animation_provenance": "docs/ANIMATION_V22.json",
+  "review": "docs/KITCHEN_AND_PLAQUES_V22.md"
+}

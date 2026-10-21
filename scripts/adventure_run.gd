@@ -3,6 +3,7 @@ extends GameRun
 
 signal action(kind: String, point: Vector2)
 const MODES := ["royal","submarine","restaurant"]
+const SERVE_SECONDS := .72
 var goal := 18
 var core := 100
 var core_max := 100
@@ -31,7 +32,7 @@ func spawn_target() -> void:
 	var word := next_word()
 	var duration := ((42.0+word.length()*3) if context=="training" else (22.0+word.length()*1.8))/difficulty
 	var pos := Vector2(1260,235+lane*210) if mode=="royal" else Vector2(1440+lane*120,180+lane*165) if mode=="submarine" else Vector2(240+lane*440,285)
-	targets.append({"id":next_id,"word":word,"typed":0,"position":pos,"lane":lane,"stage":0,"remaining":duration,"duration":duration,"speed":(930.0/(16+word.length()*1.6))*difficulty,"kind":"supply" if mode=="submarine" and next_id%4==3 else "enemy","pending":false,"cook_left":0.0})
+	targets.append({"id":next_id,"word":word,"typed":0,"position":pos,"lane":lane,"stage":0,"remaining":duration,"duration":duration,"speed":(930.0/(16+word.length()*1.6))*difficulty,"kind":"supply" if mode=="submarine" and next_id%4==3 else "enemy","pending":false,"cook_left":0.0,"serve_left":0.0})
 	if mode=="royal":
 		var boss:=next_id%6==5
 		targets[-1].kind="boss" if boss else "enemy"
@@ -60,6 +61,13 @@ func advance(dt: float) -> void:
 	skill_time=maxf(0,skill_time-dt)
 	for target in targets.duplicate():
 		if mode=="restaurant":
+			# An accepted final word launches the dish. Credit, celebration and victory
+			# wait for arrival; a guest cannot leave while their plate is in flight.
+			if target.serve_left>0:
+				target.serve_left=maxf(0,target.serve_left-dt)
+				if target.serve_left<=0: complete_order(target)
+				if done: return
+				continue
 			target.remaining-=dt
 			if target.cook_left>0:
 				target.cook_left-=dt
@@ -111,7 +119,9 @@ func on_word_completed(target: Dictionary) -> void:
 			target.cook_left=1.5
 			action.emit("cook",target.position)
 		else:
-			complete_order(target)
+			target.pending=true
+			target.serve_left=SERVE_SECONDS
+			action.emit("deliver",target.position)
 		return
 	target.pending=true
 	launch_projectile(target,Vector2(160,target.position.y) if mode=="royal" else Vector2(185,485),"knight" if mode=="royal" else "torpedo",1,340 if mode=="royal" else 650)

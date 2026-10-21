@@ -1,0 +1,398 @@
+{
+  "version": "2.2",
+  "sources": [
+    {
+      "id": "chef-cook-v22",
+      "generator": "Local Grok Build",
+      "receipt": {
+        "tool": "reference_to_video",
+        "request_id": null,
+        "tool_call_id": "call-db03f53d-f16a-4bfc-b552-7aa0b5c79183-5",
+        "model": null,
+        "status": "Completed",
+        "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-cook-v22\\grok-raw.mp4",
+        "sha256": "3E5E5F33D9E18B895CEC99529675913458776696AFC55339CD201276ABBA77FE",
+        "submitted_once": true,
+        "requested": {
+          "aspect_ratio": "1:1",
+          "duration_seconds": 8,
+          "resolution_name": "720p",
+          "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\chef-cook-v22\\seed.png",
+          "last_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\chef-cook-v22\\seed.png",
+          "fps": null,
+          "audio": "no disable parameter in schema"
+        },
+        "actual": {
+          "width": 720,
+          "height": 720,
+          "aspect_ratio": "1:1",
+          "video_codec": "h264",
+          "video_fps": "24/1",
+          "video_frames": 193,
+          "video_duration_seconds": 8.041667,
+          "container_duration_seconds": 8.041667,
+          "audio": "aac stereo 48000 Hz, duration 8.000000 seconds",
+          "size_bytes": 2476496
+        },
+        "limitations": [
+          "image_to_video accepts duration 6 or 10 only. One reference_to_video call was used because its schema supports a pinned first frame and duration 8.",
+          "The same seed was pinned as first_frame and last_frame so the clip opens and closes on the supplied pose. No second generation was submitted.",
+          "The tool response had no Imagine request id and no model name. The same call blocked until status Completed; there is no separate poll API.",
+          "No fps argument exists. The file is native 24/1 and was copied byte-for-byte. It was not re-encoded, interpolated, or frame-duplicated.",
+          "No audio-disable argument exists. The raw file includes an AAC stereo track and was left intact.",
+          "720p at 1:1 is 720x720. The seed is 1254x1254. Video duration is 8.041667 seconds (193 frames), slightly over the requested 8 seconds."
+        ]
+      },
+      "source_image": "assets/animation-sources/chef-cook-v22/seed.png",
+      "source_sha256": "5f6b09de72765542e37155aab6636b9806bc0b4a17784303ae5aee076a5131dc",
+      "prompt": "assets/animation-sources/chef-cook-v22/motion.txt",
+      "raw_video_sha256": "3e5e5f33d9e18b895cec99529675913458776696afc55339cd201276abba77fe"
+    },
+    {
+      "id": "chef-serve-v22",
+      "generator": "Local Grok Build",
+      "receipt": {
+        "tool": "reference_to_video",
+        "request_id": null,
+        "tool_call_id": "call-f4d7f359-14a7-4087-b534-46ce96cb6f1e-10",
+        "model": null,
+        "status": "succeeded",
+        "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-serve-v22\\grok-raw.mp4",
+        "source_image": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\chef-serve-v22\\seed.png",
+        "source_pixels": "1254x1254",
+        "requested": {
+          "duration_seconds": 8,
+          "resolution_name": "720p",
+          "aspect_ratio": "1:1",
+          "first_frame_pinned": true,
+          "fps": null,
+          "audio_disabled": false
+        },
+        "actual": {
+          "width": 960,
+          "height": 960,
+          "fps": 24,
+          "frame_rate": "24/1",
+          "frame_count": 193,
+          "video_duration_seconds": 8.041667,
+          "format_duration_seconds": 8.041667,
+          "audio_duration_seconds": 8.0,
+          "video_codec": "h264",
+          "audio_codec": "aac",
+          "audio_sample_rate": 48000,
+          "audio_channels": 2,
+          "size_bytes": 3408158,
+          "sha256": "B4BFF18179AE10700A7391D0FFF93B8C47E4A8D3153860FA0E04E733A0C5222E"
+        },
+        "limitations": [
+          "image_to_video accepts duration 6 or 10 only. One reference_to_video call was used because its schema allows duration 1-15 and a pinned first_frame.",
+          "No fps argument exists. The file is native 24 fps, 193 frames. It was copied without re-encoding, interpolation, or frame duplication.",
+          "No audio-disable argument exists. The raw file keeps its AAC stereo track.",
+          "The tool returned a local path only. No Imagine request id was exposed, so there was no separate poll id. The same call blocked until the file existed.",
+          "Model name was not returned.",
+          "resolution_name 720p produced 960x960, still 1:1 like the 1254x1254 source.",
+          "Video duration is 8.041667 seconds (193/24), while the request was 8 seconds."
+        ]
+      },
+      "source_image": "assets/animation-sources/chef-serve-v22/seed.png",
+      "source_sha256": "587e592959c35d51f5cca65a657efda5a63344bb49bf1ce034553422e1c3fe3f",
+      "prompt": "assets/animation-sources/chef-serve-v22/motion.txt",
+      "raw_video_sha256": "b4bff18179ae10700a7391d0fff93b8c47e4a8d3153860fa0e04e733a0c5222e"
+    },
+    {
+      "id": "chef-walk-v22",
+      "generator": "Local Grok Build",
+      "receipt": {
+        "tool": "reference_to_video",
+        "request_id": null,
+        "tool_call_id": "call-b001855e-42fd-401e-8404-3b8b502dd9be-6",
+        "model": null,
+        "status": "succeeded",
+        "output_path": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-walk-v22\\grok-raw.mp4",
+        "sha256": "EF9C94B6C73510CDA2B10FEB2F251EB43C57F4F4E90454DA72B60EAF6622F9FD",
+        "bytes": 2688390,
+        "requested": {
+          "aspect_ratio": "1:1",
+          "duration_seconds": 8,
+          "resolution_name": "720p",
+          "first_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\chef-cook-v22\\seed.png",
+          "last_frame": "D:\\dev\\windssea\\typingGame\\assets\\animation-sources\\chef-cook-v22\\seed.png"
+        },
+        "actual": {
+          "width": 720,
+          "height": 720,
+          "video_codec": "h264",
+          "frame_rate": "24/1",
+          "nb_frames": 193,
+          "video_duration_seconds": 8.041667,
+          "container_duration_seconds": 8.041667,
+          "audio": {
+            "codec": "aac",
+            "sample_rate": 48000,
+            "channels": 2,
+            "duration_seconds": 8.0,
+            "nb_frames": 376
+          },
+          "attached_picture": "mjpeg 720x720"
+        },
+        "limitations": [
+          "image_to_video accepts only duration 6 or 10. reference_to_video was used because its schema accepts duration 8 and a pinned first_frame. Source is 1254x1254, so aspect_ratio was 1:1.",
+          "No fps argument exists. Delivered file is native 24/1, 193 frames. It was byte-copied with no re-encode, interpolation, or frame duplication.",
+          "No audio-disable argument exists. Voices were omitted. The file still contains an AAC stereo track plus an mjpeg attached picture.",
+          "The tool returned no Imagine request id and no model name. The call blocked until the file was saved (about 66s). There was no separate poll handle. The local tool call id is recorded above.",
+          "720p on this 1:1 frame is 720x720."
+        ]
+      },
+      "source_image": "assets/animation-sources/chef-cook-v22/seed.png",
+      "source_sha256": "5f6b09de72765542e37155aab6636b9806bc0b4a17784303ae5aee076a5131dc",
+      "prompt": "assets/animation-sources/chef-walk-v22/motion.txt",
+      "raw_video_sha256": "ef9c94b6c73510cda2b10feb2f251eb43c57f4f4e90454da72b60eaf6622f9fd"
+    }
+  ],
+  "clips": [
+    {
+      "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-cook-v22\\grok-raw.mp4",
+      "native": {
+        "width": 720,
+        "height": 720,
+        "fps": "24",
+        "duration": 8.041667,
+        "frames": "193",
+        "audio_tracks": 1
+      },
+      "atlas": {
+        "file": "assets/animations/chef-idle-v22/idle-atlas.png",
+        "cell": 384,
+        "columns": 8,
+        "rows": 3,
+        "frames": 24,
+        "fps": "24",
+        "interval": [
+          0.0,
+          1.0
+        ],
+        "decoded_rgba_bytes": 14155776
+      },
+      "processing": [
+        "native frame interval extraction",
+        "chroma key #ff00ff",
+        "shared whole-canvas scale and padding",
+        "atlas packing",
+        "magenta-only residue alpha removal",
+        "retain connected chef silhouette and two-pixel antialias border"
+      ],
+      "interpolation": false,
+      "loop_review": "idle native interval reviewed; action clips play once and recover to idle",
+      "status": "reviewed-native-source",
+      "static_crop": null,
+      "animation": "idle",
+      "loop": true,
+      "chroma_key": "ff00ff",
+      "cell_safety_inset_px": 6,
+      "minimum_frame_margin_px": 35,
+      "removed_disconnected_pixels": 0,
+      "limitations": [
+        "Cook source adds magenta steam and detached star decorations despite the motion brief; runtime alpha excludes them. Engine supplies order-bound steam and fire."
+      ]
+    },
+    {
+      "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-serve-v22\\grok-raw.mp4",
+      "native": {
+        "width": 960,
+        "height": 960,
+        "fps": "24",
+        "duration": 8.041667,
+        "frames": "193",
+        "audio_tracks": 1
+      },
+      "atlas": {
+        "file": "assets/animations/chef-serve-v22/idle-atlas.png",
+        "cell": 384,
+        "columns": 8,
+        "rows": 6,
+        "frames": 48,
+        "fps": "24",
+        "interval": [
+          2.0,
+          4.0
+        ],
+        "decoded_rgba_bytes": 28311552
+      },
+      "processing": [
+        "native frame interval extraction",
+        "chroma key #ff00ff",
+        "shared whole-canvas scale and padding",
+        "atlas packing",
+        "magenta-only residue alpha removal",
+        "retain connected chef silhouette and two-pixel antialias border"
+      ],
+      "interpolation": false,
+      "loop_review": "idle native interval reviewed; action clips play once and recover to idle",
+      "status": "reviewed-native-source",
+      "static_crop": null,
+      "animation": "serve",
+      "loop": false,
+      "chroma_key": "ff00ff",
+      "cell_safety_inset_px": 6,
+      "minimum_frame_margin_px": 34,
+      "removed_disconnected_pixels": 0,
+      "limitations": [
+        "Cook source adds magenta steam and detached star decorations despite the motion brief; runtime alpha excludes them. Engine supplies order-bound steam and fire."
+      ]
+    },
+    {
+      "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-cook-v22\\grok-raw.mp4",
+      "native": {
+        "width": 720,
+        "height": 720,
+        "fps": "24",
+        "duration": 8.041667,
+        "frames": "193",
+        "audio_tracks": 1
+      },
+      "atlas": {
+        "file": "assets/animations/chef-stir-v22/idle-atlas.png",
+        "cell": 384,
+        "columns": 8,
+        "rows": 6,
+        "frames": 48,
+        "fps": "24",
+        "interval": [
+          1.0,
+          3.0
+        ],
+        "decoded_rgba_bytes": 28311552
+      },
+      "processing": [
+        "native frame interval extraction",
+        "chroma key #ff00ff",
+        "shared whole-canvas scale and padding",
+        "atlas packing",
+        "magenta-only residue alpha removal",
+        "retain connected chef silhouette and two-pixel antialias border"
+      ],
+      "interpolation": false,
+      "loop_review": "idle native interval reviewed; action clips play once and recover to idle",
+      "status": "reviewed-native-source",
+      "static_crop": null,
+      "animation": "stir",
+      "loop": false,
+      "chroma_key": "ff00ff",
+      "cell_safety_inset_px": 6,
+      "minimum_frame_margin_px": 35,
+      "removed_disconnected_pixels": 2376,
+      "limitations": [
+        "Cook source adds magenta steam and detached star decorations despite the motion brief; runtime alpha excludes them. Engine supplies order-bound steam and fire."
+      ]
+    },
+    {
+      "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-cook-v22\\grok-raw.mp4",
+      "native": {
+        "width": 720,
+        "height": 720,
+        "fps": "24",
+        "duration": 8.041667,
+        "frames": "193",
+        "audio_tracks": 1
+      },
+      "atlas": {
+        "file": "assets/animations/chef-toss-v22/idle-atlas.png",
+        "cell": 384,
+        "columns": 8,
+        "rows": 6,
+        "frames": 48,
+        "fps": "24",
+        "interval": [
+          3.0,
+          5.0
+        ],
+        "decoded_rgba_bytes": 28311552
+      },
+      "processing": [
+        "native frame interval extraction",
+        "chroma key #ff00ff",
+        "shared whole-canvas scale and padding",
+        "atlas packing",
+        "magenta-only residue alpha removal",
+        "retain connected chef silhouette and two-pixel antialias border"
+      ],
+      "interpolation": false,
+      "loop_review": "idle native interval reviewed; action clips play once and recover to idle",
+      "status": "reviewed-native-source",
+      "static_crop": null,
+      "animation": "toss",
+      "loop": false,
+      "chroma_key": "ff00ff",
+      "cell_safety_inset_px": 6,
+      "minimum_frame_margin_px": 34,
+      "removed_disconnected_pixels": 4951,
+      "limitations": [
+        "Cook source adds magenta steam and detached star decorations despite the motion brief; runtime alpha excludes them. Engine supplies order-bound steam and fire."
+      ]
+    },
+    {
+      "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\chef-walk-v22\\grok-raw.mp4",
+      "native": {
+        "width": 720,
+        "height": 720,
+        "fps": "24",
+        "duration": 8.041667,
+        "frames": "193",
+        "audio_tracks": 1
+      },
+      "atlas": {
+        "file": "assets/animations/chef-walk-v22/idle-atlas.png",
+        "cell": 384,
+        "columns": 8,
+        "rows": 4,
+        "frames": 26,
+        "fps": "24",
+        "interval": [
+          2.25,
+          3.333333333333333
+        ],
+        "decoded_rgba_bytes": 18874368
+      },
+      "processing": [
+        "native frame interval extraction",
+        "chroma key #ff00ff",
+        "shared whole-canvas scale and padding",
+        "atlas packing",
+        "magenta-only residue alpha removal",
+        "retain connected chef silhouette and two-pixel antialias border"
+      ],
+      "interpolation": false,
+      "loop_review": "idle native interval reviewed; action clips play once and recover to idle",
+      "status": "reviewed-native-source",
+      "static_crop": null,
+      "animation": "walk",
+      "loop": true,
+      "chroma_key": "ff00ff",
+      "cell_safety_inset_px": 6,
+      "minimum_frame_margin_px": 32,
+      "removed_disconnected_pixels": 0,
+      "limitations": [
+        "Cook source adds magenta steam and detached star decorations despite the motion brief; runtime alpha excludes them. Engine supplies order-bound steam and fire."
+      ]
+    }
+  ],
+  "images": [
+    {
+      "path": "assets/animation-sources/chef-cook-v22/seed.png",
+      "method": "built-in image_gen identity-preserve edit",
+      "reference": "assets/animation-sources/chef-v18/seed.png",
+      "prompt": "assets/animation-sources/chef-cook-v22/seed-prompt.txt"
+    },
+    {
+      "path": "assets/animation-sources/chef-serve-v22/seed.png",
+      "method": "built-in image_gen identity-preserve edit",
+      "reference": "assets/animation-sources/chef-cook-v22/seed.png",
+      "prompt": "assets/animation-sources/chef-serve-v22/seed-prompt.txt"
+    },
+    {
+      "path": "assets/generated/v22/comfort-tart.png",
+      "method": "built-in image_gen transparent generation",
+      "prompt": "assets/generated/v22/comfort-tart-prompt.txt"
+    }
+  ]
+}

@@ -31,6 +31,7 @@ var shake := Vector2.ZERO
 var shake_tween: Tween
 var auras: Array[CPUParticles2D] = []
 var meteor_trails: Array[Dictionary] = []
+var stoves: Array[Dictionary] = []
 
 func radial_texture(extent: int, for_light := false) -> GradientTexture2D:
 	var gradient := Gradient.new()
@@ -93,8 +94,30 @@ func _ready() -> void:
 		ambient.position.y=24;ambient.direction=Vector2(.3,1)
 		ambient.gravity=Vector2(4,8);ambient.color=Color(.96,.83,.42,.32)
 	if arena.run.mode=="restaurant":
-		ambient.position=Vector2(680,400);ambient.emission_rect_extents=Vector2(440,2)
-		ambient.color=Color(1,.97,.88,.22);ambient.scale_amount_min=.4;ambient.scale_amount_max=.7
+		# A quiet kitchen at rest. Steam and fire belong only to cooking orders.
+		ambient.amount=6;ambient.position=Vector2(680,100)
+		ambient.emission_rect_extents=Vector2(600,1);ambient.color=Color(1,.97,.88,.12)
+		for lane in range(3):
+			var steam:=make_emitter("StoveSteam%d"%lane)
+			steam.one_shot=false;steam.explosiveness=0;steam.amount=22;steam.lifetime=.9
+			steam.position=Vector2(240+lane*440,378);steam.direction=Vector2.UP
+			steam.spread=22;steam.gravity=Vector2(0,-24)
+			steam.initial_velocity_min=18;steam.initial_velocity_max=45
+			steam.scale_amount_min=.3;steam.scale_amount_max=.75
+			steam.color=Color(1,.96,.87,.33)
+			var fire:=make_emitter("StoveFlame%d"%lane)
+			fire.one_shot=false;fire.explosiveness=0;fire.amount=18;fire.lifetime=.32
+			fire.position=Vector2(240+lane*440,416);fire.direction=Vector2.UP
+			fire.emission_shape=CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+			fire.emission_rect_extents=Vector2(29,1);fire.spread=12;fire.gravity=Vector2(0,-30)
+			fire.initial_velocity_min=12;fire.initial_velocity_max=35
+			fire.scale_amount_min=.12;fire.scale_amount_max=.27;fire.color=Color("ffb047")
+			var stove_light:=PointLight2D.new();stove_light.texture=light_texture
+			stove_light.name="StoveLight%d"%lane;stove_light.position=fire.position
+			stove_light.range_item_cull_mask=2;stove_light.texture_scale=1.2
+			stove_light.color=Color("ffc16b");stove_light.enabled=false
+			add_child(stove_light)
+			stoves.append({"lane":lane,"steam":steam,"fire":fire,"light":stove_light})
 	if arena.run is CastleRun:
 		for i in range(CastleRun.PADS.size()):
 			var aura:=make_emitter("TowerAura%02d"%i)
@@ -132,7 +155,7 @@ func make_emitter(label: String) -> CPUParticles2D:
 
 func impact(point: Vector2, tier: int, tint: Color) -> void:
 	var mode:=arena.run.mode
-	if mode=="restaurant": point.y=385
+	if mode=="restaurant" and point.y>200: point.y=395
 	var kind: String={"balloons":"confetti","moles":"soil","bubbles":"water","submarine":"water","fighter":"slash","royal":"slash","restaurant":"steam","sprint":"speed","dojo":"magic"}.get(mode,"magic")
 	emit_at(point,tier,kind,tint)
 
@@ -223,10 +246,10 @@ func on_castle_effect(kind: String, origin: Vector2, destination: Vector2, _amou
 
 func on_action(kind: String, point: Vector2) -> void:
 	# Impact events already pass through GameArena.record_impact.
-	if arena.run.mode=="restaurant" and kind in ["cook","plate"]:
-		emit_at(Vector2(point.x,385),1,"steam",Color("ffdf9a"))
-	elif kind=="skill":
-		emit_at(point,3,"water" if arena.run.mode=="submarine" else "celebrate",PlayTheme.SKY)
+	if kind=="skill":
+		if arena.run.mode=="restaurant":
+			for target in arena.run.targets: emit_at(Vector2(target.position.x,170),1,"celebrate",Color("ffe7a1"))
+		else: emit_at(point,3,"water" if arena.run.mode=="submarine" else "celebrate",PlayTheme.SKY)
 
 func on_arcade_effect(kind: String, point: Vector2, _power: int) -> void:
 	if kind=="aliens": light_at(Vector2(520,540),PlayTheme.SKY,.35,1.5)
@@ -276,6 +299,13 @@ func _process(delta: float) -> void:
 		emitter.emitting=not reduced and not towers.is_empty()
 		if not towers.is_empty():
 			emitter.color={"fire":Color("ffb05c"),"ice":Color("92eaff"),"storm":Color("c6a1ff")}[towers[0].kind]
+	for stove in stoves:
+		var cooking: bool=arena.run.targets.any(func(t): return t.lane==stove.lane and t.cook_left>0)
+		for emitter in [stove.steam,stove.fire]:
+			emitter.speed_scale=0.0 if paused else 1.0
+			emitter.visible=not reduced;emitter.emitting=cooking and not reduced
+		stove.light.enabled=cooking and not reduced
+		stove.light.energy=.28+sin(clock*23+stove.lane)*.035
 	if paused: return
 	clock+=delta
 	update_meteor_trails(delta)
@@ -324,4 +354,4 @@ func update_meteor_trails(delta: float) -> void:
 				break
 
 func snapshot() -> Dictionary:
-	return {"backend":"CPUParticles2D + PointLight2D + Tween + canvas shaders","events":event_count,"launches":launch_count,"burst_pool":bursts.size(),"trail_pool":trails.size(),"meteor_trails":meteor_trails.filter(func(slot): return slot.emitter.emitting).size(),"light_pool":lights.size(),"wave_pool":waves.size(),"tower_auras":auras.filter(func(p): return p.emitting).size(),"active_bursts":bursts.filter(func(p): return p.emitting).size(),"active_lights":lights.filter(func(p): return p.node.enabled).size(),"protected_regions":protected_regions.size(),"clock":clock,"paused":paused,"reduced":reduced,"shake":[shake.x,shake.y]}
+	return {"backend":"CPUParticles2D + PointLight2D + Tween + canvas shaders","events":event_count,"launches":launch_count,"burst_pool":bursts.size(),"trail_pool":trails.size(),"meteor_trails":meteor_trails.filter(func(slot): return slot.emitter.emitting).size(),"light_pool":lights.size(),"wave_pool":waves.size(),"tower_auras":auras.filter(func(p): return p.emitting).size(),"cooking_stoves":stoves.filter(func(s): return s.fire.emitting).size(),"active_bursts":bursts.filter(func(p): return p.emitting).size(),"active_lights":lights.filter(func(p): return p.node.enabled).size(),"protected_regions":protected_regions.size(),"clock":clock,"paused":paused,"reduced":reduced,"shake":[shake.x,shake.y]}

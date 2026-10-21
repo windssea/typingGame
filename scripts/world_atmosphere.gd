@@ -29,9 +29,7 @@ static func paint(canvas: CanvasItem, mode: String, clock: float, extent: Vector
 			canvas.draw_line(p-Vector2(0,3),p+Vector2(0,3),Color(1,1,1,alpha),1,true)
 		return
 	if mode=="restaurant":
-		for i in range(6):
-			var p := Vector2(40+i%2*(extent.x-80)+sin(clock+i)*5,extent.y*.55-fposmod(clock*22+i*33,150))
-			canvas.draw_circle(p,4+sin(clock+i),Color(1,.9,.7,.18))
+		# Native emitters follow active stoves; no unrelated ambient fake steam.
 		return
 	if mode=="royal":
 		for i in range(12):
