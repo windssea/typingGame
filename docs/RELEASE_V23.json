@@ -39,5 +39,27 @@
     "armored_two_impacts_verified": true,
     "console_errors": 0,
     "screenshot": "docs/ui-review-v23/browser-armor.jpg"
+  },
+  "production_validation": {
+    "url": "https://typing.nanokid.win/?release=v23",
+    "deployment": "https://937a53d4.typinggame-cl5.pages.dev",
+    "console_errors": 0,
+    "minimum_plaque": {
+      "mode": "dojo",
+      "lesson": 1,
+      "word": "dk",
+      "correct": 2,
+      "attempts": 2,
+      "screenshot": "docs/ui-review-v23/production-minimum.jpg"
+    },
+    "submarine": {
+      "correct": 6,
+      "attempts": 6,
+      "kills": 5,
+      "hp": 100,
+      "skill_uses": 1,
+      "screenshot": "docs/ui-review-v23/production-dive.jpg",
+      "content_pack_loaded": true
+    }
   }
 }
