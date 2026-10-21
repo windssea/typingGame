@@ -39,5 +39,21 @@
     "guard_ready": true,
     "skill_uses": 1,
     "console_errors": 0
+  },
+  "production_validation": {
+    "url": "https://typing.nanokid.win/?release=v21a",
+    "deployment": "https://c848d653.typinggame-cl5.pages.dev",
+    "cached_browser_update": true,
+    "manifest_script": "content-manifest-a7768f44b809ffc7.js",
+    "loader_script": "content-packs-b4405ed5b24d6483.js",
+    "visible_fighters": 2,
+    "mode": "fighter",
+    "attempts": 10,
+    "correct": 10,
+    "kills": 3,
+    "guard_ready": true,
+    "skill_uses": 1,
+    "console_errors": 0,
+    "screenshot": "docs/ui-review-v21/production-combat.jpg"
   }
 }
