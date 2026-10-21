@@ -1,0 +1,194 @@
+{
+  "url": "https://typing.nanokid.win/?qa=1&qa_profile=1&release=v24",
+  "deployment": "https://9c0aa0a0.typinggame-cl5.pages.dev",
+  "method": "Real keyboard and button interaction; read-only DOM QA state; isolated QA save",
+  "typing": [
+    {
+      "word": "lion",
+      "correct": 3,
+      "attempts": 3
+    },
+    {
+      "word": "n",
+      "correct": 3,
+      "attempts": 3
+    },
+    {
+      "word": "n",
+      "correct": 3,
+      "attempts": 3
+    },
+    {
+      "word": "n",
+      "correct": 4,
+      "attempts": 6
+    },
+    {
+      "word": "bat",
+      "correct": 7,
+      "attempts": 10
+    }
+  ],
+  "automation_note": "Early input loop reused stale QA state and generated three wrong n keys. Later waits explicitly synchronize target completion; bee and fish add seven correct keys without additional errors.",
+  "nitro": {
+    "attempts": 13,
+    "context": "challenge",
+    "correct": 10,
+    "counters": 0,
+    "difficulty": 1,
+    "distance": 0.1,
+    "done": false,
+    "elapsed": 3.76956666666666,
+    "enemy_hp": 100,
+    "engine_vfx": {
+      "active_bursts": 1,
+      "active_dive_wakes": 0,
+      "active_lights": 1,
+      "active_racing_exhaust": 2,
+      "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+      "burst_pool": 10,
+      "clock": 3.63623333333333,
+      "cooking_stoves": 0,
+      "dive_wake_pool": 0,
+      "events": 3,
+      "launches": 0,
+      "light_pool": 5,
+      "meteor_trails": 0,
+      "paused": false,
+      "protected_regions": 1,
+      "racing_exhaust_pool": 3,
+      "reduced": false,
+      "shake": [
+        0,
+        0
+      ],
+      "tower_auras": 0,
+      "trail_pool": 6,
+      "wave_pool": 6
+    },
+    "goal": 30,
+    "guard_ready": false,
+    "hp": 100,
+    "kills": 3,
+    "last_meaning": "蜜蜂",
+    "last_word": "bee",
+    "mode": "racing",
+    "motion_clock": 3.63623333333333,
+    "particles": 0,
+    "paused": false,
+    "pool_size": 17,
+    "projectiles": 0,
+    "rank": "normal",
+    "recommended": 3,
+    "reduced_motion": false,
+    "rival": 0.0248700404910674,
+    "score": 120,
+    "shield": 40,
+    "skill_charge": 0,
+    "skill_time": 3.86666666666667,
+    "skill_uses": 1,
+    "targets": [
+      {
+        "cook_left": 0,
+        "health": 1,
+        "id": 3,
+        "intent": "cruise",
+        "intent_left": 0,
+        "kind": "0",
+        "pending": false,
+        "position": [
+          520,
+          164
+        ],
+        "remaining": 7.6,
+        "serve_left": 0,
+        "stage": 0,
+        "typed": 0,
+        "word": "fish"
+      }
+    ],
+    "vocabulary_topic": "animals",
+    "won": false
+  },
+  "after_nitro": {
+    "attempts": 17,
+    "context": "challenge",
+    "correct": 14,
+    "counters": 0,
+    "difficulty": 1,
+    "distance": 0.15175,
+    "done": false,
+    "elapsed": 4.07906666666666,
+    "enemy_hp": 100,
+    "engine_vfx": {
+      "active_bursts": 1,
+      "active_dive_wakes": 0,
+      "active_lights": 1,
+      "active_racing_exhaust": 3,
+      "backend": "CPUParticles2D + PointLight2D + Tween + canvas shaders",
+      "burst_pool": 10,
+      "clock": 3.94573333333333,
+      "cooking_stoves": 0,
+      "dive_wake_pool": 0,
+      "events": 4,
+      "launches": 0,
+      "light_pool": 5,
+      "meteor_trails": 0,
+      "paused": true,
+      "protected_regions": 1,
+      "racing_exhaust_pool": 3,
+      "reduced": false,
+      "shake": [
+        0,
+        0
+      ],
+      "tower_auras": 0,
+      "trail_pool": 6,
+      "wave_pool": 6
+    },
+    "goal": 30,
+    "guard_ready": false,
+    "hp": 100,
+    "kills": 4,
+    "last_meaning": "鱼",
+    "last_word": "fish",
+    "mode": "racing",
+    "motion_clock": 3.94573333333333,
+    "particles": 0,
+    "paused": false,
+    "pool_size": 17,
+    "projectiles": 0,
+    "rank": "normal",
+    "recommended": 4,
+    "reduced_motion": false,
+    "rival": 0.0269119933765411,
+    "score": 175,
+    "shield": 40,
+    "skill_charge": 1,
+    "skill_time": 3.55716666666667,
+    "skill_uses": 1,
+    "targets": [
+      {
+        "cook_left": 0,
+        "health": 1,
+        "id": 4,
+        "intent": "cruise",
+        "intent_left": 0,
+        "kind": "1",
+        "pending": false,
+        "position": [
+          520,
+          164
+        ],
+        "remaining": 6.95,
+        "serve_left": 0,
+        "stage": 0,
+        "typed": 0,
+        "word": "hen"
+      }
+    ],
+    "vocabulary_topic": "animals",
+    "won": false
+  },
+  "console_errors": []
+}

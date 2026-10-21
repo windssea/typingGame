@@ -63,6 +63,15 @@ static func game_button(primary := false, state := "normal") -> StyleBox:
 		depth = 2
 	return game_panel(fill,edge,16,depth)
 
+static func button_focus() -> StyleBoxTexture:
+	# Inlaid light and paired gold markers sit inside the existing button art.
+	# No second outline, outward margins or keyboard-navigation layout changes.
+	var focus := StyleBoxTexture.new()
+	focus.texture = preload("res://assets/ui-focus-inlay-v24b.svg")
+	for side in [SIDE_LEFT,SIDE_RIGHT]: focus.set_texture_margin(side,18)
+	for side in [SIDE_TOP,SIDE_BOTTOM]: focus.set_texture_margin(side,14)
+	return focus
+
 static func surface(color: Color, border := BORDER, radius := 20, raised := false) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
 	box.bg_color = color
@@ -95,6 +104,7 @@ static func ui(font: Font) -> Theme:
 		result.set_stylebox(state,"HudButton",hud)
 	for state in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
 		result.set_color(state,"HudButton",Color("fff1cf"))
+	result.set_stylebox("focus","HudButton",button_focus())
 	for variant in ["Button","PrimaryButton"]:
 		var primary: bool = variant=="PrimaryButton"
 		for state in ["normal","hover","pressed","disabled"]:
@@ -104,13 +114,7 @@ static func ui(font: Font) -> Theme:
 			box.content_margin_top = 5
 			box.content_margin_bottom = 7
 			result.set_stylebox(state,variant,box)
-		var focus := surface(Color.TRANSPARENT,PRIMARY,16)
-		focus.set_border_width_all(3)
-		focus.expand_margin_left = 3
-		focus.expand_margin_right = 3
-		focus.expand_margin_top = 3
-		focus.expand_margin_bottom = 3
-		result.set_stylebox("focus",variant,focus)
+		result.set_stylebox("focus",variant,button_focus())
 		for state in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
 			result.set_color(state,variant,ACTION_INK if primary else TEXT)
 		result.set_color("font_disabled_color",variant,MUTED)
@@ -125,6 +129,7 @@ static func ui(font: Font) -> Theme:
 		result.set_stylebox("panel",control,surface(SURFACE))
 		result.set_stylebox("hover",control,surface(PASTELS[0]))
 		result.set_stylebox("focus",control,surface(Color.TRANSPARENT,PRIMARY))
+	result.set_stylebox("focus","OptionButton",button_focus())
 	result.set_color("font_placeholder_color","TextEdit",MUTED)
 	result.set_color("caret_color","TextEdit",PRIMARY)
 	result.set_color("selection_color","TextEdit",Color("d3e4ff"))

@@ -51,5 +51,7 @@
   "limits": [
     "Native local GPU measurements are not browser/mobile or all-hardware guarantees.",
     "Broader product-polish objective remains active; this release does not claim every game is finished."
-  ]
+  ],
+  "production_validation": "docs/ui-review-v24/production-validation.json",
+  "deployment": "https://9c0aa0a0.typinggame-cl5.pages.dev"
 }

@@ -1,0 +1,25 @@
+{
+  "version": "2.4b",
+  "date": "2026-10-21",
+  "production_url": "https://typing.nanokid.win/",
+  "core": {
+    "key": "keybound/game-bb4627dbc76d9c25f0a5.pck",
+    "raw_bytes": 4768192,
+    "upload_bytes": 4179099,
+    "sha256": "bb4627dbc76d9c25f0a53e329144f8c0a8c9da1aa6d77d741af12951c1ec483d"
+  },
+  "changes": [
+    "Removed external blue focus box and all outward focus margins from shared Button and PrimaryButton skins.",
+    "Added an inlaid warm sheen and paired gold selection marks inside the existing button art, including HudButton and OptionButton.",
+    "Existing focus order, text margins, keyboard activation and animations retained."
+  ],
+  "focus_art": "assets/ui-focus-inlay-v24b.svg",
+  "validation": {
+    "keyboard_focus_checks": 41,
+    "keyboard_focus_failures": 0,
+    "ui_layout_checks": 5572,
+    "ui_layout_failures": 0,
+    "ui_states": 116
+  },
+  "native_loading_preview": "docs/ui-review-v24/button-loading-v24b.png"
+}
