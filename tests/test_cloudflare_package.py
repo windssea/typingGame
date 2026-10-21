@@ -42,6 +42,33 @@ class CloudflareCorsTests(unittest.TestCase):
         self.assertIn('https://typing.nanokid.win', origins)
         self.assertIn('https://typinggame-cl5.pages.dev', origins)
 
+    def test_streamed_manifest_keeps_game_packs_off_pages(self):
+        import gzip
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            source=Path(directory)/'source';source.mkdir()
+            (source/'index.html').write_text('<script src="index.js"></script>')
+            (source/'index.js').write_text('// fixture')
+            (source/'index.wasm').write_bytes(b'engine')
+            (source/'index.pck').write_bytes(b'bootstrap')
+            pack=b'independent game payload'
+            (source/'content-dojo.pck').write_bytes(pack)
+            (source/'content-packs.json').write_text(json.dumps({'modes':{'dojo':['dojo']},'packs':{'dojo':{'file':'content-dojo.pck','bytes':len(pack)}}}))
+            (source/'pack-plan.json').write_text('{}')
+            output=Path(directory)/'release'
+            subprocess.run([sys.executable,str(ROOT/'tools/prepare-cloudflare.py'),'--source',str(source),'--out',str(output),'--asset-base-url','https://assets.example'],check=True,stdout=subprocess.DEVNULL)
+            manifest=json.loads((output/'manifest.json').read_text())
+            self.assertEqual(len(manifest['objects']),3)
+            self.assertFalse((output/'pages/content-dojo.pck').exists())
+            self.assertFalse((output/'pages/pack-plan.json').exists())
+            runtime=(output/'pages/content-manifest.js').read_text()
+            self.assertIn(hashlib.sha256(pack).hexdigest(),runtime)
+            html=(output/'pages/index.html').read_text()
+            self.assertLess(html.index('content-manifest.js'),html.index('content-packs.js'))
+            self.assertLess(html.index('content-packs.js'),html.index('src="index.js"'))
+            obj=next(item for item in manifest['objects'] if 'content-dojo-' in item['key'])
+            self.assertEqual(gzip.decompress(Path(obj['file']).read_bytes()),pack)
+
 
 if __name__ == '__main__':
     unittest.main()

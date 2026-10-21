@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-21",
+  "assets": [
+    {
+      "path": "assets/generated/v20/kitchen-props.png",
+      "sha256": "7f8eddcdc9fd746edbf12e641d377a6c71e8bfa796ce48a0606a4981e783ea9b",
+      "pixels": [
+        1254,
+        1254
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "generator": "Built-in ImageGen",
+      "prompt_source": "docs/ASSET_PROMPTS_V20.md"
+    },
+    {
+      "path": "assets/generated/v20/rain-background.png",
+      "sha256": "d9c25a13d77f6dfdb27cf5afdecc0f73556779f53456e2901038b1bbb007e7c4",
+      "pixels": [
+        1817,
+        866
+      ],
+      "alpha_extrema": null,
+      "generator": "Built-in ImageGen",
+      "prompt_source": "docs/ASSET_PROMPTS_V20.md"
+    },
+    {
+      "path": "assets/generated/v20/ui-word-plaque.png",
+      "sha256": "87a41fd50555002dfd5323492717010fed71dc30512ca42815a73fd915ee253c",
+      "pixels": [
+        2172,
+        724
+      ],
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "generator": "Built-in ImageGen",
+      "prompt_source": "docs/WORD_MATERIAL_PROMPTS_V20.md"
+    },
+    {
+      "path": "assets/generated/v20/ui-keycap.png",
+      "sha256": "2d59bff3d71a23082dd50e8095090a491d90fd8559e2b8a07414584ee0431924",
+      "pixels": [
+        1254,
+        1254
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "generator": "Built-in ImageGen",
+      "prompt_source": "docs/WORD_MATERIAL_PROMPTS_V20.md"
+    },
+    {
+      "path": "assets/generated/v20/ui-themed-plaques.png",
+      "sha256": "cf410a4cfc2b99ccc9afc2a0bcc70525cd8966c08fb133dc5f082a0ea135a011",
+      "pixels": [
+        1254,
+        1254
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "generator": "Built-in ImageGen",
+      "prompt_source": "docs/WORD_MATERIAL_PROMPTS_V20.md"
+    }
+  ]
+}

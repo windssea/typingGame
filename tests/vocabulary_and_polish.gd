@@ -97,6 +97,10 @@ func exercise() -> void:
 			app.run.spawn_target()
 		elif mode.id=="rain":
 			app.run.spawn_target()
+		elif mode.id=="submarine":
+			for i in range(200):
+				if not app.run.recommended_target().is_empty(): break
+				app.run.step(.1)
 		await process_frame
 		var before: int = app.run.correct
 		await complete_word()

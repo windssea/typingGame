@@ -28,18 +28,24 @@ pages.mkdir(parents=True,exist_ok=True)
 payload.mkdir(parents=True,exist_ok=True)
 mapping={}
 objects=[]
-for name,mime in [('index.wasm','application/wasm'),('index.pck','application/octet-stream')]:
+content_path=source/'content-packs.json'
+content=json.loads(content_path.read_text(encoding='utf-8')) if content_path.exists() else None
+files=[('index.wasm','application/wasm'),('index.pck','application/octet-stream')]
+if content:
+    files.extend((item['file'],'application/octet-stream') for item in content['packs'].values())
+for name,mime in files:
     raw=(source/name).read_bytes()
     digest=hashlib.sha256(raw).hexdigest()
     suffix=Path(name).suffix
-    key=f'keybound/{"engine" if suffix==".wasm" else "game"}-{digest[:20]}{suffix}'
+    kind='engine' if suffix=='.wasm' else 'game' if name=='index.pck' else Path(name).stem
+    key=f'keybound/{kind}-{digest[:20]}{suffix}'
     compressed=gzip.compress(raw,compresslevel=9,mtime=0)
     target=payload/Path(key).name
     target.write_bytes(compressed)
     mapping[name]=base+'/'+key
     objects.append({'key':key,'file':str(target),'content_type':mime,'content_encoding':'gzip','cache_control':'public, max-age=31536000, immutable','raw_bytes':len(raw),'upload_bytes':len(compressed),'sha256':digest})
 for item in source.iterdir():
-    if item.is_file() and item.name not in mapping:
+    if item.is_file() and item.name not in mapping and item.name not in ['content-packs.json','pack-plan.json','pack-inventory.json']:
         if item.stat().st_size>25*1024*1024:
             raise SystemExit('Unexpected large shell asset: '+item.name)
         shutil.copy2(item,pages/item.name)
@@ -60,6 +66,15 @@ loader='''<script>
 marker='<script src="index.js"></script>'
 if marker not in html:
     raise SystemExit('Unrecognized Godot shell; no changes written to the source export')
+if content:
+    packs={}
+    for group,item in content['packs'].items():
+        obj=next(obj for obj in objects if mapping[item['file']].endswith(obj['key']))
+        packs[group]={'url':mapping[item['file']],'bytes':obj['raw_bytes'],'sha256':obj['sha256']}
+    browser_manifest={'modes':content['modes'],'packs':packs}
+    (pages/'content-manifest.js').write_text('window.keyboundContentManifest='+json.dumps(browser_manifest,separators=(',',':'))+';\n',encoding='utf-8')
+    shutil.copy2(Path(__file__).resolve().parents[1]/'web/content-packs.js',pages/'content-packs.js')
+    loader+='<script src="content-manifest.js"></script>\n<script src="content-packs.js"></script>\n'
 (pages/'index.html').write_text(html.replace(marker,loader+marker),encoding='utf-8')
 (pages/'_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n/index.html\n  Cache-Control: no-cache\n',encoding='utf-8')
 page_origin=args.page_origin or f'https://{args.project}.pages.dev'

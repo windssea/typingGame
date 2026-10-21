@@ -23,10 +23,11 @@ func _ready() -> void:
 	header = UiLayout.row(stack,16)
 	header.custom_minimum_size.y = 80
 	heading = UiLayout.column(header,4)
-	heading.custom_minimum_size.x = 300
+	heading.custom_minimum_size.x = 252
 	heading.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	# Metrics are inserted between heading and actions by the caller.
 	actions = UiLayout.row(header,8)
+	actions.name="BattleActions"
 	actions.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	UiLayout.space(stack,16)
 	var body := UiLayout.row(stack,20)

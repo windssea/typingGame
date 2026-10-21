@@ -75,6 +75,10 @@ func exercise() -> void:
 			run.spawn_enemy("goblin").position = Vector2(245,275)
 		elif mode=="rain":
 			run.spawn_target()
+		elif mode=="submarine":
+			for i in range(200):
+				if not run.recommended_target().is_empty(): break
+				run.step(.1)
 		# Let a mole emerge before the static readability capture.
 		run.step(.4)
 		arena()._process(.4)
@@ -95,7 +99,7 @@ func exercise() -> void:
 			check(arena().motion.texture("idle",0).get_width()>=256,"active character uses a newly decoded HD atlas: "+mode)
 		if mode not in ["dojo","sprint"]:
 			var rects: Array = arena().label_rects.values()
-			check(rects.size()==run.targets.size(),"each target has a protected label: "+mode)
+			check(rects.size()==run.targets.filter(run.target_available).size(),"each available target has a protected label: "+mode)
 			for i in range(rects.size()):
 				check(Rect2(Vector2.ZERO,arena().size).encloses(rects[i]),"word plate stays inside arena: "+mode)
 				for j in range(i):

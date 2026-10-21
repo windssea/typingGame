@@ -84,6 +84,13 @@ static func ui(font: Font) -> Theme:
 	result.set_font("font","Button",preload("res://assets/ui-heading.ttf"))
 	result.set_font_size("font_size","Button",20)
 	result.set_type_variation("PrimaryButton","Button")
+	result.set_type_variation("HudButton","Button")
+	for state in ["normal","hover","pressed","disabled"]:
+		var hud:=game_panel(Color("244c63") if state=="normal" else Color("376981") if state=="hover" else Color("183a50"),Color("d6bd7b"),9,2)
+		hud.content_margin_left=12;hud.content_margin_right=12
+		result.set_stylebox(state,"HudButton",hud)
+	for state in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
+		result.set_color(state,"HudButton",Color("fff1cf"))
 	for variant in ["Button","PrimaryButton"]:
 		var primary: bool = variant=="PrimaryButton"
 		for state in ["normal","hover","pressed","disabled"]:

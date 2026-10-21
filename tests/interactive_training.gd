@@ -79,8 +79,8 @@ func exercise() -> void:
 	var attempts: int = app.run.attempts
 	complete_word(); complete_word()
 	check(app.run.skill_charge==3,"three actual word completions charge an ability")
-	await key(KEY_F3)
-	check(app.run.skill_uses==1 and app.run.skill_time>0 and app.run.skill_charge==0,"F3 triggers a real earned ability")
+	await key(KEY_SPACE)
+	check(app.run.skill_uses==1 and app.run.skill_time>0 and app.run.skill_charge==0,"Space triggers a real earned ability")
 	check(app.run.attempts==attempts+2,"skill hotkey never counts as a typing mistake")
 	var remaining: float = app.run.targets[0].remaining
 	app.run.advance(.5)
@@ -98,7 +98,7 @@ func exercise() -> void:
 		await create_timer(.3).timeout
 		for i in range(3):complete_word()
 		var before: float = app.run.rival if mode=="racing" else app.run.shield if mode=="aliens" else app.run.hp
-		await key(KEY_F3)
+		await key(KEY_SPACE)
 		check(app.run.skill_uses==1,"skill reachable by actual keyboard: "+mode)
 		if mode=="racing":
 			check(app.run.rival<before,"rally ability actually moves rival back")

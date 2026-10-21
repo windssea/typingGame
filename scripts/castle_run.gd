@@ -292,6 +292,10 @@ func on_word_completed(target: Dictionary) -> void:
 	energy = mini(20,energy+2)
 	var pos: Vector2 = target.position
 	var amount: int = 36 + upgrades.power * 14
+	# Ordinary foes are one completed word; armored foes and bosses have explicit HP.
+	if target.kind in ["goblin","wolf"]: amount=maxi(amount,target.health)
+	target.pending=true
+	locked=-1
 	if target.intent in ["casting","arming"]:
 		interrupts += 1
 		EnemyTactics.enter(target,"recover",2.0)
@@ -305,6 +309,7 @@ func on_word_completed(target: Dictionary) -> void:
 		feedback = "蓄力打断！继续攻击弱点。"
 		effect.emit("interrupt",pos,pos,0)
 	damage_enemy(target,amount,"fire",KEEP)
+	if not projectiles.is_empty(): projectiles.back().typing_attack=true
 	if combo > 0 and combo % 5 == 0:
 		feedback = "五连击 · 雷霆连锁！"
 		var nearby := targets.duplicate()
@@ -313,10 +318,6 @@ func on_word_completed(target: Dictionary) -> void:
 		for other in nearby.slice(0,3):
 			damage_enemy(other,40+upgrades.chain*16,"storm",source)
 			source = other.position
-	if targets.has(target):
-		target.word = choose_word()
-		target.typed = 0
-		locked = target.id
 
 func damage_enemy(target: Dictionary, amount: int, kind: String, source: Vector2) -> void:
 	if not targets.has(target):
@@ -334,6 +335,12 @@ func resolve_projectile(shot: Dictionary, target: Dictionary) -> void:
 	if shot.kind=="ice": target.slow = 4.0
 	var point: Vector2=target.position
 	apply_damage(target,shot.amount,shot.kind,shot.position)
+	# A new attack prompt is revealed only after the previous projectile actually hits.
+	if targets.has(target) and target.get("pending",false) and shot.get("typing_attack",false):
+		target.pending=false
+		target.word=choose_word()
+		target.typed=0
+		if locked==-1: locked=target.id
 	if shot.get("splash",false):
 		for other in targets.duplicate():
 			if other.id!=target.id and other.position.distance_to(point)<95:

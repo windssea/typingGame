@@ -134,7 +134,7 @@ func _process(delta: float) -> void:
 			if run.mode=="aliens":
 				juice.trail(Vector2(520+sin(clock*3)*7,560),Vector2(0,65),Color("7ae2ff"),8)
 			elif run.mode=="racing":
-				var p := Vector2(70+visual_distance*770,364)
+				var p := track_point(visual_distance,0)-Vector2(65,0)
 				juice.trail(p,Vector2(-120,15),Color("d9e3f2"),7)
 				if run.boost>0 and run.combo>=3:
 					juice.trail(p,Vector2(-220,0),Color("67e5ff"),11)
@@ -186,8 +186,7 @@ func prepare_prompts() -> void:
 		blocked.append(Rect2(20,18,220,48))
 	if run.mode=="fighter":
 		actors.assign([Rect2(240,270,240,300),Rect2(575,270,245,300)])
-		blocked.append(Rect2(50,105,380,65))
-		blocked.append(Rect2(610,105,380,65))
+		blocked.append(Rect2(20,20,1000,110))
 		blocked.append(Rect2(220,198,250,44))
 	elif run.mode=="racing":
 		actors.assign([Rect2(55+visual_distance*770,310,150,94),Rect2(55+visual_rival*770,465,150,94)])
@@ -241,7 +240,7 @@ func draw_mole(texture: Texture2D, point: Vector2, emergence: float, tint := Col
 	draw_set_transform(world_offset)
 
 func draw_atmosphere() -> void:
-	if reduced_motion:
+	if reduced_motion or run.mode=="racing":
 		return
 	for i in range(16):
 		var p := Vector2(fposmod(i*193.0-clock*(18 if run.mode=="aliens" else 5),1040),110+fposmod(i*113.0+sin(clock+i)*8,440))
@@ -278,6 +277,15 @@ func sprite_pose(id: String, center: Vector2, bounds: Vector2, angle: float, str
 	art.draw_sprite(self,id,Vector2.ZERO,bounds)
 	draw_set_transform(world_offset)
 
+func track_point(fraction: float, lane: int) -> Vector2:
+	# Use exactly the TextureRect's cover crop, including the wider scenery parent.
+	var source:=art.background.get_size()
+	var factor:=maxf(backdrop.size.x/source.x,backdrop.size.y/source.y)
+	var crop_offset: Vector2=(backdrop.size-source*factor)*.5
+	var uv:=Vector2(.18+.62*fraction,.545 if lane==0 else .781)
+	var global_point: Vector2=backdrop.get_global_transform()*(crop_offset+source*uv*factor)
+	return get_global_transform().affine_inverse()*global_point
+
 func banner(title: String, _subtitle: String) -> void:
 	panel(Rect2(20,18,220,48),Color(.81,.93,.95,.95),16)
 	write(title,Vector2(36,50),24,INK)
@@ -296,7 +304,6 @@ func draw_generated_game() -> void:
 		banner("第 %d 阵" % mini(run.wave,4), "")
 	elif run.mode=="fighter":
 		var intent := EnemyTactics.caption(run.recommended_target())
-		banner(intent if not intent.is_empty() else "第 %d 位对手" % run.round_number, "")
 	if run.mode == "moles":
 		for i in range(6):
 			var hole := Vector2(240+(i%3)*280,326+(i/3)*170)
@@ -355,21 +362,20 @@ func draw_generated_game() -> void:
 		panel(Rect2(40,540,185*run.shield/60.0,9),BLUE,4)
 	elif run.mode == "racing":
 		var suspension := 0.0 if reduced_motion else sin(clampf(impact_age/.3,0,1)*PI)
-		var player := Vector2(120+visual_distance*770,356-suspension*7)
-		var rival := Vector2(120+visual_rival*770,510)
-		for y in [305,458]:
-			for row in range(6):
+		var player := track_point(visual_distance,0)-Vector2(0,suspension*3)
+		var rival := track_point(visual_rival,1)
+		for lane in range(2):
+			var finish:=track_point(1.07,lane)
+			for row in range(8):
 				for col in range(2):
-					draw_rect(Rect2(939+col*13,y+row*16,13,16),Color.WHITE if (row+col)%2==0 else INK)
+					draw_rect(Rect2(finish+Vector2(col*11-11,row*12-48),Vector2(11,12)),Color.WHITE if (row+col)%2==0 else INK)
 		if run.boost>0 and run.combo>=3:
 			art.draw_sprite(self,"impact",player-Vector2(65,0),Vector2(96,62))
 		var state := "boost" if nitro_age>=0 and nitro_age<motion.duration("boost") else "idle"
 		if not motion_sprite(state,nitro_age if state=="boost" else pose_clock,player,Vector2(205,205),Color.WHITE,-suspension*.035,Vector2(1+suspension*.045,1-suspension*.04)):
 			sprite_pose("car_mint",player,Vector2(136,88),0,Vector2.ONE)
-		sprite_pose("car_coral",rival,Vector2(136,88),0.0 if reduced_motion else sin(clock*13)*0.012,Vector2.ONE)
-		panel(Rect2(player-Vector2(52,71),Vector2(104,29)),Color("deedf5"),9)
+		sprite_pose("car_coral",rival,Vector2(160,106),0.0 if reduced_motion else sin(clock*13)*0.012,Vector2.ONE)
 		write("你  %d%%" % roundi(run.distance*100),player-Vector2(33,50),17,MINT)
-		panel(Rect2(rival-Vector2(52,71),Vector2(104,29)),Color("deedf5"),9)
 		write("陪练车" if run.context=="training" else "对手",rival-Vector2(29,50),17,CORAL)
 
 	elif run.mode == "fighter":
@@ -385,14 +391,14 @@ func draw_generated_game() -> void:
 		for side in range(2):
 			var x := 50+side*560
 			var health: int = run.hp if side==0 else run.enemy_hp
-			panel(Rect2(x,105,380,39),Color(.10,.22,.35,.80),10)
-			panel(Rect2(x+15,119,350,10),Color("deddee"),5)
+			panel(Rect2(x,35,380,28),Color("203c52"),7,Color("e7c07b"))
 			var delayed := visual_player_hp if side==0 else visual_enemy_hp
-			panel(Rect2(x+15,119,350*delayed/100.0,10),PlayTheme.YELLOW,5)
-			panel(Rect2(x+15,119,350*health/100.0,10),MINT if side==0 else CORAL,5)
-			write(("你" if side==0 else "对手")+" · 体力 %d" % health,Vector2(x+15,140),15,Color("f2f8ef"))
+			panel(Rect2(x+5,40,370*delayed/100.0,18),PlayTheme.YELLOW,4)
+			panel(Rect2(x+5,40,370*health/100.0,18),MINT if side==0 else CORAL,4)
+			write("蓝拳 · 你" if side==0 else "红拳 · 对手",Vector2(x,91),21,Color("26475b"))
+			write(str(health),Vector2(x+380,91),23,Color("26475b"),true)
+		write("VS",Vector2(520,63),34,Color("a65d2b"),true)
 		if run.combo>1 or (strike>0 and run.last_tactic=="counter"):
-			panel(Rect2(220,198,250,44),Color("deedf5"),12)
 			write("破招！双倍重拳" if strike>0 and run.last_tactic=="counter" else "%d HIT COMBO" % run.combo,Vector2(345,230),25,GOLD,true)
 
 func balloons() -> void:

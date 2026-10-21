@@ -9,6 +9,9 @@ var lobby: Texture2D
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if ContentPackLoader.enabled():
+		lobby=load("res://assets/menu-v20/settings.png" if settings_room else "res://assets/menu-v20/lobby.png")
+		return
 	if ResourceLoader.exists("res://assets/generated/academy-lobby-v10.png"):
 		lobby = load("res://assets/generated/dojo-background.png" if settings_room else "res://assets/generated/academy-lobby-v10.png")
 
@@ -26,8 +29,8 @@ func _draw() -> void:
 		draw_circle(Vector2(1330,730),420,Color("dceef9"))
 	if not home and not settings_room:
 		# A quiet wash lets the actual illustration remain visible; individual controls own their framing.
-		draw_style_box(PlayTheme.surface(Color(.8,.93,.89,.88),Color.TRANSPARENT,32),Rect2(270,18,1148,864))
-		draw_rect(Rect2(0,0,260,900),Color(.75,.89,.82,.45))
+		draw_style_box(PlayTheme.surface(Color(.8,.93,.89,.48),Color.TRANSPARENT,18),Rect2(270,18,1148,864))
+		draw_rect(Rect2(0,0,260,900),Color(.75,.89,.82,.18))
 	if settings_room:
 		draw_rect(Rect2(0,0,260,900),Color(.75,.89,.82,.9))
 	if not reduced_motion:

@@ -11,6 +11,7 @@ var skill_charge := 0
 var skill_time := 0.0
 var skill_uses := 0
 var units: Array[Dictionary] = []
+var bosses_defeated:=0
 
 func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 0) -> void:
 	super.setup(mode_id,lesson_data,pace,seed_value)
@@ -29,13 +30,22 @@ func spawn_target() -> void:
 				break
 	var word := next_word()
 	var duration := ((42.0+word.length()*3) if context=="training" else (22.0+word.length()*1.8))/difficulty
-	var pos := Vector2(1160,235+lane*210) if mode=="royal" else Vector2([1110,880,1190][lane],180+lane*165) if mode=="submarine" else Vector2(240+lane*440,285)
+	var pos := Vector2(1260,235+lane*210) if mode=="royal" else Vector2(1440+lane*120,180+lane*165) if mode=="submarine" else Vector2(240+lane*440,285)
 	targets.append({"id":next_id,"word":word,"typed":0,"position":pos,"lane":lane,"stage":0,"remaining":duration,"duration":duration,"speed":(930.0/(16+word.length()*1.6))*difficulty,"kind":"supply" if mode=="submarine" and next_id%4==3 else "enemy","pending":false,"cook_left":0.0})
+	if mode=="royal":
+		var boss:=next_id%6==5
+		targets[-1].kind="boss" if boss else "enemy"
+		targets[-1].health=3+SessionOptions.rank_index(challenge_rank) if boss else 1
+		targets[-1].max_health=targets[-1].health
+		if boss: targets[-1].speed*=.55
 	next_id+=1
 	spawned+=1
 
 func priority(target: Dictionary) -> float:
 	return float(target.remaining) if mode=="restaurant" else (target.position.x-100)/maxf(1,target.speed)
+
+func target_available(target: Dictionary) -> bool:
+	return super.target_available(target) and (mode!="submarine" or target.position.x<1320)
 
 func step(delta: float) -> void:
 	if done or paused: return
@@ -109,6 +119,13 @@ func on_word_completed(target: Dictionary) -> void:
 
 func resolve_projectile(_shot: Dictionary, target: Dictionary) -> void:
 	if mode=="royal":
+		target.health-=1
+		if target.health>0:
+			target.pending=false;target.typed=0;target.word=next_word()
+			target.position.x+=26
+			action.emit("hit",target.position)
+			return
+		if target.kind=="boss": bosses_defeated+=1
 		units.append({"position":target.position,"lane":target.lane})
 	elif target.kind=="supply": hp=mini(100,hp+12)
 	complete_order(target)

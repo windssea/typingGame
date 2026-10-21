@@ -73,7 +73,7 @@ func exercise() -> void:
 		if mode.id in ["dojo","bubbles","rain","sprint"]:
 			for child in app.layer.find_children("*","Control",true,false):
 				if child is GameArena:
-					check(child.art.sprites.size()==6,"foundation game has real production props: "+mode.id)
+					check(child.art.sprites.has({"dojo":"key","bubbles":"bubble","rain":"meteor_head","sprint":"stopwatch"}[mode.id]),"foundation game has its production prop: "+mode.id)
 		for node in app.layer.find_children("*","Button",true,false):
 			check(node.size.y>=44,"all arena controls have readable targets: "+mode.id)
 		if app.run is CastleRun:
@@ -83,6 +83,10 @@ func exercise() -> void:
 			app.run.spawn_enemy("boss").position = Vector2(780,350)
 		elif mode.id=="rain":
 			app.run.spawn_target()
+		elif mode.id=="submarine":
+			for i in range(200):
+				if not app.run.recommended_target().is_empty(): break
+				app.run.step(.1)
 		var sound: CastleAudio = app.castle_audio
 		check(sound!=null and sound.players.size()==6,"every mode routes bounded SFX players: "+mode.id)
 		for voice in sound.players:

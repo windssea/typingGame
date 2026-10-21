@@ -17,7 +17,7 @@ static func modes() -> Array:
 		{"id":"moles", "name":"地鼠敲敲乐", "tag":"WHACK / 定位与切换", "description":"地鼠钻出洞口，逐键举锤，\n输入完成，敲出小星星！", "goal":"训练漏掉不扣血 · 准确定位"},
 		{"id":"racing", "name":"疾速拉力赛", "tag":"RACE / 稳定与速度", "description":"输入推进赛车，连击加速。\n挑战时抢在对手前冲线。", "goal":"训练自由完赛 · 挑战竞速"},
 		{"id":"fighter", "name":"连击小拳王", "tag":"FIGHT / 连击与反应", "description":"逐键蓄势，完成输入打出重拳。\n打断对手蓄力，连击制胜。", "goal":"四次命中击倒对手 · 攻击打断"},
-		{"id":"royal", "name":"双桥皇家战", "tag":"DUEL", "description":"输入敌军单词，派出骑士迎战。\n突破双桥，摧毁对方城堡。", "goal":"输入出兵 · 双路攻防 · F3 集结冲锋"},
-		{"id":"submarine", "name":"深蓝潜艇队", "tag":"DIVE", "description":"输入目标发射追踪鱼雷，\n拦截敌潜艇，护送补给船。", "goal":"鱼雷拦截 · 收集 18 份补给 · F3 声呐冻结"},
-		{"id":"restaurant", "name":"星厨开饭啦", "tag":"COOK", "description":"接单、翻锅、出餐！\n优先照顾快等不及的客人。", "goal":"连续三步烹饪 · 完成 12 份餐点 · F3 安抚客人"}
+		{"id":"royal", "name":"双桥皇家战", "tag":"DUEL", "description":"输入敌军单词，派出骑士迎战。\n突破双桥，摧毁对方城堡。", "goal":"输入出兵 · 双路攻防 · 空格 集结冲锋"},
+		{"id":"submarine", "name":"深蓝潜艇队", "tag":"DIVE", "description":"输入目标发射追踪鱼雷，\n拦截敌潜艇，护送补给船。", "goal":"鱼雷拦截 · 收集 18 份补给 · 空格 声呐冻结"},
+		{"id":"restaurant", "name":"星厨开饭啦", "tag":"COOK", "description":"接单、翻锅、出餐！\n优先照顾快等不及的客人。", "goal":"连续三步烹饪 · 完成 12 份餐点 · 空格 安抚客人"}
 	]

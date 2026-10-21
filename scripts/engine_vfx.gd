@@ -30,6 +30,7 @@ var reduced := false
 var shake := Vector2.ZERO
 var shake_tween: Tween
 var auras: Array[CPUParticles2D] = []
+var meteor_trails: Array[Dictionary] = []
 
 func radial_texture(extent: int, for_light := false) -> GradientTexture2D:
 	var gradient := Gradient.new()
@@ -52,6 +53,20 @@ func _ready() -> void:
 		var emitter:=make_emitter("Flight%02d"%i)
 		emitter.one_shot=false;emitter.amount=20;emitter.lifetime=.32
 		trails.append({"emitter":emitter,"shot":{},"tail":0.0})
+	if arena.run.mode=="rain":
+		for i in range(12):
+			var emitter:=make_emitter("MeteorTail%02d"%i)
+			emitter.one_shot=false;emitter.explosiveness=0;emitter.amount=72;emitter.lifetime=.95
+			emitter.preprocess=.15
+			var glow:=ShaderMaterial.new();glow.shader=preload("res://shaders/meteor_particles.gdshader")
+			emitter.material=glow
+			emitter.spread=11;emitter.gravity=Vector2.ZERO
+			emitter.initial_velocity_min=140;emitter.initial_velocity_max=240
+			emitter.scale_amount_min=.15;emitter.scale_amount_max=.55
+			var ramp:=Gradient.new();ramp.offsets=PackedFloat32Array([0,.12,.45,1])
+			ramp.colors=PackedColorArray([Color(1,1,.8,.95),Color(.55,.96,1,.9),Color(.12,.65,1,.5),Color(.08,.25,1,0)])
+			emitter.color_ramp=ramp
+			meteor_trails.append({"emitter":emitter,"target":-1,"tail":0.0})
 	for i in range(LIGHT_LIMIT):
 		var light:=PointLight2D.new()
 		light.name="ContactLight%02d"%i;light.texture=light_texture
@@ -215,7 +230,7 @@ func on_action(kind: String, point: Vector2) -> void:
 
 func on_arcade_effect(kind: String, point: Vector2, _power: int) -> void:
 	if kind=="aliens": light_at(Vector2(520,540),PlayTheme.SKY,.35,1.5)
-	if kind=="racing": emit_at(Vector2(80+arena.run.distance*770,365),1,"speed",PlayTheme.SKY)
+	if kind=="racing": emit_at(arena.track_point(arena.run.distance,0)-Vector2(55,0),1,"speed",PlayTheme.SKY)
 
 func apply_mask() -> void:
 	protected_regions=arena.juice.protected_regions.duplicate()
@@ -234,6 +249,9 @@ func apply_mask() -> void:
 	packed.resize(32)
 	particle_material.set_shader_parameter("protected_rects",packed)
 	particle_material.set_shader_parameter("protected_count",count)
+	for slot in meteor_trails:
+		slot.emitter.material.set_shader_parameter("protected_rects",packed)
+		slot.emitter.material.set_shader_parameter("protected_count",count)
 	for slot in waves:
 		slot.node.material.set_shader_parameter("protected_rects",packed)
 		slot.node.material.set_shader_parameter("protected_count",count)
@@ -246,6 +264,10 @@ func _process(delta: float) -> void:
 	ambient.speed_scale=0.0 if paused else 1.0
 	ambient.visible=not reduced;ambient.emitting=not reduced
 	for slot in trails: slot.emitter.speed_scale=0.0 if paused else 1.0
+	for slot in meteor_trails:
+		slot.emitter.speed_scale=0.0 if paused else 1.0
+		slot.emitter.visible=not reduced
+		if reduced: slot.emitter.emitting=false
 	for i in range(auras.size()):
 		var emitter:=auras[i]
 		emitter.speed_scale=0.0 if paused else 1.0
@@ -256,6 +278,7 @@ func _process(delta: float) -> void:
 			emitter.color={"fire":Color("ffb05c"),"ice":Color("92eaff"),"storm":Color("c6a1ff")}[towers[0].kind]
 	if paused: return
 	clock+=delta
+	update_meteor_trails(delta)
 	for slot in waves+lights:
 		if slot.tween!=null and slot.tween.is_valid(): slot.tween.custom_step(delta)
 	if reduced:
@@ -280,5 +303,25 @@ func _process(delta: float) -> void:
 				slot.shot={};emitter.emitting=false;slot.tail=emitter.lifetime
 		else: slot.tail=maxf(0,slot.tail-delta)
 
+func update_meteor_trails(delta: float) -> void:
+	for slot in meteor_trails:
+		var target:=arena.run.target_by_id(slot.target)
+		if target.is_empty() or reduced:
+			if slot.target!=-1: slot.target=-1;slot.tail=.95;slot.emitter.emitting=false
+			slot.tail=maxf(0,slot.tail-delta)
+		else:
+			slot.emitter.position=target.position
+			slot.emitter.direction=-Vector2(target.velocity).normalized()
+			slot.emitter.emitting=true
+	if reduced: return
+	for target in arena.run.targets:
+		if arena.run.mode!="rain" or meteor_trails.any(func(slot): return slot.target==target.id): continue
+		for slot in meteor_trails:
+			if slot.target==-1 and slot.tail<=0:
+				slot.target=target.id;slot.emitter.position=target.position
+				slot.emitter.direction=-Vector2(target.velocity).normalized()
+				slot.emitter.restart();slot.emitter.emitting=true
+				break
+
 func snapshot() -> Dictionary:
-	return {"backend":"CPUParticles2D + PointLight2D + Tween + canvas shaders","events":event_count,"launches":launch_count,"burst_pool":bursts.size(),"trail_pool":trails.size(),"light_pool":lights.size(),"wave_pool":waves.size(),"tower_auras":auras.filter(func(p): return p.emitting).size(),"active_bursts":bursts.filter(func(p): return p.emitting).size(),"active_lights":lights.filter(func(p): return p.node.enabled).size(),"protected_regions":protected_regions.size(),"clock":clock,"paused":paused,"reduced":reduced,"shake":[shake.x,shake.y]}
+	return {"backend":"CPUParticles2D + PointLight2D + Tween + canvas shaders","events":event_count,"launches":launch_count,"burst_pool":bursts.size(),"trail_pool":trails.size(),"meteor_trails":meteor_trails.filter(func(slot): return slot.emitter.emitting).size(),"light_pool":lights.size(),"wave_pool":waves.size(),"tower_auras":auras.filter(func(p): return p.emitting).size(),"active_bursts":bursts.filter(func(p): return p.emitting).size(),"active_lights":lights.filter(func(p): return p.node.enabled).size(),"protected_regions":protected_regions.size(),"clock":clock,"paused":paused,"reduced":reduced,"shake":[shake.x,shake.y]}

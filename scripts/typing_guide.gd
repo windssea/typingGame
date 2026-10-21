@@ -57,7 +57,7 @@ func _draw() -> void:
 	text("当前按键" if wide else "我的指法小教练",Vector2(20,40),22,PlayTheme.ORANGE)
 	var data := mapping(current)
 	var key_label := "空格" if current == " " else current
-	text(key_label if current != "" else "准备",Vector2(22,128),72 if wide else 40,PlayTheme.TEXT)
+	TypingPrompt.key(self,Rect2(20,60,125 if wide else 80,90 if wide else 76),key_label if current != "" else "准备",64 if wide else 38,true)
 	text(NAMES[data.finger] if current != "" else "双手回到基准行",Vector2(180 if wide else 117,95 if wide else 117),26 if wide else 18,PlayTheme.TEXT)
 	var instruction: String = "+ " + data.shift_hand + " Shift" if data.shift else "回到 " + HOMES[data.finger]
 	text("" if current == "" else instruction,Vector2(180 if wide else 20,138 if wide else 156),22 if wide else 17)
@@ -71,17 +71,14 @@ func _draw() -> void:
 			var finger: int = mapping(key).finger
 			var p := Vector2(12+r*14+c*46, r*49)
 			var active: bool = current != "" and data.key == key
-			box(Rect2(p,Vector2(42,43)),COLORS[finger] if active else COLORS[finger].lightened(0.8),COLORS[finger].darkened(0.15),8)
-			text(key.to_upper(),p+Vector2(12,28),24,PlayTheme.TEXT)
+			TypingPrompt.key(self,Rect2(p,Vector2(42,43)),key.to_upper(),24,active)
 			if key in "fj":
 				draw_line(p+Vector2(12,36),p+Vector2(28,36),PlayTheme.TEXT,3)
 	for side in range(2):
 		var active: bool = data.shift and ((side == 0 and data.finger >= 4) or (side == 1 and data.finger < 4))
 		var rect := Rect2(12+side*491,202,107,42)
-		box(rect,PlayTheme.YELLOW if active else Color("edf2fa"))
-		text("L Shift" if side == 0 else "R Shift",rect.position+Vector2(10,28),21,PlayTheme.TEXT)
-	box(Rect2(148,202,305,42),COLORS[8] if current == " " else Color("edf2fa"))
-	text("SPACE",Vector2(265,231),22,PlayTheme.TEXT)
+		TypingPrompt.key(self,rect,"L Shift" if side == 0 else "R Shift",21,active)
+	TypingPrompt.key(self,Rect2(148,202,305,42),"SPACE",22,current == " ")
 	draw_set_transform(Vector2.ZERO)
 	if wide:
 		draw_set_transform(Vector2(150,0))

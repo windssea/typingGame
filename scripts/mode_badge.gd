@@ -6,10 +6,14 @@ var reduced_motion := false
 var clock := 0.0
 var art := GeneratedArt.new()
 var preview_motion := ArcadeMotion.new()
+var menu_icon: Texture2D
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	if ContentPackLoader.enabled():
+		menu_icon=MenuArt.icon(mode)
+		return
 	art.setup(mode)
 	if size.x>=200 or mode=="dojo":
 		preview_motion.setup("coach" if mode=="dojo" else mode,true)
@@ -20,6 +24,11 @@ func _process(delta: float) -> void:
 		queue_redraw()
 
 func _draw() -> void:
+	if menu_icon!=null:
+		var bob:=0.0 if reduced_motion else sin(clock*2.5)*3
+		var side:=minf(size.x,size.y)*1.18
+		draw_texture_rect(menu_icon,Rect2(size/2-Vector2.ONE*side/2+Vector2(0,bob),Vector2.ONE*side),false)
+		return
 	var sprite: String = {"royal":"knight","submarine":"sub","restaurant":"chef","dojo":"key","bubbles":"bubble","rain":"comet","sprint":"stopwatch","balloons":"balloon_coral","aliens":"ufo","moles":"mole","racing":"car_mint","fighter":"boxer_blue","castle":"tower_fire"}.get(mode,"")
 	if art.sprites.has(sprite):
 		var bob := 0.0 if reduced_motion else sin(clock*2.5)*3

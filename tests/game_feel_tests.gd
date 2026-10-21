@@ -48,13 +48,17 @@ func exercise() -> void:
 		if app.run is CastleRun:
 			app.run.begin_wave();app.run.spawn_enemy("goblin").health=1
 		elif definition.id=="rain": app.run.spawn_target()
+		elif definition.id=="submarine":
+			for i in range(200):
+				if not app.run.recommended_target().is_empty(): break
+				app.run.step(.1)
 		var arena: GameArena=app.layer.find_children("*","GameArena",true,false)[0]
 		var target: Dictionary=app.run.recommended_target()
 		for character in str(target.word).substr(target.typed):
 			app.run.paused=false
 			var key:=InputEventKey.new();key.pressed=true;key.unicode=character.unicode_at(0)
 			Input.parse_input_event(key);await process_frame
-		if definition.id in ["rain","castle"]:
+		if definition.id in ["rain","castle","royal","submarine"]:
 			for i in range(180):
 				if not arena.feel.events.is_empty(): break
 				app.run.step(.025);arena._process(.025)
@@ -62,6 +66,10 @@ func exercise() -> void:
 		var before: int=app.run.correct
 		if app.run.recommended_target().is_empty():
 			if app.run is CastleRun: app.run.spawn_enemy("goblin")
+			elif definition.id=="submarine":
+				for i in range(200):
+					if not app.run.recommended_target().is_empty(): break
+					app.run.step(.1)
 			else: app.run.spawn_target()
 		if arena is ArcadeArena: arena.impact_freeze=.065
 		target=app.run.recommended_target()

@@ -162,17 +162,14 @@ func draw_prompt() -> void:
 	var shift: bool = TypingGuide.mapping(next).shift
 	if word.length()==1:
 		var rect := Rect2(620,148,200,210)
-		var color := Color("f9da81") if error_pulse<=0 else Color("f6aaa0")
-		draw_style_box(PlayTheme.game_panel(color,Color("d09b42") if error_pulse<=0 else Color("ba6256"),32,2),rect)
 		var caption := "空格" if next==" " else next
-		var font_size := 68 if next==" " else 144
-		draw_string(TypingPrompt.FONT,Vector2(720-TypingPrompt.FONT.get_string_size(caption,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x/2,313),caption,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,PlayTheme.TEXT)
+		TypingPrompt.key(self,rect,caption,68 if next==" " else 144,true,error_pulse>0,clock)
 		if shift:
 			write("Shift +",Vector2(720,178),22,PlayTheme.TEXT,true)
 	else:
 		var layout := TypingPrompt.measure(word,1080,88,52)
 		var rect := Rect2(Vector2(720,250)-layout.size*.5,layout.size)
-		TypingPrompt.paint(self,word,target.typed,rect,layout,true,error_pulse>0)
+		TypingPrompt.paint(self,word,target.typed,rect,layout,true,error_pulse>0,true,clock,key_pulse,reduced_motion,run.mode)
 		var meaning := Vocabulary.meaning(run.lesson,word)
 		if not meaning.is_empty() and layout.rows.size()==1:
 			write(meaning,Vector2(720,350),28,PlayTheme.TEAL,true)
@@ -197,9 +194,8 @@ func draw_practice_keys() -> void:
 	for i in range(keys.length()):
 		var key := keys.substr(i,1)
 		var active: bool = key==mapping.key
-		var press := 0.0 if reduced_motion or not active else key_pulse/.22*4
+		var press := 0.0
 		var at := Vector2(left+i*(width+16),751+press)
-		draw_style_box(PlayTheme.game_panel(PlayTheme.YELLOW if active else Color("c8e6ea"),Color("bca155") if active else Color("94bfc8"),16,2),Rect2(at,Vector2(width,80)))
-		write(key.to_upper(),at+Vector2(width/2,55),44,PlayTheme.TEXT,true)
+		TypingPrompt.key(self,Rect2(at,Vector2(width,80)),key.to_upper(),44,active,false,clock)
 		var finger: int = TypingGuide.mapping(key).finger
 		write(TypingGuide.NAMES[finger].replace("手",""),at+Vector2(width/2,109),21,PlayTheme.TEXT,true)

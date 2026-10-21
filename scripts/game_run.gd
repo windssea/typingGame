@@ -7,6 +7,7 @@ signal ended
 signal key_feedback(character: String, accepted: bool, point: Vector2)
 signal projectile_launched(shot: Dictionary)
 signal projectile_impact(shot: Dictionary, point: Vector2)
+const INTERCEPTOR_ORIGIN:=Vector2(680,526)
 
 var mode: String
 var lesson: Dictionary
@@ -107,12 +108,15 @@ func recommended_target() -> Dictionary:
 	var target := target_by_id(locked)
 	if not target.is_empty():
 		return target
-	var available := targets.filter(func(t): return not t.get("pending",false))
+	var available := targets.filter(target_available)
 	if available.is_empty():
 		return {}
 	var ordered := available
 	ordered.sort_custom(higher_priority)
 	return ordered[0]
+
+func target_available(target: Dictionary) -> bool:
+	return not target.get("pending",false)
 
 func higher_priority(a: Dictionary, b: Dictionary) -> bool:
 	var first := priority(a)
@@ -248,7 +252,7 @@ func type_character(character: String) -> bool:
 		return false
 	var target := target_by_id(locked)
 	if target.is_empty():
-		var candidates := targets.filter(func(t): return not t.get("pending",false) and t.word.begins_with(character))
+		var candidates := targets.filter(func(t): return target_available(t) and t.word.begins_with(character))
 		candidates.sort_custom(higher_priority)
 		if not candidates.is_empty():
 			target = candidates[0]
@@ -288,8 +292,8 @@ func on_word_completed(target: Dictionary) -> void:
 	if mode=="rain":
 		target.pending = true
 		locked = -1
-		var base := Vector2(680,558)
-		launch_projectile(target,base+base.direction_to(target.position)*70,"interceptor",1,1150)
+		var base := INTERCEPTOR_ORIGIN
+		launch_projectile(target,base+base.direction_to(target.position)*94,"interceptor",1,1150)
 		return
 	defeat(target, false)
 	if mode in ["dojo", "bubbles"]:

@@ -25,9 +25,14 @@ func exercise() -> void:
 	root.add_child(app);await process_frame
 	app.lesson_index=6
 	var records:=[]
-	for mode in ["balloons","castle","submarine"]:
+	for mode in ["balloons","castle","submarine","rain"]:
 		app.start_game(mode)
 		if app.run is CastleRun: app.run.begin_wave();app.run.spawn_enemy("guard")
+		if mode=="rain": app.run.spawn_target();app.run.targets[0].position=Vector2(600,340)
+		if mode=="submarine":
+			for i in range(200):
+				if not app.run.recommended_target().is_empty(): break
+				app.run.step(.1)
 		var arena: GameArena=app.layer.find_children("*","GameArena",true,false)[0]
 		app.run.paused=true;app.close_modal()
 		arena.set_process(false)
@@ -58,6 +63,19 @@ func exercise() -> void:
 		check(lit_changes>100,"PointLight2D really illuminates the scenery: "+mode)
 		check(difference(before,after,inside)==0,"lighting leaves opaque target text unchanged: "+mode)
 		records.append({"mode":mode,"word_pixels_changed":protected_changes,"wave_pixels_changed":visible_changes,"lit_pixels_changed":lit_changes})
+		if mode=="rain":
+			for slot in fx.lights: slot.node.enabled=false
+			for slot in fx.meteor_trails: slot.emitter.visible=false
+			before=await capture()
+			fx.update_meteor_trails(.02)
+			for slot in fx.meteor_trails:
+				slot.emitter.speed_scale=1;slot.emitter.visible=true
+			await create_timer(.35).timeout
+			after=await capture()
+			var tail_region:=Rect2i(transform*Rect2(Vector2(460,180),Vector2(230,190)))
+			check(difference(before,after,tail_region)>20,"real meteor particles leave a visible luminous tail")
+			check(difference(before,after,inside)==0,"native meteor tail stays clear of the word plate")
+			after.save_png("res://build/v20-meteor-particle-proof.png")
 	FileAccess.open("res://build/v19-render-validation.json",FileAccess.WRITE).store_string(JSON.stringify(records,"  "))
 	app.queue_free();await process_frame
 	for suffix in ["",".bak",".tmp"]:

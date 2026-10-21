@@ -2,7 +2,58 @@ class_name TypingPrompt
 extends RefCounted
 
 const FONT = preload("res://assets/ui-heading.ttf")
+const PLAQUE = preload("res://assets/generated/v20/ui-word-plaque.png")
+const THEMES = preload("res://assets/generated/v20/ui-themed-plaques.png")
+const THEME_INDEX := {"castle":0,"royal":0,"dojo":0,"rain":1,"aliens":1,"bubbles":2,"submarine":2,"balloons":3,"moles":4,"racing":5,"fighter":6,"restaurant":7,"sprint":8}
+const THEME_REGIONS := [Rect2(14,239,401,143),Rect2(433,237,388,146),Rect2(842,240,397,142),Rect2(16,552,394,141),Rect2(426,551,402,143),Rect2(841,552,398,141),Rect2(14,865,396,139),Rect2(430,867,394,138),Rect2(841,866,398,139)]
+const KEYCAP = preload("res://assets/generated/v20/ui-keycap.png")
 static var measurements: Dictionary = {}
+
+# Source-space slices and destination-space bevels are separate: a one-letter
+# key keeps the same slim edge as a long phrase, without stretching the corners.
+static func material_frame(canvas: CanvasItem, rect: Rect2, keycap := false, active := true, error := false, phase := 0.0, theme := "") -> void:
+	var texture: Texture2D = KEYCAP if keycap else PLAQUE
+	var source := Rect2(38,45,1186,1165) if keycap else Rect2(0,88,2172,492)
+	var themed := not keycap and THEME_INDEX.has(theme)
+	if themed:
+		texture = THEMES
+		source = THEME_REGIONS[THEME_INDEX[theme]]
+	var x_margin := 180 if keycap else 38 if themed else 156
+	var top_margin := 180 if keycap else 23 if themed else 82
+	var bottom_margin := 210 if keycap else 22 if themed else 70
+	var sx := [source.position.x,source.position.x+x_margin,source.end.x-x_margin,source.end.x]
+	var sy := [source.position.y,source.position.y+top_margin,source.end.y-bottom_margin,source.end.y]
+	var edge := minf(14.0 if keycap else 12.0,minf(rect.size.x,rect.size.y)*.22)
+	var dx := [rect.position.x,rect.position.x+edge,rect.end.x-edge,rect.end.x]
+	var dy := [rect.position.y,rect.position.y+edge,rect.end.y-edge,rect.end.y]
+	var tint := Color.WHITE if active else Color(.69,.84,.89,.96)
+	if error: tint = Color(1,.64,.58)
+	# An opaque enamel/wood/paper undercoat keeps world lighting from leaking
+	# through the atlas alpha into the text. The painted material stays above it.
+	var undercoat := Color("fff0ce") if keycap or theme=="restaurant" else Color("167a90") if theme in ["balloons","submarine","bubbles","sprint"] else Color("244252")
+	canvas.draw_rect(rect.grow(-4),undercoat)
+	for y in range(3):
+		for x in range(3):
+			canvas.draw_texture_rect_region(texture,Rect2(dx[x],dy[y],dx[x+1]-dx[x],dy[y+1]-dy[y]),Rect2(sx[x],sy[y],sx[x+1]-sx[x],sy[y+1]-sy[y]),tint)
+	if active and not keycap:
+		# Animated glint stays on the bevel, never over a letter's strokes.
+		var travel := fposmod(phase*.16,1.0)
+		var start := rect.position+Vector2(edge+travel*maxf(1,rect.size.x-edge*2-18),3)
+		canvas.draw_line(start,start+Vector2(18,0),Color(1,.95,.7,.42),1.5,true)
+
+static func glyph(canvas: CanvasItem, value: String, baseline: Vector2, font_size: int, tint: Color, glow := 0.0, dark := false) -> void:
+	var ink := Color("19364c")
+	if glow>0:
+		canvas.draw_string_outline(FONT,baseline,value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,5,Color(1,.77,.3,glow*.16))
+	canvas.draw_string_outline(FONT,baseline+Vector2(0,2),value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,2,Color(.025,.12,.20,.8 if not dark else .22))
+	canvas.draw_string_outline(FONT,baseline,value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,2 if not dark else 1,ink if not dark else Color("fff5d1"))
+	canvas.draw_string(FONT,baseline,value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,tint)
+
+static func key(canvas: CanvasItem, rect: Rect2, value: String, font_size: int, active := true, error := false, phase := 0.0) -> void:
+	material_frame(canvas,rect,true,active,error,phase)
+	var width := FONT.get_string_size(value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
+	var baseline := rect.position+Vector2((rect.size.x-width)*.5,(rect.size.y-FONT.get_height(font_size))*.5+FONT.get_ascent(font_size)-rect.size.y*.025)
+	glyph(canvas,value,baseline,font_size,Color("18384f") if active else Color("355365"),0,true)
 
 # One measured layout serves the fixed input dock and every world-space label.
 # Text never inherits camera shake, hit squash or a particle transform.
@@ -36,8 +87,11 @@ static func measure(word: String, maximum: float, preferred := 34, minimum := 25
 	measurements[key] = result
 	return result
 
-static func paint(canvas: CanvasItem, word: String, typed: int, rect: Rect2, layout: Dictionary, active: bool, error := false, centered := true) -> void:
+static func paint(canvas: CanvasItem, word: String, typed: int, rect: Rect2, layout: Dictionary, active: bool, error := false, centered := true, phase := 0.0, pulse := 0.0, reduced := false, theme := "") -> void:
+	material_frame(canvas,rect,false,active,error,0.0 if reduced else phase,theme)
+	var light := theme in ["submarine","bubbles","balloons","restaurant","sprint"]
 	var font_size: int = layout.font
+	var breath := .5 if reduced else .5+.5*sin(phase*3.4)
 	for i in range(layout.rows.size()):
 		var row: Dictionary = layout.rows[i]
 		var point := rect.position+Vector2((rect.size.x-row.width)*.5 if centered else 16,8+font_size+i*layout.line_height)
@@ -45,21 +99,25 @@ static func paint(canvas: CanvasItem, word: String, typed: int, rect: Rect2, lay
 		var prefix := FONT.get_string_size(str(row.text).substr(0,count),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
 		var next_width := FONT.get_string_size(str(row.text).substr(count,1),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
 		var current: bool = active and typed>=int(row.start) and typed<int(row.start)+str(row.text).length()
-		if current:
-			var key_rect := Rect2(point+Vector2(prefix-2,-font_size+2),Vector2(maxf(13,next_width)+4,font_size+7))
-			canvas.draw_style_box(PlayTheme.surface(Color("ffe093") if not error else Color("ffc5b5"),Color.TRANSPARENT,5),key_rect)
-		canvas.draw_string(FONT,point,row.text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,PlayTheme.TEXT)
+		glyph(canvas,row.text,point,font_size,(Color("17394e") if active else Color("355363")) if light else (Color("f5eedb") if active else Color("d3e3e7")),0,light)
 		if count>0:
-			canvas.draw_string(FONT,point,str(row.text).substr(0,count),HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,Color("147c72"))
+			glyph(canvas,str(row.text).substr(0,count),point,font_size,Color("126d60") if light else Color("8cf4ce"),minf(1,pulse*5),light)
 		if current:
-			canvas.draw_line(point+Vector2(prefix,7),point+Vector2(prefix+maxf(13,next_width),7),Color("a76613") if not error else Color("ae4138"),3,true)
+			var key_rect := Rect2(point+Vector2(prefix-3,-font_size+2),Vector2(maxf(13,next_width)+6,font_size+7))
+			material_frame(canvas,key_rect,true,true,error,phase)
+			var character := str(row.text).substr(count,1)
+			glyph(canvas,character,point+Vector2(prefix,0),font_size,Color("81362e") if error else Color("17384e"),.3+breath*.5,true)
+			var underline := Color("ff9683") if error else Color("ffdf89")
+			underline.a = .7+breath*.3
+			canvas.draw_line(point+Vector2(prefix,10),point+Vector2(prefix+maxf(13,next_width),10),underline,2,true)
 			if word.substr(typed,1)==" ":
-				canvas.draw_line(point+Vector2(prefix+3,0),point+Vector2(prefix+maxf(13,next_width)-3,0),PlayTheme.TEXT,2,true)
+				canvas.draw_line(point+Vector2(prefix+3,0),point+Vector2(prefix+maxf(13,next_width)-3,0),Color("17384e"),2,true)
 
 static func place(preferred_center: Vector2, extent: Vector2, bounds: Rect2, occupied: Array[Rect2], actors: Array[Rect2], previous := Vector2.ZERO) -> Rect2:
 	var base := preferred_center-extent*.5
 	var best := Rect2(base,extent)
 	var best_score := INF
+	var previous_position := base+previous
 	var offsets: Array[Vector2] = [previous,Vector2.ZERO]
 	# Small clearances must be considered before moving a whole label height.
 	# A two-pixel actor overlap should not detach its word by a hundred pixels.
@@ -68,7 +126,7 @@ static func place(preferred_center: Vector2, extent: Vector2, bounds: Rect2, occ
 			offsets.append(Vector2(dx,dy))
 	for shift in offsets:
 		var rect := Rect2((base+shift).clamp(bounds.position,bounds.end-extent),extent)
-		var score := rect.position.distance_squared_to(base)*.002
+		var score := rect.position.distance_squared_to(base)*.0002+rect.position.distance_squared_to(previous_position)*.05
 		for blocked in occupied:
 			if rect.grow(6).intersects(blocked):
 				score += rect.grow(6).intersection(blocked).get_area()*80+10000
@@ -87,7 +145,7 @@ static func place(preferred_center: Vector2, extent: Vector2, bounds: Rect2, occ
 		while y+extent.y<=bounds.end.y:
 			for x in [bounds.position.x,bounds.get_center().x-extent.x*.5,bounds.end.x-extent.x]:
 				var rect := Rect2(Vector2(x,y),extent)
-				var score := rect.position.distance_squared_to(base)*.002
+				var score := rect.position.distance_squared_to(base)*.0002+rect.position.distance_squared_to(previous_position)*.05
 				for blocked in occupied:
 					if rect.grow(6).intersects(blocked):
 						score += rect.grow(6).intersection(blocked).get_area()*80+10000

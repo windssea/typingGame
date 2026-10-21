@@ -1,0 +1,140 @@
+{
+  "version": "2.0",
+  "date": "2026-10-21",
+  "production_url": "https://typing.nanokid.win/",
+  "pages_project": "typinggame-cl5",
+  "assets": [
+    {
+      "key": "keybound/engine-fc74679e3b97f7687894.wasm",
+      "raw_bytes": 39514754,
+      "gzip_bytes": 10054758,
+      "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+    },
+    {
+      "key": "keybound/game-89d494e174515fbb7ccf.pck",
+      "raw_bytes": 4387008,
+      "gzip_bytes": 3918112,
+      "sha256": "89d494e174515fbb7ccfa130c79ac69241ec540278ac28ebad7930a03a6da7f8"
+    },
+    {
+      "key": "keybound/content-aliens-08d936212ad8bbb8e4a9.pck",
+      "raw_bytes": 5358768,
+      "gzip_bytes": 5346065,
+      "sha256": "08d936212ad8bbb8e4a974839d40ea216b0d51e32c50e69821452dc232b9b0ca"
+    },
+    {
+      "key": "keybound/content-arcade-b9a1f67ff5338ea69a2d.pck",
+      "raw_bytes": 2383860,
+      "gzip_bytes": 2376177,
+      "sha256": "b9a1f67ff5338ea69a2d06ab81346fe4d1a22717ff42c523ecf1852f18892a25"
+    },
+    {
+      "key": "keybound/content-balloons-025e8a0fe535fe141c6b.pck",
+      "raw_bytes": 3820264,
+      "gzip_bytes": 3793331,
+      "sha256": "025e8a0fe535fe141c6b5913544b73cc5f6a2908bec8a9757058c1db7b7604b3"
+    },
+    {
+      "key": "keybound/content-bubbles-08392096f783922cc247.pck",
+      "raw_bytes": 2212792,
+      "gzip_bytes": 2198767,
+      "sha256": "08392096f783922cc247e2d18f1a841bdb7de415bfa889d06cd0df32bab08280"
+    },
+    {
+      "key": "keybound/content-rain-70ff7e5119b59f3df37a.pck",
+      "raw_bytes": 2154272,
+      "gzip_bytes": 2132333,
+      "sha256": "70ff7e5119b59f3df37aa9e14058becc2d23de31d36fca5a6e7c60a09fba5d9d"
+    },
+    {
+      "key": "keybound/content-castle-550a8279f885b44c6e60.pck",
+      "raw_bytes": 23203732,
+      "gzip_bytes": 23141914,
+      "sha256": "550a8279f885b44c6e60f2affc6625aaf566ede4319cabbe706be53a69639619"
+    },
+    {
+      "key": "keybound/content-restaurant-eec87e4a921b31cfd956.pck",
+      "raw_bytes": 9482908,
+      "gzip_bytes": 9469195,
+      "sha256": "eec87e4a921b31cfd956a48322286e3221fc4d7d264a6a2864c9b5b3b5fe44fa"
+    },
+    {
+      "key": "keybound/content-fighter-95333c1fdfd4ee5b5644.pck",
+      "raw_bytes": 17516456,
+      "gzip_bytes": 17485835,
+      "sha256": "95333c1fdfd4ee5b564423330287707eb9dc2584df4bd50551f5de89be385ed4"
+    },
+    {
+      "key": "keybound/content-royal-68f94a0a8cbbe32214a4.pck",
+      "raw_bytes": 8243732,
+      "gzip_bytes": 8233493,
+      "sha256": "68f94a0a8cbbe32214a4472a5513191ac3a663ca281effe0b38779ec66458e74"
+    },
+    {
+      "key": "keybound/content-racing-726cc4b91ee328f72868.pck",
+      "raw_bytes": 4819408,
+      "gzip_bytes": 4794977,
+      "sha256": "726cc4b91ee328f7286812eb50b079c76c977d3494a7584f6082895632865426"
+    },
+    {
+      "key": "keybound/content-dojo-9ca28c477e5efd413f1c.pck",
+      "raw_bytes": 12624228,
+      "gzip_bytes": 12590775,
+      "sha256": "9ca28c477e5efd413f1c0d6abfab2e1b6c3e82ba3e58e6eae57fb13e62861186"
+    },
+    {
+      "key": "keybound/content-bosses-16949142bfd50dcb045a.pck",
+      "raw_bytes": 4582204,
+      "gzip_bytes": 4568791,
+      "sha256": "16949142bfd50dcb045aa2e9af49cf859b4f8e5e0840df1fb937874ae3980ec4"
+    },
+    {
+      "key": "keybound/content-moles-13da6a2b49dfd8196477.pck",
+      "raw_bytes": 5406768,
+      "gzip_bytes": 5394496,
+      "sha256": "13da6a2b49dfd81964771f3cb13dcf5e6873afa32fd1d2d3d264e153df0afaf5"
+    },
+    {
+      "key": "keybound/content-goblins-271f3d0da0d7422b5dcd.pck",
+      "raw_bytes": 2630908,
+      "gzip_bytes": 2627541,
+      "sha256": "271f3d0da0d7422b5dcd11db3c45f5df4cb68a8a1866350ecf9f681be5c49d68"
+    },
+    {
+      "key": "keybound/content-sprint-4119b401b746cd298dd8.pck",
+      "raw_bytes": 5569164,
+      "gzip_bytes": 5563812,
+      "sha256": "4119b401b746cd298dd89203439275ca46e375427385368c810eec311ae8ca44"
+    },
+    {
+      "key": "keybound/content-submarine-f7beaf35061fdea372c8.pck",
+      "raw_bytes": 7686352,
+      "gzip_bytes": 7679707,
+      "sha256": "f7beaf35061fdea372c8b58f9542b317314e5d2cca5853bcef303045ea5dd90b"
+    },
+    {
+      "key": "keybound/content-learning-8834b8b2382805e8968c.pck",
+      "raw_bytes": 2056476,
+      "gzip_bytes": 2030963,
+      "sha256": "8834b8b2382805e8968c36f0d24958ac9e4c7b0a418783dab0cc6ee9fb7887b4"
+    }
+  ],
+  "validation": {
+    "regression_suites": 20,
+    "regression_checks": 31054,
+    "regression_failures": 0,
+    "stability_checks": 27,
+    "stability_failures": 0,
+    "gpu_pixel_checks": 18,
+    "gpu_pixel_failures": 0,
+    "isolated_game_packs": 13,
+    "node_loader_tests": 5,
+    "python_loader_and_package_tests": 6,
+    "native_ui_states": 18
+  },
+  "notes": [
+    "Existing gameplay HD textures and Grok animation frames preserved in optional mode packs.",
+    "Current word labels follow actors; focus and feedback do not change label geometry.",
+    "Browser QA uses a separate qa_profile; normal saves retain their namespace."
+  ]
+}

@@ -35,7 +35,16 @@ var live_hud: LiveHud
 var vocabulary_topic := "mixed"
 var soundscape: GameSoundscape
 var fullscreen_transition_until := 0
+var pack_loader: ContentPackLoader
+var loading_progress: ProgressBar
+var loading_status: Label
+var pending_game := ""
+var pending_purpose := "training"
 func _ready() -> void:
+	pack_loader=ContentPackLoader.new()
+	add_child(pack_loader)
+	pack_loader.progress.connect(update_pack_progress)
+	pack_loader.finished.connect(pack_finished)
 	# Public rebrand keeps the existing engine/save namespace for all old profiles.
 	DisplayServer.window_set_title("指尖挑战 · 每一次输入，都有回应")
 	if OS.has_feature("web") and JavaScriptBridge.eval("new URLSearchParams(location.search).has('qa') && new URLSearchParams(location.search).has('qa_profile')",true):
@@ -100,7 +109,7 @@ func clear_ui() -> void:
 	layer.add_child(backdrop)
 	if page!="game":
 		var stage := MenuStage.new()
-		stage.home = page=="home"
+		stage.home = page in ["home","loading"]
 		stage.settings_room = page=="profile"
 		stage.reduced_motion = store.data.settings.reduced_motion
 		layer.add_child(stage)
@@ -135,6 +144,7 @@ func button(value: String, at: Vector2, dimensions: Vector2, callback: Callable,
 	item.position = at
 	item.size = dimensions
 	item.theme_type_variation = "PrimaryButton" if primary else "Button"
+	if parent.name=="BattleActions": item.theme_type_variation="HudButton"
 	item.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	if parent is Container:
 		item.custom_minimum_size = dimensions
@@ -220,9 +230,9 @@ func navigation(active: String) -> void:
 	button("打字训练",Vector2.ZERO,Vector2(208,60),show_lessons,active=="lessons",stack).name = "TrainingNav"
 	button("打字挑战",Vector2.ZERO,Vector2(208,60),show_challenges,active=="challenges",stack).name = "ChallengeNav"
 	UiLayout.space(stack,0,true)
-	var progress := UiLayout.column(UiLayout.margin(UiLayout.card(stack,Color("f0f8ff")),16),8)
-	UiLayout.text(progress,"Lv. %02d  ·  %d XP" % [1+int(store.data.xp/100),store.data.xp],19)
-	UiLayout.text(progress,"已掌握 %d / 10 节" % store.data.completed.size(),16,MINT)
+	var progress := UiLayout.column(UiLayout.margin(UiLayout.card(stack,Color(.09,.25,.31,.78)),16),8)
+	UiLayout.text(progress,"Lv. %02d  ·  %d XP" % [1+int(store.data.xp/100),store.data.xp],19,Color("fff1cd"))
+	UiLayout.text(progress,"已掌握 %d / 10 节" % store.data.completed.size(),16,Color("b9e8d9"))
 	button("存档与设置",Vector2.ZERO,Vector2(194,48),show_profile,false,stack).name = "ProfileUtility"
 	button("全屏  F11",Vector2.ZERO,Vector2(194,44),toggle_fullscreen,false,stack).name = "FullscreenUtility"
 	sound_button = button("F2 声音开" if store.data.settings.get("sound",true) else "F2 声音关",Vector2.ZERO,Vector2(194,44),toggle_sound,false,stack)
@@ -247,14 +257,12 @@ func show_home() -> void:
 	var welcome := UiLayout.column(stack,4)
 	var title := UiLayout.text(welcome,"小手就位，冒险开打！",42)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var subtitle := UiLayout.text(welcome,"从第一个按键，到流畅的单词连击",21,MINT)
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var cards := UiLayout.row(stack,24)
 	cards.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	for i in range(2):
 		var card := UiLayout.card(cards,Color("d7eee0") if i==0 else Color("d7eafa"))
+		card.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		UiLayout.illustrate(card,GeneratedArt.background_path(recommended_mode() if i==0 else "aliens"),Color("d7eee0") if i==0 else Color("d7eafa"))
 		var content := UiLayout.column(UiLayout.margin(card,24),12)
 		var center := CenterContainer.new()
 		center.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -266,17 +274,17 @@ func show_home() -> void:
 		UiLayout.space(caption,0,true)
 		if i==0:
 			button("选课程",Vector2.ZERO,Vector2(128,44),show_lessons,false,caption).name = "ChooseCourse"
-		UiLayout.text(content,"从 F / J 开始，逐步练习单词。" if i==0 else "选好难度，用连击改变战局。",20,MUTED)
 		var launch := button("继续训练  →" if i==0 else "选择挑战  →",Vector2.ZERO,Vector2(0,60),begin_recommended_training if i==0 else show_challenges,i==0,content)
 		launch.name = "StartTraining" if i==0 else "StartChallenge"
 		if i==0:
 			launch.grab_focus()
-	var footer := UiLayout.row(UiLayout.margin(UiLayout.card(stack,Color("d7eee0")),20),20)
+	var footer_frame:=UiLayout.card(stack,Color(.10,.26,.32,.78))
+	footer_frame.add_theme_stylebox_override("panel",PlayTheme.game_panel(Color(.10,.26,.32,.78),Color(.85,.76,.50,.55),10,2))
+	var footer := UiLayout.row(UiLayout.margin(footer_frame,18),20)
 	var next_course := UiLayout.column(footer,4)
-	UiLayout.text(next_course,"继续成长 · "+str(lessons[lesson_index].name),22)
-	UiLayout.text(next_course,"已掌握 %d / 10 节" % store.data.completed.size(),17,MINT)
+	UiLayout.text(next_course,str(lessons[lesson_index].name),22,Color("fff1cd"))
 	UiLayout.space(footer,0,true)
-	UiLayout.text(footer,"Lv. %02d  ·  %d XP" % [1+int(store.data.xp/100),store.data.xp],22)
+	UiLayout.text(footer,"Lv. %02d  ·  %d XP" % [1+int(store.data.xp/100),store.data.xp],22,Color("fff1cd"))
 
 
 func recommended_mode() -> String:
@@ -302,8 +310,8 @@ func add_badge(mode: String, at: Vector2, dimensions: Vector2, parent: Control =
 
 func mission_goal(mode: String, purpose: String) -> String:
 	if mode=="royal": return "输入派兵 · 双路推进 · 击破敌方城堡"
-	if mode=="submarine": return "输入发射鱼雷 · 收集补给 · F3 声呐冻结"
-	if mode=="restaurant": return "备料 → 翻锅 → 出餐 · F3 安抚客人"
+	if mode=="submarine": return "输入发射鱼雷 · 收集补给 · 空格 声呐冻结"
+	if mode=="restaurant": return "备料 → 翻锅 → 出餐 · 空格 安抚客人"
 	if mode=="dojo":
 		return "修好星桥 · 点亮三座星灯"
 	if mode=="castle":
@@ -315,7 +323,7 @@ func mission_goal(mode: String, purpose: String) -> String:
 	if mode in ["dojo","bubbles"]:
 		return "完成 18 次输入 · 不限时、没有失败"
 	if mode=="racing":
-		return "先于对手冲线 · F3 干扰对手" if purpose=="challenge" else "输入推进赛程 · 自由完赛"
+		return "先于对手冲线 · 空格 干扰对手" if purpose=="challenge" else "输入推进赛程 · 自由完赛"
 	return "完成 %d 次命中 · 体力归零则失败" % (30+challenge_index*6) if purpose=="challenge" else "三个小阶段 · 完成 18 次命中"
 
 func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String, parent: Control = layer) -> void:
@@ -339,7 +347,8 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String, 
 		var mode: Dictionary = definition
 		var tint: Color = PlayTheme.PASTELS[GameContent.modes().find(definition)%5]
 		var card := UiLayout.card(grid,tint)
-		UiLayout.illustrate(card,GeneratedArt.background_path(mode.id),tint,.32,.48)
+		card.add_theme_stylebox_override("panel",PlayTheme.game_panel(Color("244c63"),Color("8dabad"),8,3))
+		UiLayout.illustrate(card,MenuArt.background(mode.id),tint,.32,.48)
 		card.custom_minimum_size = Vector2(350,290)
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var content := UiLayout.column(UiLayout.margin(card,14),10)
@@ -354,19 +363,20 @@ func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String, 
 		mascot.offset_right = 80
 		mascot.offset_bottom = 56
 		mascot.reduced_motion = true
-		UiLayout.text(content,mode.name+(" · 推荐" if purpose=="training" and mode.id==recommended_mode() else ""),24)
-		var rule := UiLayout.text(content,mission_goal(mode.id,purpose),16,MUTED)
+		UiLayout.text(content,mode.name+(" · 推荐" if purpose=="training" and mode.id==recommended_mode() else ""),24,Color("fff1cd"))
+		var rule := UiLayout.text(content,mission_goal(mode.id,purpose),16,Color("b9d8db"))
 		rule.custom_minimum_size.y = 46
 		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		UiLayout.space(content,0,true)
 		var enter := button("进入挑战  →" if purpose=="challenge" else "开始训练  →",Vector2.ZERO,Vector2(0,46),func(): start_game(mode.id,purpose),false,content)
+		enter.theme_type_variation="HudButton"
 		enter.name = "Mission_"+str(mode.id)
 		enter.focus_entered.connect(func():
 			GeneratedArt.warm_props(mode.id)
 			enter.theme_type_variation = "PrimaryButton"
 			mascot.reduced_motion = store.data.settings.reduced_motion)
 		enter.focus_exited.connect(func():
-			enter.theme_type_variation = "Button"
+			enter.theme_type_variation = "HudButton"
 			mascot.reduced_motion = true)
 
 
@@ -573,8 +583,8 @@ func show_game_guide() -> void:
 	UiLayout.text(copy,"指法与规则",30,GOLD)
 	var goal := UiLayout.text(copy,mission_goal(run.mode,run.context),21,MINT)
 	goal.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var action_rules := "敲下金色按键，修好脚下的桥。\n每六步点亮一座星灯。\n按错保留进度，重试即可。" if run is BridgeRun else "输入高亮词牌上的完整文字。\nTab 换目标，退格撤回一字。"+("\n完成三次命中后，F3 释放技能。" if run is ArcadeRun or run is AdventureRun else "")
-	var tactics: String = {"fighter":"蓄力时完成单词，打出双倍重拳。\nF3 格挡反击，抓住下一次破绽。", "aliens":"俯冲时优先输入，拦截有额外奖励。\n补给舰恢复护盾。", "castle":"输入萨满符文打断治疗。\n爆破兵点火时，输入符文拆弹。"}.get(run.mode, "")
+	var action_rules := "敲下金色按键，修好脚下的桥。\n每六步点亮一座星灯。\n按错保留进度，重试即可。" if run is BridgeRun else "输入高亮词牌上的完整文字。\nTab 换目标，退格撤回一字。"+("\n完成三次命中后，空格 释放技能。" if run is ArcadeRun or run is AdventureRun else "")
+	var tactics: String = {"fighter":"蓄力时完成单词，打出双倍重拳。\n空格 格挡反击，抓住下一次破绽。", "aliens":"俯冲时优先输入，拦截有额外奖励。\n补给舰恢复护盾。", "castle":"输入萨满符文打断治疗。\n爆破兵点火时，输入符文拆弹。"}.get(run.mode, "")
 	if not tactics.is_empty(): action_rules += "\n\n"+tactics
 	var rules := UiLayout.text(copy,action_rules+"\n\nF2 开关声音 · Esc 暂停",20)
 	rules.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -773,7 +783,61 @@ func show_import() -> void:
 	button("取消",Vector2.ZERO,Vector2(340,52),close_modal,false,actions)
 	input.grab_focus()
 
+func show_pack_loading(mode: String, purpose: String) -> void:
+	page="loading";run=null;pending_game=mode;pending_purpose=purpose
+	clear_ui()
+	var center:=CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(center)
+	var stack:=UiLayout.column(center,22)
+	stack.custom_minimum_size.x=640
+	var name_of_game:=mode
+	for definition in GameContent.modes():
+		if definition.id==mode: name_of_game=definition.name
+	var title:=UiLayout.text(stack,name_of_game,38)
+	title.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	var portrait:=CenterContainer.new();stack.add_child(portrait)
+	var badge:=add_badge(mode,Vector2.ZERO,Vector2(300,250),portrait)
+	badge.custom_minimum_size=Vector2(300,250)
+	loading_status=UiLayout.text(stack,"正在加载游戏… 0%",25)
+	loading_status.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+	loading_progress=ProgressBar.new();loading_progress.show_percentage=false
+	loading_progress.custom_minimum_size=Vector2(640,22)
+	loading_progress.add_theme_stylebox_override("background",PlayTheme.surface(Color("2a6679"),Color("d6e7c5"),10))
+	loading_progress.add_theme_stylebox_override("fill",PlayTheme.surface(PlayTheme.YELLOW,Color.TRANSPARENT,10))
+	stack.add_child(loading_progress)
+	var actions:=UiLayout.row(stack,16)
+	actions.alignment=BoxContainer.ALIGNMENT_CENTER
+	button("重试 Enter",Vector2.ZERO,Vector2(310,52),func(): pack_loader.request(pending_game),true,actions).name="RetryContent"
+	layer.find_child("RetryContent",true,false).hide()
+	button("返回 Esc",Vector2.ZERO,Vector2(310,52),cancel_game_loading,false,actions).grab_focus()
+	pack_loader.request(mode)
+
+func update_pack_progress(value: float, description: String) -> void:
+	if page!="loading": return
+	loading_progress.value=value*100
+	loading_status.text=description+" %d%%"%roundi(value*100)
+	var retry:=layer.find_child("RetryContent",true,false)
+	if is_instance_valid(retry): retry.hide()
+
+func pack_finished(mode: String, success: bool, description: String) -> void:
+	if page!="loading" or pending_game!=mode: return
+	if success:
+		start_game(mode,pending_purpose)
+	else:
+		loading_status.text=description
+		var retry: Button=layer.find_child("RetryContent",true,false)
+		retry.show();retry.grab_focus()
+
+func cancel_game_loading() -> void:
+	pack_loader.cancel();pending_game=""
+	if pending_purpose=="challenge": show_challenges()
+	else: show_training_games()
+
 func start_game(mode: String, purpose := "training") -> void:
+	if is_instance_valid(pack_loader) and pack_loader.needs(mode):
+		show_pack_loading(mode,purpose)
+		return
 	page = "game"
 	session_context = purpose
 	clear_ui()
@@ -786,6 +850,9 @@ func start_game(mode: String, purpose := "training") -> void:
 	if mode=="dojo":
 		start_bridge_stage()
 		return
+	var chrome:=GameChrome.new()
+	chrome.background=load(GeneratedArt.background_path(mode))
+	layer.add_child(chrome)
 	var title := ""
 	for definition in GameContent.modes():
 		if definition.id == mode:
@@ -795,9 +862,12 @@ func start_game(mode: String, purpose := "training") -> void:
 	layer.add_child(shell)
 	var title_label := UiLayout.text(shell.heading,title,28)
 	title_label.name = "GameTitle"
+	title_label.add_theme_color_override("font_color",Color("fff1cd"))
+	title_label.add_theme_color_override("font_outline_color",Color("1e3b4d"))
+	title_label.add_theme_constant_override("outline_size",4)
 	live_hud = LiveHud.new()
 	live_hud.reduced_motion = store.data.settings.reduced_motion
-	live_hud.custom_minimum_size = Vector2(660,80)
+	live_hud.custom_minimum_size = Vector2(560,80)
 	live_hud.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	live_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	shell.header.add_child(live_hud)
@@ -816,6 +886,7 @@ func start_game(mode: String, purpose := "training") -> void:
 	arena.run = run
 	arena.reduced_motion = store.data.settings.reduced_motion
 	shell.field.add_child(arena)
+	chrome.world=arena.backdrop
 	if run is ArcadeRun:
 		# Keep the simulation/actor proportions intact; the scenery fills the wider stage.
 		arena.position.x = 160
@@ -881,6 +952,7 @@ func start_bridge_stage() -> void:
 	title.add_theme_color_override("font_outline_color",Color("d7eff5"))
 	UiLayout.space(header,0,true)
 	var help := button("F1 指法",Vector2.ZERO,Vector2(100,48),show_game_guide,false,header)
+	help.theme_type_variation="HudButton"
 	help.focus_mode = Control.FOCUS_NONE
 	pause_button = button("暂停 Esc",Vector2.ZERO,Vector2(126,48),toggle_pause,false,header)
 	pause_button.focus_mode = Control.FOCUS_NONE
@@ -896,6 +968,8 @@ func _input(event: InputEvent) -> void:
 		toggle_fullscreen()
 		get_viewport().set_input_as_handled()
 		return
+	if page=="loading" and event.keycode==KEY_ESCAPE:
+		cancel_game_loading();get_viewport().set_input_as_handled();return
 	if event.keycode==KEY_F2 and page!="game" and not is_instance_valid(overlay):
 		toggle_sound()
 		get_viewport().set_input_as_handled()
@@ -935,11 +1009,11 @@ func _input(event: InputEvent) -> void:
 			toggle_sound()
 			get_viewport().set_input_as_handled()
 			return
-		if event.keycode==KEY_F3 and run is ArcadeRun and not guide_open and not is_instance_valid(overlay):
+		if event.keycode==KEY_SPACE and run is ArcadeRun and not guide_open and not is_instance_valid(overlay) and not next_input_is_space():
 			run.activate_skill()
 			get_viewport().set_input_as_handled()
 			return
-		if event.keycode==KEY_F3 and run is AdventureRun and not guide_open and not is_instance_valid(overlay):
+		if event.keycode==KEY_SPACE and run is AdventureRun and not guide_open and not is_instance_valid(overlay) and not next_input_is_space():
 			run.activate_skill()
 			get_viewport().set_input_as_handled()
 			return
@@ -963,6 +1037,11 @@ func _input(event: InputEvent) -> void:
 		elif event.unicode >= 32 and event.unicode <= 126 and not event.ctrl_pressed and not event.alt_pressed and not event.meta_pressed:
 			run.type_character(String.chr(event.unicode))
 		get_viewport().set_input_as_handled()
+
+func next_input_is_space() -> bool:
+	# Phrase lessons keep their spaces; skill input never steals a required character.
+	var target:=run.recommended_target()
+	return not target.is_empty() and str(target.word).substr(target.typed,1)==" "
 
 func toggle_fullscreen() -> void:
 	fullscreen_transition_until=Time.get_ticks_msec()+700

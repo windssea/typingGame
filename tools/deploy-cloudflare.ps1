@@ -1,7 +1,8 @@
 param(
     [Parameter(Mandatory=$true)][string]$Package,
     [string]$BucketName = 'typinggame-assets',
-    [switch]$ReuseEngine
+    [switch]$ReuseEngine,
+    [switch]$AssetsOnly
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path -LiteralPath $Package).Path
@@ -25,5 +26,9 @@ $effectiveCorsPath = Join-Path $root 'cors.effective.json'
 $corsPolicy | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $effectiveCorsPath -Encoding utf8NoBOM
 & npx --yes wrangler r2 bucket cors set $BucketName --file $effectiveCorsPath
 if ($LASTEXITCODE -ne 0) { throw 'R2 CORS configuration failed; Pages was not deployed.' }
+if ($AssetsOnly) {
+    Write-Output 'Versioned assets uploaded. The current Pages deployment is unchanged.'
+    return
+}
 & npx --yes wrangler pages deploy $manifest.pages_directory --project-name $manifest.project --branch main
 if ($LASTEXITCODE -ne 0) { throw 'Pages deployment failed. R2 assets remain versioned and can be reused.' }

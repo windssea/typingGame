@@ -44,7 +44,7 @@ static func paint(canvas: CanvasItem, mode: String, clock: float, extent: Vector
 		var axis := Vector2.from_angle(clock*.7+i)* (3+i%3)
 		var cross_axis := axis.orthogonal()*.45
 		canvas.draw_colored_polygon(PackedVector2Array([p-axis,p-cross_axis,p+axis,p+cross_axis]),Color(1,.9,.55,.45))
-	if mode in ["balloons","sprint","racing","moles"]:
+	if mode in ["balloons","sprint","racing"]:
 		for i in range(3):
 			var p := Vector2(fposmod(clock*(5+i*3)+i*extent.x*.4,extent.x+140)-70,45+i*43)
 			canvas.draw_texture_rect(CLOUD,Rect2(p,Vector2(200+i*30,67+i*10)),false,Color(1,1,1,.40))

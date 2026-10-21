@@ -118,7 +118,7 @@ func _draw() -> void:
 		actors.append(Rect2(CastleRun.PADS[tower.pad]-Vector2(52,115),Vector2(104,150)))
 	for target in battle.targets:
 		var boss: bool = target.kind=="boss"
-		prompts.append({"target":target,"center":target.position-Vector2(0,146 if boss else 94),"source":target.position-Vector2(0,27)})
+		if not target.get("pending",false): prompts.append({"target":target,"center":target.position-Vector2(0,146 if boss else 94),"source":target.position-Vector2(0,27)})
 		actors.append(Rect2(target.position-Vector2(74 if boss else 40,116 if boss else 58),Vector2(148,150) if boss else Vector2(80,90)))
 		if boss:
 			blocked.append(Rect2(260,64,520,40))

@@ -13,6 +13,8 @@ func _process(delta: float) -> void:
 	countdown = 0.08
 	var value := {"page":app.page,"lesson":app.lesson_index,"profile":{"xp":app.store.data.xp,"completed":app.store.data.completed,"records":app.store.data.records},"viewport":[app.get_viewport_rect().size.x,app.get_viewport_rect().size.y],"buttons":[],"focus":"","overlay":is_instance_valid(app.overlay)}
 	var focused := app.get_viewport().gui_get_focus_owner()
+	if is_instance_valid(app.pack_loader):
+		value.content_loading={"phase":app.pack_loader.phase,"mode":app.pack_loader.active_mode,"progress":app.pack_loader.last_progress,"loaded_modes":app.pack_loader.loaded_modes.keys()}
 	if focused is Button:
 		value.focus = focused.text
 		value.focus_name = str(focused.name)

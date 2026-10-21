@@ -12,9 +12,13 @@ var last_combo := 0
 var progress_tween: Tween
 var combo_tween: Tween
 var reduced_motion := false
+var mode_id:=""
+var round_number:=1
 var refresh_count := 0
 
 func refresh(run: GameRun) -> void:
+	mode_id=run.mode
+	if run is ArcadeRun: round_number=run.round_number
 	refresh_count += 1
 	var status := "体力"
 	var last := str(run.hp)
@@ -32,6 +36,7 @@ func refresh(run: GameRun) -> void:
 		if run.context=="training" and run.goal==18:
 			note = "%d / 18" % run.kills
 		fraction = run.distance if run.mode=="racing" else float(run.kills)/run.goal
+		if run.mode=="racing": note="赛程 %d%%"%roundi(run.distance*100)
 		if run.mode=="aliens":
 			status = "船体"
 			last = str(run.hp)
@@ -82,12 +87,14 @@ func _draw() -> void:
 		if values.size()<=i:
 			return
 		var x := slot*cell
-		var tint: Color = [PlayTheme.TEAL,PlayTheme.PRIMARY,Color("a54e50")][slot]
+		var tint: Color = [Color("a7f0d9"),Color("ffdd80"),Color("ffb4ad")][slot]
 		var glyph: String = ["accuracy","combo","speed" if values[i][0]=="速度 WPM" else "health"][slot]
+		if mode_id=="fighter" and slot==2: glyph="star"
 		GameGlyph.draw(self,glyph,Vector2(x+22,27),12,tint)
 		var value: String = values[i][1]+(" 连击" if i==2 else " WPM" if values[i][0]=="速度 WPM" else "")
+		if mode_id=="fighter" and slot==2: value="ROUND %02d"%round_number
 		draw_string(FONT,Vector2(x+44,38),value,HORIZONTAL_ALIGNMENT_LEFT,-1,30,tint)
-	draw_string(FONT,Vector2(14,70),note,HORIZONTAL_ALIGNMENT_LEFT,-1,20,PlayTheme.TEXT)
-	draw_line(Vector2(14,78),Vector2(width-14,78),Color("d8e9e6"),3,true)
+	draw_string(FONT,Vector2(14,70),note,HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("fff1cd"))
+	draw_line(Vector2(14,78),Vector2(width-14,78),Color(.75,.84,.88,.25),3,true)
 	if shown_progress>0:
-		draw_line(Vector2(14,78),Vector2(14+(width-28)*shown_progress,78),PlayTheme.TEAL,3,true)
+		draw_line(Vector2(14,78),Vector2(14+(width-28)*shown_progress,78),Color("ffdb83"),3,true)

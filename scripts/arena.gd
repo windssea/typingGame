@@ -69,7 +69,7 @@ func draw_scene_background() -> void:
 
 func layout_labels(candidates: Array[Dictionary], actors: Array[Rect2], blocked: Array[Rect2] = []) -> void:
 	var selected: int = run.recommended_target().get("id",-1)
-	candidates.sort_custom(func(a,b): return a.target.id==selected if (a.target.id==selected)!=(b.target.id==selected) else int(a.target.id)<int(b.target.id))
+	candidates.sort_custom(func(a,b): return int(a.target.id)<int(b.target.id))
 	var occupied: Array[Rect2] = blocked.duplicate()
 	label_order = candidates
 	label_rects.clear()
@@ -77,7 +77,7 @@ func layout_labels(candidates: Array[Dictionary], actors: Array[Rect2], blocked:
 	for entry in candidates:
 		var target: Dictionary = entry.target
 		var active: bool = target.id==selected
-		var layout := TypingPrompt.measure(target.word,minf(480,size.x-32),52 if active else 42,32)
+		var layout := TypingPrompt.measure(target.word,minf(480,size.x-32),48,32)
 		var extent: Vector2 = layout.size
 		var center: Vector2 = entry.center
 		var rect := TypingPrompt.place(center,extent,Rect2(12,12,size.x-24,size.y-28),occupied,actors,label_offsets.get(target.id,Vector2.ZERO))
@@ -99,10 +99,7 @@ func draw_target_labels() -> void:
 		var target: Dictionary = entry.target
 		var active: bool = target.id==selected
 		var rect: Rect2 = label_rects[target.id]
-		var edge := Color("bb6256") if active and error_pulse>0 else PlayTheme.PRIMARY if active else Color("afc9d4")
-		# A quiet, close-fitting label. Association comes from placement, never a leader line.
-		draw_style_box(PlayTheme.surface(Color("fff1c9") if active else Color(.88,.95,.98,.90),edge if active else Color.TRANSPARENT,10),rect)
-		TypingPrompt.paint(self,target.word,target.typed,rect,label_layouts[target.id],active,active and error_pulse>0)
+		TypingPrompt.paint(self,target.word,target.typed,rect,label_layouts[target.id],active,active and error_pulse>0,true,clock,key_pulse if active else 0.0,reduced_motion,run.mode)
 		if target.has("health"):
 			var fraction: float = clampf(float(target.health)/target.max_health,0,1)
 			draw_line(rect.position+Vector2(10,rect.size.y-4),rect.end-Vector2(10,4),Color("d5e7de"),3,true)
@@ -151,7 +148,7 @@ func step_feedback(delta: float) -> void:
 	displayed_wpm = lerpf(displayed_wpm,run.wpm(),1-exp(-delta*7))
 	if run.mode=="rain":
 		var target := run.recommended_target()
-		var goal: float = (Vector2(target.position)-Vector2(680,558)).angle()+PI/2 if not target.is_empty() else 0.0
+		var goal: float = (Vector2(target.position)-GameRun.INTERCEPTOR_ORIGIN).angle()+PI/2 if not target.is_empty() else 0.0
 		cannon_angle = goal if reduced_motion else lerp_angle(cannon_angle,goal,1-exp(-delta*14))
 		cannon_x = 680
 	for beat in key_beats.duplicate():
@@ -269,16 +266,14 @@ func _draw() -> void:
 		castle(GameRun.CENTER - Vector2(0, 12), 0.8)
 		write("键 之 城", GameRun.CENTER + Vector2(0, 93), 15, GOLD, true)
 	else:
-		draw_style_box(PlayTheme.game_panel(Color("e9f6ff"),Color("aed1dd"),8,3),Rect2(50,582,1260,12))
-		write("防 线", Vector2(680, 620), 16, GOLD, true)
 		# A small interceptor visibly tracks the recommended threat.
 		var recoil := 0.0 if reduced_motion else sin(clampf(impact_age/.24,0,1)*PI)*9
-		var ship := Vector2(680,558+recoil)
+		var ship := GameRun.INTERCEPTOR_ORIGIN+Vector2(0,recoil)
 		draw_ellipse_shadow(ship+Vector2(0,14),Vector2(31,6))
 		if cannon_base!=null:
-			draw_texture_rect(cannon_base,Rect2(ship+Vector2(-58,0),Vector2(116,38)),false)
+			draw_texture_rect(cannon_base,Rect2(ship+Vector2(-78,0),Vector2(156,51)),false)
 			draw_set_transform(ship,cannon_angle)
-			draw_texture_rect(cannon_barrel,Rect2(-58,-78,116,78),false)
+			draw_texture_rect(cannon_barrel,Rect2(-78,-105,156,105),false)
 			draw_set_transform(Vector2.ZERO)
 		else:
 			draw_colored_polygon(PackedVector2Array([ship+Vector2(-25,10),ship+Vector2(0,-21),ship+Vector2(25,10),ship]),PlayTheme.PRIMARY)
@@ -292,17 +287,12 @@ func _draw() -> void:
 			monster(pos, target.kind, selected)
 		else:
 			var velocity: Vector2=target.get("velocity",Vector2.DOWN)
-			var tail := pos-velocity.normalized()*96
-			if not reduced_motion:
-				draw_line(tail,pos,Color(.2,.75,1,.14),22,true)
-				draw_line(tail.lerp(pos,.3),pos,Color(.45,.9,1,.4),10,true)
-				draw_line(tail.lerp(pos,.6),pos,Color(.8,.96,1,.8),4,true)
 			draw_set_transform(pos,velocity.angle()-PI/4)
-			art.draw_sprite(self,"comet",Vector2.ZERO,Vector2(64,68))
+			art.draw_sprite(self,"meteor_head",Vector2.ZERO,Vector2(57,57))
 			draw_set_transform(Vector2.ZERO)
 			if art.sprites.is_empty():
 				draw_circle(pos,13,PlayTheme.SKY)
-		if not target.get("pending",false): prompts.append({"target":target,"center":pos-Vector2(0,76),"source":pos-Vector2(0,20)})
+		if not target.get("pending",false): prompts.append({"target":target,"center":pos+Vector2(160,-5) if run.mode=="rain" else pos-Vector2(0,76),"source":pos-Vector2(0,20)})
 		actors.append(Rect2(pos-Vector2(28,30),Vector2(56,62)))
 	if not reduced_motion and run.mode!="rain":
 		for effect in effects:
@@ -320,7 +310,9 @@ func _draw() -> void:
 				draw_circle(p, 7, Color("ffbc69"))
 				draw_circle(p, 3, Color("fff0c1"))
 			draw_arc(effect.to, 10 + t * 32, 0, TAU, 24, Color(0.92, 0.76, 0.47, 1 - t), 2, true)
-	layout_labels(prompts,actors)
+	var blocked: Array[Rect2]=[]
+	if run.mode=="rain": blocked.append(Rect2(570,445,220,155))
+	layout_labels(prompts,actors,blocked)
 	draw_flights()
 	juice.draw(self)
 	draw_impact()
@@ -433,13 +425,12 @@ func monster(p: Vector2, kind: int, selected: bool) -> void:
 func word_plate(target: Dictionary, at: Vector2, selected: bool) -> void:
 	var layout := TypingPrompt.measure(target.word,minf(size.x-28,700),36 if selected else 29,25)
 	var rect := Rect2((at-layout.size*.5).clamp(Vector2(12,12),size-layout.size-Vector2(12,12)),layout.size)
-	draw_style_box(PlayTheme.game_panel(Color("f3fcff") if selected else Color.WHITE,PlayTheme.PRIMARY if selected else Color("bfd3e5"),13,4),rect)
-	TypingPrompt.paint(self,target.word,target.typed,rect,layout,selected,error_pulse>0)
+	TypingPrompt.paint(self,target.word,target.typed,rect,layout,selected,error_pulse>0,true,clock,key_pulse,reduced_motion,run.mode)
 
 func training_word(target: Dictionary, at: Vector2, preferred_size: int, max_width: float) -> void:
 	var layout := TypingPrompt.measure(target.word,max_width,preferred_size,30)
 	var rect := Rect2(at-Vector2(layout.size.x*.5,layout.font+8),layout.size)
-	TypingPrompt.paint(self,target.word,target.typed,rect,layout,true,error_pulse>0)
+	TypingPrompt.paint(self,target.word,target.typed,rect,layout,true,error_pulse>0,true,clock,key_pulse,reduced_motion,run.mode)
 
 func draw_dojo() -> void:
 	var press := 0.0 if reduced_motion else key_pulse/0.22
@@ -528,7 +519,7 @@ func draw_sprint() -> void:
 		var target: Dictionary = run.targets[0]
 		var layout := TypingPrompt.measure(target.word,960,132 if str(target.word).length()==1 else 104,42)
 		var rect := Rect2(Vector2(680,285)-layout.size*.5,layout.size)
-		TypingPrompt.paint(self,target.word,target.typed,rect,layout,true,error_pulse>0)
+		TypingPrompt.paint(self,target.word,target.typed,rect,layout,true,error_pulse>0,true,clock,key_pulse,reduced_motion,run.mode)
 	var runner := Vector2(sprint_runner_x(),568)
 	var running_seconds := clock if sprint_running else 0.0
 	var frame := coach_motion.texture("run" if coach_motion.clips.has("run") and sprint_running else "idle",running_seconds,reduced_motion)

@@ -21,6 +21,10 @@ func exercise() -> void:
 			for i in range(3): app.run.build_tower(i,["fire","ice","storm"][i])
 			app.run.begin_wave();app.run.spawn_enemy("goblin").health=1
 		elif definition.id=="rain": app.run.spawn_target()
+		elif definition.id=="submarine":
+			for i in range(200):
+				if not app.run.recommended_target().is_empty(): break
+				app.run.step(.1)
 		var arena: GameArena=app.layer.find_children("*","GameArena",true,false)[0]
 		var vfx: EngineVfx=arena.native_vfx
 		check(is_instance_valid(vfx) and vfx.ambient is CPUParticles2D,"native emitters exist: "+definition.id)
@@ -36,6 +40,10 @@ func exercise() -> void:
 		if definition.id in ["rain","castle","royal","submarine"]:
 			check(vfx.launch_count>0,"physical launches drive native trails: "+definition.id)
 		if app.run is CastleRun and app.run.targets.is_empty(): app.run.spawn_enemy("guard")
+		if definition.id=="submarine":
+			for i in range(200):
+				if not app.run.recommended_target().is_empty(): break
+				app.run.step(.1)
 		arena.queue_redraw();await process_frame
 		vfx.apply_mask()
 		check(not vfx.protected_regions.is_empty(),"typing regions mask native effects: "+definition.id)
