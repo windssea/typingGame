@@ -49,7 +49,7 @@ Web 现在使用约 4.39 MB 的启动 PCK（gzip 约 3.92 MB），保留代码�
 ```powershell
 ./tools/export-web.ps1 -Python <python.exe>
 python tools/test-content-packs.py --source build/web-streamed
-python tools/prepare-cloudflare.py --source build/web-streamed --out <new-output-directory> --project typinggame-cl5 --page-origin https://typinggame-cl5.pages.dev --asset-base-url <public-r2-origin>
+python tools/prepare-cloudflare.py --source build/web-streamed --out <new-output-directory> --project typinggame --page-origin https://typinggame-cl5.pages.dev --asset-base-url <public-r2-origin>
 ./tools/deploy-cloudflare.ps1 -Package <output-directory> -ReuseEngine
 ```
 

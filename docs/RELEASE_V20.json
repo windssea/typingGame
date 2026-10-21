@@ -2,7 +2,7 @@
   "version": "2.0",
   "date": "2026-10-21",
   "production_url": "https://typing.nanokid.win/",
-  "pages_project": "typinggame-cl5",
+  "pages_project": "typinggame",
   "assets": [
     {
       "key": "keybound/engine-fc74679e3b97f7687894.wasm",
