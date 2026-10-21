@@ -35,6 +35,12 @@ func setup(mode: String) -> void:
 	if mode in AdventureRun.MODES:
 		for id in {"royal":["knight","goblin"],"submarine":["sub"],"restaurant":["chef"]}[mode]:
 			sprites[id] = load_texture("res://assets/generated/v18/"+id+".png")
+		if mode=="submarine":
+			var atlas: Texture2D=load_texture("res://assets/generated/v23/dive-props.png")
+			var regions: Dictionary={"supply_pod":Rect2(60,106,510,530),"friendly_torpedo":Rect2(595,224,645,352),"enemy_torpedo":Rect2(22,720,650,410),"fish_school":Rect2(676,642,560,512)}
+			for id in regions:
+				var sprite:=AtlasTexture.new();sprite.atlas=atlas;sprite.region=regions[id];sprite.filter_clip=true
+				sprites[id]=sprite
 		if mode=="restaurant":
 			sprites.dessert=load_texture("res://assets/generated/v22/comfort-tart.png")
 			var kitchen: Texture2D=load_texture("res://assets/generated/v20/kitchen-props.png")

@@ -7,15 +7,25 @@ var boss_motion:=ArcadeMotion.new()
 var reaction_age := 10.0
 var reaction_point := Vector2.ZERO
 var kitchen := KitchenMotion.new()
+var dive := DiveMotion.new()
 
 func _ready() -> void:
 	super._ready()
 	if run.mode=="restaurant": kitchen.setup()
 	else: motion.setup({"royal":"knight","submarine":"sub"}[run.mode])
+	if run.mode=="submarine": dive.setup()
 	if run.mode=="royal":
 		enemy_motion.setup("castle")
 		boss_motion.setup("castle_boss")
 	run.action.connect(func(kind,point):
+		if run.mode=="submarine":
+			dive.react(kind,point,run)
+			if kind in ["launch","enemy_launch","skill","interrupt"]: return
+			var color:=PlayTheme.CORAL if kind in ["miss","depth_hit"] else PlayTheme.MINT if kind=="pickup" else PlayTheme.SKY
+			var tier:=2 if kind in ["hit","armor_hit","depth_hit"] else 1
+			juice.burst(point,color,tier,"droplet")
+			record_impact(point,tier,color)
+			return
 		if run.mode=="restaurant":
 			kitchen.react(kind,point,run)
 			if kind in ["deliver","skill"]: return
@@ -36,6 +46,7 @@ func _process(delta: float) -> void:
 	if run!=null and not run.paused:
 		reaction_age+=delta
 		if run.mode=="restaurant": kitchen.step(delta,reduced_motion)
+		if run.mode=="submarine": dive.step(delta)
 
 func actor(id: String, point: Vector2, bounds: Vector2, seconds: float, flip := false, animated := true) -> void:
 	var frame := boss_motion.texture("idle",seconds,reduced_motion) if id=="boss" else enemy_motion.texture("idle",seconds,reduced_motion) if id=="goblin" else motion.texture("idle",seconds,reduced_motion) if animated else null
@@ -61,8 +72,9 @@ func _draw() -> void:
 			panel(Rect2(x,46,135,12),Color(.12,.23,.32,.5),6)
 			panel(Rect2(x,46,135*(float(run.hp)/100 if side==0 else float(run.core)/run.core_max),12),PlayTheme.TEAL if side==0 else PlayTheme.CORAL,6)
 	elif run.mode=="submarine":
-		actor("sub",Vector2(175,490),Vector2(240,240),clock)
-		draw_flights()
+		dive.draw_fish(self)
+		var recoil:=0.0 if reduced_motion else sin(clampf(dive.recoil_age/.24,0,1)*PI)*5
+		actor("sub",DiveTactics.PLAYER-Vector2(recoil,0),Vector2(240,240),clock)
 	if run.mode=="restaurant": kitchen.draw_guests(self,run)
 	for target in run.targets:
 		var p: Vector2=target.position
@@ -76,17 +88,15 @@ func _draw() -> void:
 				write("统领  %d / %d"%[target.health,target.max_health],p+Vector2(0,112),21,Color("254454"),true)
 		elif run.mode=="submarine":
 			if p.x>1460: continue
-			actor("sub",p,Vector2(172,172),clock+target.id*.3,true)
-			if target.kind=="supply":
-				write("+",p+Vector2(-8,8),32,PlayTheme.TEAL)
+			dive.draw_target(self,target)
 		else:
 			kitchen.draw_station(self,target)
 		if run.target_available(target):
-			var center := p-Vector2(0,182 if target.kind=="boss" else 100) if run.mode!="restaurant" else p-Vector2(0,55)
+			var center := p-Vector2(0,182 if target.kind=="boss" else 145 if target.kind=="armored" else 115 if run.mode=="submarine" else 100) if run.mode!="restaurant" else p-Vector2(0,55)
 			prompts.append({"target":target,"center":center,"source":p})
 		if run.mode=="restaurant":
 			actors.append(Rect2(p.x-50,65,100,110))
-		else: actors.append(Rect2(p-Vector2(95,135),Vector2(190,255)) if target.kind=="boss" else Rect2(p-Vector2(50,60),Vector2(100,95)))
+		else: actors.append(Rect2(p-Vector2(100,96),Vector2(200,192)) if target.kind=="armored" else Rect2(p-Vector2(95,135),Vector2(190,255)) if target.kind=="boss" else Rect2(p-Vector2(76,64),Vector2(152,128)) if run.mode=="submarine" else Rect2(p-Vector2(50,60),Vector2(100,95)))
 	var blocked: Array[Rect2]=[]
 	if run.mode=="restaurant":
 		blocked.append(Rect2(kitchen.chef_x-110,310,220,320))
@@ -97,6 +107,10 @@ func _draw() -> void:
 			draw_texture_rect(frame,Rect2(-180,-180,360,360),false)
 			draw_set_transform(Vector2.ZERO)
 	layout_labels(prompts,actors,blocked)
+	if run.mode=="submarine":
+		dive.draw_ghosts(self)
+		dive.draw_torpedoes(self,run.projectiles)
+		dive.draw_torpedoes(self,run.enemy_shots,true)
 	if run.mode=="restaurant": kitchen.draw_desserts(self)
 	juice.draw(self)
 	draw_impact()

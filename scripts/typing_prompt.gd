@@ -95,7 +95,7 @@ static func measure(word: String, maximum: float, preferred := 34, minimum := 25
 
 static func paint(canvas: CanvasItem, word: String, typed: int, rect: Rect2, layout: Dictionary, active: bool, error := false, centered := true, phase := 0.0, pulse := 0.0, reduced := false, theme := "") -> void:
 	material_frame(canvas,rect,false,active,error,0.0 if reduced else phase,theme)
-	var light := theme in ["submarine","bubbles","balloons","restaurant","sprint"]
+	var light := theme in ["balloons","restaurant","sprint"]
 	var font_size: int = layout.font
 	var breath := .5 if reduced else .5+.5*sin(phase*3.4)
 	for i in range(layout.rows.size()):

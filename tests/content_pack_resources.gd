@@ -24,6 +24,10 @@ func exercise() -> void:
 		for state in ["idle","stir","toss","serve","walk"]:
 			require(arena.kitchen.clips.texture(state,.25)!=null,"exported kitchen action: "+state)
 		require(arena.art.sprites.has("dessert"),"exported comfort dessert")
+	if mode=="submarine":
+		for library in [arena.dive.scout,arena.dive.armored]:
+			for state in ["idle","alert","hit"]: require(library.texture(state,.2)!=null,"exported submarine native action: "+state)
+		for prop in ["supply_pod","friendly_torpedo","enemy_torpedo","fish_school"]: require(arena.art.sprites.has(prop),"exported underwater prop: "+prop)
 	if run is CastleRun:
 		run.wave=6
 		arena.prepare_creatures()

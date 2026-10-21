@@ -43,6 +43,7 @@ func _process(delta: float) -> void:
 			value.run.merge({"travel":run.travel,"lit_beacons":int(run.kills/6),"goal":18})
 		if run is AdventureRun:
 			value.run.merge({"core":run.core,"goal":run.goal,"skill_charge":run.skill_charge,"skill_time":run.skill_time,"skill_uses":run.skill_uses,"units":run.units.size()})
+			value.run.merge({"enemy_projectiles":run.enemy_shots.size(),"recovered_supplies":run.recovered_supplies})
 		if run is ArcadeRun:
 			value.run.merge({"distance":run.distance,"rival":run.rival,"shield":run.shield,"enemy_hp":run.enemy_hp})
 			value.run.merge({"skill_charge":run.skill_charge,"skill_time":run.skill_time,"skill_uses":run.skill_uses,"goal":run.goal,"counters":run.counters,"guard_ready":run.guard_ready})

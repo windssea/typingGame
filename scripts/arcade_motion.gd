@@ -5,6 +5,8 @@ extends RefCounted
 const LIBRARY := {
 	"knight":{"idle":"knight-v18"},
 	"sub":{"idle":"sub-v18"},
+	"dive_scout":{"idle":"dive-scout-idle-v23","alert":"dive-scout-alert-v23","hit":"dive-scout-hit-v23"},
+	"dive_armored":{"idle":"dive-armored-idle-v23","alert":"dive-armored-alert-v23","hit":"dive-armored-hit-v23"},
 	"chef":{"idle":"chef-idle-v22","stir":"chef-stir-v22","toss":"chef-toss-v22","serve":"chef-serve-v22","walk":"chef-walk-v22"},
 	"robot":{"idle":"robot-v18"},
 	"balloon_pop":{"idle":"balloon-pop-v18"},

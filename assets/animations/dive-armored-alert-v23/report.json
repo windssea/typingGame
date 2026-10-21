@@ -1,0 +1,40 @@
+{
+  "source": "D:\\dev\\windssea\\typingGame\\build\\animations\\dive-armored-v23\\grok-raw.mp4",
+  "native": {
+    "width": 960,
+    "height": 960,
+    "fps": "24",
+    "duration": 8.041667,
+    "frames": "193",
+    "audio_tracks": 1
+  },
+  "atlas": {
+    "file": "assets/animations/dive-armored-alert-v23/idle-atlas.png",
+    "cell": 384,
+    "columns": 8,
+    "rows": 5,
+    "frames": 36,
+    "fps": "24",
+    "interval": [
+      2.0,
+      3.5
+    ],
+    "decoded_rgba_bytes": 23592960
+  },
+  "processing": [
+    "native frame interval extraction",
+    "chroma key #ff00ff",
+    "shared whole-canvas scale and padding",
+    "atlas packing",
+    "boundary-only magenta-spill alpha attenuation, no opaque interior recoloring"
+  ],
+  "interpolation": false,
+  "loop_review": "native interval and mechanical silhouette inspected; common source-canvas pivot retained",
+  "status": "reviewed-native-source",
+  "static_crop": null,
+  "animation": "alert",
+  "loop": false,
+  "chroma_key": "ff00ff",
+  "cell_safety_inset_px": 8,
+  "minimum_frame_margin_px": 12
+}

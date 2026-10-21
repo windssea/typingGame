@@ -5,6 +5,7 @@ uniform float strength = 1.0;
 uniform int world_kind = 0;
 uniform float restored = 0.0;
 uniform vec2 impact_offset = vec2(0.0);
+uniform float sonar = 0.0;
 
 void fragment() {
 	vec2 uv = UV;
@@ -29,6 +30,14 @@ void fragment() {
 		light += sin(uv.x*11.0+uv.y*7.0-clock*0.3)*0.012*edge*strength;
 	}
 	source.rgb *= 1.0+light;
+	if (world_kind==3) {
+		float a=sin(uv.x*34.0+uv.y*17.0+clock*.7);
+		float b=sin(uv.x*21.0-uv.y*31.0-clock*.55);
+		float caustic=pow(max(0.0,a*b),6.0)*smoothstep(.25,.95,uv.y);
+		source.rgb+=vec3(.028,.055,.05)*caustic*strength;
+		float scan=exp(-pow((uv.x-(1.0-sonar)*1.15)/.035,2.0));
+		source.rgb+=vec3(.05,.22,.20)*scan*step(.001,sonar)*strength;
+	}
 	if (world_kind==5) {
 		source.rgb = mix(source.rgb,source.rgb*vec3(1.06,1.025,.97),restored);
 	}

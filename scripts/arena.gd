@@ -53,7 +53,7 @@ func setup_backdrop(texture: Texture2D) -> void:
 	var shader_material := ShaderMaterial.new()
 	shader_material.shader = BREEZE
 	shader_material.set_shader_parameter("strength",0.0 if reduced_motion else 1.0)
-	shader_material.set_shader_parameter("world_kind",1 if run.mode in ["castle","moles"] else 2 if run.mode in ["aliens","rain"] else 3 if run.mode=="bubbles" else 4 if run.mode=="balloons" else 0)
+	shader_material.set_shader_parameter("world_kind",1 if run.mode in ["castle","moles"] else 2 if run.mode in ["aliens","rain"] else 3 if run.mode in ["bubbles","submarine"] else 4 if run.mode=="balloons" else 0)
 	backdrop.material = shader_material
 	add_child(backdrop)
 	native_vfx=EngineVfx.new()
@@ -65,6 +65,7 @@ func draw_scene_background() -> void:
 		if not backdrop_external:
 			backdrop.size = size
 		backdrop.material.set_shader_parameter("clock",clock)
+		if run.mode=="submarine": backdrop.material.set_shader_parameter("sonar",run.skill_time/4.0)
 	WorldAtmosphere.paint(self,run.mode,clock,size,reduced_motion)
 
 func layout_labels(candidates: Array[Dictionary], actors: Array[Rect2], blocked: Array[Rect2] = []) -> void:
@@ -187,7 +188,8 @@ func _ready() -> void:
 		run.spell.connect(func(_a,_b,_l):
 			if coach_age<0:
 				coach_age = 0.0)
-		run.projectile_launched.connect(func(_shot): key_pulse=.22)
+		run.projectile_launched.connect(func(shot):
+			if shot.kind!="enemy_torpedo": key_pulse=.22)
 
 func _process(delta: float) -> void:
 	if run == null or not run.paused:
@@ -211,7 +213,7 @@ func _process(delta: float) -> void:
 					var direction: Vector2=target.get("velocity",Vector2.DOWN).normalized()
 					juice.trail(target.position-direction*20,-direction*42,Color("77d9ff"),6)
 			for shot in run.projectiles:
-				juice.trail(shot.position,(shot.previous-shot.position).normalized()*65,Color("a7edff") if shot.kind in ["ice","torpedo","interceptor"] else Color("ffb56e"),4)
+				juice.trail(shot.position,(shot.previous-shot.position).normalized()*65,Color("a7edff") if shot.kind in ["ice","torpedo","rescue","interceptor"] else Color("ffb56e"),4)
 		for effect in effects.duplicate():
 			effect.life -= delta
 			if effect.life <= 0:

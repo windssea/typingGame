@@ -16,7 +16,7 @@ static func paint(canvas: CanvasItem, mode: String, clock: float, extent: Vector
 		for i in range(18):
 			var p := Vector2(fposmod(i*193.7+sin(clock*.3+i)*18,extent.x),extent.y-fposmod(clock*(14+i%4*6)+i*41,extent.y))
 			canvas.draw_circle(p,2+i%3,Color(.65,.94,1,.28))
-		for i in range(5):
+		for i in range(0 if mode=="submarine" else 5):
 			var x := fposmod(clock*22+i*277,extent.x+120)-60
 			var p := Vector2(x,extent.y*.18+i*22)
 			canvas.draw_colored_polygon(PackedVector2Array([p-Vector2(10,0),p+Vector2(8,-3),p+Vector2(8,3)]),Color(.1,.42,.61,.25))

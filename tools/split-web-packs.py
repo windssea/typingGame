@@ -23,7 +23,7 @@ backgrounds.pop('assets/generated/rain-background.png',None)
 backgrounds['assets/generated/v20/rain-background.png']='rain'
 animation_groups={
  'coach':'dojo','goblin':'goblins','wolf':'castle','boss':'bosses','guard':'castle','shaman':'castle','bomber':'castle','royal-guard':'castle',
- 'mole':'moles','ufo':'aliens','rally':'racing','boxing':'fighter','knight':'royal','sub':'submarine','chef':'restaurant','balloon':'balloons','robot':'sprint'}
+ 'mole':'moles','ufo':'aliens','rally':'racing','boxing':'fighter','knight':'royal','sub':'submarine','dive':'submarine','chef':'restaurant','balloon':'balloons','robot':'sprint'}
 def group_for(path):
  s=imports.get(path,path)
  if not path.endswith('.ctex'):return 'core'
@@ -36,6 +36,7 @@ def group_for(path):
  if s in backgrounds:return backgrounds[s]
  if s=='assets/generated/v20/kitchen-props.png':return 'restaurant'
  if s=='assets/generated/v22/comfort-tart.png':return 'restaurant'
+ if s=='assets/generated/v23/dive-props.png':return 'submarine'
  if s=='assets/generated/learning-sprites-v10.png':return 'learning'
  if s=='assets/generated/arcade-sprites.png':return 'arcade'
  if s=='assets/generated/castle-sprites.png' or s.startswith('assets/generated/v17/'):return 'castle'

@@ -1,0 +1,43 @@
+{
+  "version": "2.3",
+  "date": "2026-10-21",
+  "production_url": "https://typing.nanokid.win/",
+  "objects": [
+    {
+      "key": "keybound/game-4e37eeaf80986c28dcce.pck",
+      "raw_bytes": 4526156,
+      "upload_bytes": 3949632,
+      "sha256": "4e37eeaf80986c28dccef6a6caebfd83858002326adac22793e9f1378ff2aa95"
+    },
+    {
+      "key": "keybound/content-submarine-86b8aca402e6c3703d77.pck",
+      "raw_bytes": 14726756,
+      "upload_bytes": 14663673,
+      "sha256": "86b8aca402e6c3703d77b36bf1843619adc4071080da508eaaf66abfd9f7db73"
+    }
+  ],
+  "validation": {
+    "regression_suites": 20,
+    "regression_checks": 31055,
+    "regression_failures": 0,
+    "dive_simulation_checks": 60,
+    "dive_assets_vfx_checks": 483,
+    "ui_states": 116,
+    "isolated_games": 13,
+    "minimum_card_checks": 96
+  },
+  "animation_provenance": "docs/ANIMATION_V23.json",
+  "review": "docs/DIVE_POLISH_V23.md",
+  "performance": "docs/ui-review-v23/native-performance.json",
+  "local_browser": {
+    "correct": 9,
+    "attempts": 9,
+    "kills": 8,
+    "hp": 100,
+    "recovered_supplies": 2,
+    "skill_uses": 1,
+    "armored_two_impacts_verified": true,
+    "console_errors": 0,
+    "screenshot": "docs/ui-review-v23/browser-armor.jpg"
+  }
+}

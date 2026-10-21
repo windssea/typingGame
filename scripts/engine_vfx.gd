@@ -32,6 +32,8 @@ var shake_tween: Tween
 var auras: Array[CPUParticles2D] = []
 var meteor_trails: Array[Dictionary] = []
 var stoves: Array[Dictionary] = []
+var dive_wakes: Array[Dictionary] = []
+var dive_lamps: Array[PointLight2D] = []
 
 func radial_texture(extent: int, for_light := false) -> GradientTexture2D:
 	var gradient := Gradient.new()
@@ -127,6 +129,23 @@ func _ready() -> void:
 			aura.scale_amount_min=.08;aura.scale_amount_max=.18
 			aura.position=CastleRun.PADS[i]-Vector2(0,102)
 			auras.append(aura)
+	if arena.run.mode=="submarine":
+		var rim:=Gradient.new()
+		rim.offsets=PackedFloat32Array([0,.58,.78,.94,1])
+		rim.colors=PackedColorArray([Color(1,1,1,0),Color(1,1,1,.03),Color(1,1,1,.6),Color(1,1,1,.16),Color(1,1,1,0)])
+		var bubble:=radial_texture(32);bubble.gradient=rim
+		for i in range(4):
+			var emitter:=make_emitter("DiveWake%d"%i)
+			emitter.texture=bubble;emitter.one_shot=false;emitter.explosiveness=0
+			emitter.amount=18;emitter.lifetime=.85;emitter.spread=16;emitter.gravity=Vector2(0,-18)
+			emitter.initial_velocity_min=12;emitter.initial_velocity_max=35
+			emitter.scale_amount_min=.12;emitter.scale_amount_max=.34;emitter.color=Color(.72,.95,1,.65)
+			dive_wakes.append({"emitter":emitter,"entity":-2 if i==0 else -1,"tail":0.0})
+		for i in range(3):
+			var lamp:=PointLight2D.new();lamp.name="DiveSignal%d"%i
+			lamp.texture=light_texture;lamp.color=Color("ffba79");lamp.texture_scale=1.7
+			lamp.range_item_cull_mask=2;lamp.shadow_enabled=false;lamp.enabled=false
+			add_child(lamp);dive_lamps.append(lamp)
 	# PointLight2D affects only scenery (mask 2), never labels, HUD or menu controls.
 	arena.backdrop.light_mask=2
 	arena.run.projectile_launched.connect(on_launch)
@@ -225,7 +244,7 @@ func shake_backdrop(tier: int) -> void:
 func on_launch(shot: Dictionary) -> void:
 	launch_count+=1
 	if arena.reduced_motion: return
-	var tint:=Color("92e8ff") if shot.kind in ["ice","torpedo","interceptor"] else Color("ffc178")
+	var tint:=Color("92e8ff") if shot.kind in ["ice","torpedo","rescue","interceptor"] else Color("ffac88") if shot.kind=="enemy_torpedo" else Color("ffc178")
 	light_at(shot.origin,tint,.3,1.2)
 	for slot in trails:
 		if slot.shot.is_empty() and slot.tail<=0:
@@ -249,7 +268,8 @@ func on_action(kind: String, point: Vector2) -> void:
 	if kind=="skill":
 		if arena.run.mode=="restaurant":
 			for target in arena.run.targets: emit_at(Vector2(target.position.x,170),1,"celebrate",Color("ffe7a1"))
-		else: emit_at(point,3,"water" if arena.run.mode=="submarine" else "celebrate",PlayTheme.SKY)
+		elif arena.run.mode=="submarine": emit_at(DiveTactics.PLAYER,2,"water",PlayTheme.SKY)
+		else: emit_at(point,3,"celebrate",PlayTheme.SKY)
 
 func on_arcade_effect(kind: String, point: Vector2, _power: int) -> void:
 	if kind=="aliens": light_at(Vector2(520,540),PlayTheme.SKY,.35,1.5)
@@ -291,6 +311,17 @@ func _process(delta: float) -> void:
 		slot.emitter.speed_scale=0.0 if paused else 1.0
 		slot.emitter.visible=not reduced
 		if reduced: slot.emitter.emitting=false
+	for slot in dive_wakes:
+		slot.emitter.speed_scale=0.0 if paused else 1.0
+		slot.emitter.visible=not reduced
+		if reduced: slot.emitter.emitting=false
+	if not dive_lamps.is_empty():
+		var charging: Array=arena.run.targets.filter(func(t):return t.intent=="charging")
+		for i in range(dive_lamps.size()):
+			dive_lamps[i].enabled=not reduced and i<charging.size()
+			if i<charging.size():
+				dive_lamps[i].position=charging[i].position-Vector2(68,0)
+				dive_lamps[i].energy=.22+.05*sin(clock*6)
 	for i in range(auras.size()):
 		var emitter:=auras[i]
 		emitter.speed_scale=0.0 if paused else 1.0
@@ -309,6 +340,7 @@ func _process(delta: float) -> void:
 	if paused: return
 	clock+=delta
 	update_meteor_trails(delta)
+	update_dive_wakes(delta)
 	for slot in waves+lights:
 		if slot.tween!=null and slot.tween.is_valid(): slot.tween.custom_step(delta)
 	if reduced:
@@ -326,12 +358,33 @@ func _process(delta: float) -> void:
 		var emitter: CPUParticles2D=slot.emitter
 		emitter.visible=not reduced
 		if not slot.shot.is_empty():
-			if arena.run.projectiles.has(slot.shot) and not reduced:
+			if (arena.run.projectiles.has(slot.shot) or (arena.run is AdventureRun and arena.run.enemy_shots.has(slot.shot))) and not reduced:
 				emitter.position=slot.shot.position
 				emitter.direction=(slot.shot.previous-slot.shot.position).normalized()
 			else:
 				slot.shot={};emitter.emitting=false;slot.tail=emitter.lifetime
 		else: slot.tail=maxf(0,slot.tail-delta)
+
+func update_dive_wakes(delta: float) -> void:
+	if dive_wakes.is_empty(): return
+	for slot in dive_wakes:
+		var target:=arena.run.target_by_id(slot.entity)
+		var hero: bool=slot.entity==-2
+		if not hero and target.is_empty():
+			if slot.entity!=-1: slot.entity=-1;slot.tail=.85;slot.emitter.emitting=false
+			slot.tail=maxf(0,slot.tail-delta)
+			continue
+		slot.emitter.position=DiveTactics.PLAYER-Vector2(78,0) if hero else target.position+Vector2(76,8)
+		slot.emitter.direction=Vector2.LEFT if hero else Vector2.RIGHT
+		slot.emitter.emitting=not reduced
+	if reduced: return
+	for target in arena.run.targets:
+		if target.position.x>1450 or target.intent=="returning" or target.kind=="supply" or dive_wakes.any(func(s): return s.entity==target.id): continue
+		for slot in dive_wakes:
+			if slot.entity==-1 and slot.tail<=0:
+				slot.entity=target.id;slot.emitter.position=target.position+Vector2(76,8)
+				slot.emitter.direction=Vector2.RIGHT;slot.emitter.restart();slot.emitter.emitting=true
+				break
 
 func update_meteor_trails(delta: float) -> void:
 	for slot in meteor_trails:
@@ -354,4 +407,4 @@ func update_meteor_trails(delta: float) -> void:
 				break
 
 func snapshot() -> Dictionary:
-	return {"backend":"CPUParticles2D + PointLight2D + Tween + canvas shaders","events":event_count,"launches":launch_count,"burst_pool":bursts.size(),"trail_pool":trails.size(),"meteor_trails":meteor_trails.filter(func(slot): return slot.emitter.emitting).size(),"light_pool":lights.size(),"wave_pool":waves.size(),"tower_auras":auras.filter(func(p): return p.emitting).size(),"cooking_stoves":stoves.filter(func(s): return s.fire.emitting).size(),"active_bursts":bursts.filter(func(p): return p.emitting).size(),"active_lights":lights.filter(func(p): return p.node.enabled).size(),"protected_regions":protected_regions.size(),"clock":clock,"paused":paused,"reduced":reduced,"shake":[shake.x,shake.y]}
+	return {"backend":"CPUParticles2D + PointLight2D + Tween + canvas shaders","events":event_count,"launches":launch_count,"burst_pool":bursts.size(),"trail_pool":trails.size(),"meteor_trails":meteor_trails.filter(func(slot): return slot.emitter.emitting).size(),"light_pool":lights.size(),"wave_pool":waves.size(),"tower_auras":auras.filter(func(p): return p.emitting).size(),"dive_wake_pool":dive_wakes.size(),"active_dive_wakes":dive_wakes.filter(func(s): return s.emitter.emitting).size(),"cooking_stoves":stoves.filter(func(s): return s.fire.emitting).size(),"active_bursts":bursts.filter(func(p): return p.emitting).size(),"active_lights":lights.filter(func(p): return p.node.enabled).size(),"protected_regions":protected_regions.size(),"clock":clock,"paused":paused,"reduced":reduced,"shake":[shake.x,shake.y]}

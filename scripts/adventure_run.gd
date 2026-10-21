@@ -13,6 +13,8 @@ var skill_time := 0.0
 var skill_uses := 0
 var units: Array[Dictionary] = []
 var bosses_defeated:=0
+var enemy_shots: Array[Dictionary] = []
+var recovered_supplies:=0
 
 func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 0) -> void:
 	super.setup(mode_id,lesson_data,pace,seed_value)
@@ -22,7 +24,7 @@ func setup(mode_id: String, lesson_data: Dictionary, pace := 1.0, seed_value := 
 	for i in range(2 if mode=="royal" else 3): spawn_target()
 
 func spawn_target() -> void:
-	if mode=="restaurant" and kills+targets.size()>=goal: return
+	if mode in ["restaurant","submarine"] and kills+targets.size()>=goal: return
 	var lane := next_id% (2 if mode=="royal" else 3)
 	if mode=="restaurant":
 		for i in range(3):
@@ -39,6 +41,7 @@ func spawn_target() -> void:
 		targets[-1].health=3+SessionOptions.rank_index(challenge_rank) if boss else 1
 		targets[-1].max_health=targets[-1].health
 		if boss: targets[-1].speed*=.55
+	elif mode=="submarine": DiveTactics.configure(targets[-1],SessionOptions.rank_index(challenge_rank))
 	next_id+=1
 	spawned+=1
 
@@ -47,6 +50,11 @@ func priority(target: Dictionary) -> float:
 
 func target_available(target: Dictionary) -> bool:
 	return super.target_available(target) and (mode!="submarine" or target.position.x<1320)
+
+func allows_typing() -> bool:
+	# Entry and accepted-shot travel offer no readable target; spare input then
+	# cannot create phantom mistakes before the next visible word arrives.
+	return targets.any(target_available) if mode=="submarine" else true
 
 func step(delta: float) -> void:
 	if done or paused: return
@@ -60,6 +68,14 @@ func advance(dt: float) -> void:
 	elapsed+=dt
 	skill_time=maxf(0,skill_time-dt)
 	for target in targets.duplicate():
+		if mode=="submarine" and target.intent=="returning":
+			target.collect_left=maxf(0,target.collect_left-dt)
+			var fraction:=1-pow(target.collect_left/DiveTactics.COLLECT_SECONDS,2)
+			target.position=target.collect_origin.lerp(DiveTactics.PLAYER,fraction)
+			if target.collect_left<=0:
+				hp=mini(100,hp+12);recovered_supplies+=1;complete_order(target)
+				if done: return
+			continue
 		if mode=="restaurant":
 			# An accepted final word launches the dish. Credit, celebration and victory
 			# wait for arrival; a guest cannot leave while their plate is in flight.
@@ -77,10 +93,10 @@ func advance(dt: float) -> void:
 					target.word=next_word()
 					target.typed=0
 					action.emit("plate",target.position)
-		else:
-			var factor := .12 if mode=="submarine" and skill_time>0 else 1.0
-			target.position.x-=target.speed*dt*factor
-		if (mode=="restaurant" and target.remaining<=0) or (mode!="restaurant" and target.position.x<110):
+		elif mode=="submarine":
+			if DiveTactics.advance(target,dt,skill_time>0,context=="challenge",difficulty): launch_enemy_torpedo(target)
+		else: target.position.x-=target.speed*dt
+		if (mode=="restaurant" and target.remaining<=0) or (mode!="restaurant" and target.position.x<110 and not (mode=="submarine" and target.pending)):
 			hp=maxi(0,hp-(12 if context=="training" else 20))
 			combo=0
 			action.emit("miss",target.position)
@@ -90,6 +106,9 @@ func advance(dt: float) -> void:
 				finish(false)
 				return
 	step_projectiles(dt)
+	if done: return
+	if mode=="submarine": step_enemy_torpedoes(dt)
+	if done: return
 	for unit in units.duplicate():
 		unit.position.x+=dt*(420 if skill_time>0 else 255)
 		if unit.position.x>=1240:
@@ -124,7 +143,10 @@ func on_word_completed(target: Dictionary) -> void:
 			action.emit("deliver",target.position)
 		return
 	target.pending=true
-	launch_projectile(target,Vector2(160,target.position.y) if mode=="royal" else Vector2(185,485),"knight" if mode=="royal" else "torpedo",1,340 if mode=="royal" else 650)
+	if mode=="submarine" and target.intent=="charging":
+		target.intent="cruise";target.fired=true;target.intent_left=0
+		action.emit("interrupt",target.position)
+	launch_projectile(target,Vector2(160,target.position.y) if mode=="royal" else DiveTactics.MUZZLE,"knight" if mode=="royal" else "rescue" if target.kind=="supply" else "torpedo",1,340 if mode=="royal" else 650)
 	action.emit("deploy" if mode=="royal" else "launch",target.position)
 
 func resolve_projectile(_shot: Dictionary, target: Dictionary) -> void:
@@ -137,11 +159,45 @@ func resolve_projectile(_shot: Dictionary, target: Dictionary) -> void:
 			return
 		if target.kind=="boss": bosses_defeated+=1
 		units.append({"position":target.position,"lane":target.lane})
-	elif target.kind=="supply": hp=mini(100,hp+12)
+	elif mode=="submarine":
+		if target.kind=="supply":
+			target.intent="returning";target.collect_left=DiveTactics.COLLECT_SECONDS
+			target.collect_origin=target.position
+			action.emit("recover",target.position)
+			return
+		for shot in enemy_shots.duplicate():
+			if shot.source==target.id:
+				enemy_shots.erase(shot);action.emit("neutralize",shot.position)
+		if target.kind=="armored":
+			target.health-=1
+			if target.health>0:
+				target.pending=false;target.typed=0;target.word=next_word()
+				action.emit("armor_hit",target.position)
+				return
 	complete_order(target)
 
+func launch_enemy_torpedo(target: Dictionary) -> void:
+	if enemy_shots.size()>=6: return
+	var origin: Vector2=target.position+Vector2(-68,8)
+	var shot: Dictionary={"position":origin,"previous":origin,"origin":origin,"destination":DiveTactics.PLAYER,"source":target.id,"kind":"enemy_torpedo","speed":250.0,"trail":[]}
+	enemy_shots.append(shot)
+	projectile_launched.emit(shot)
+	action.emit("enemy_launch",origin)
+
+func step_enemy_torpedoes(dt: float) -> void:
+	for shot in enemy_shots.duplicate():
+		shot.previous=shot.position
+		var distance: float=shot.speed*dt*(.12 if skill_time>0 else 1.0)
+		if shot.position.distance_to(shot.destination)<=distance+14:
+			enemy_shots.erase(shot)
+			hp=maxi(0,hp-(12 if context=="training" else 20))
+			combo=0;action.emit("depth_hit",DiveTactics.PLAYER)
+			if hp<=0: finish(false);return
+		else:
+			shot.position=shot.position.move_toward(shot.destination,distance)
+
 func complete_order(target: Dictionary) -> void:
-	action.emit("serve" if mode=="restaurant" else "hit",target.position)
+	action.emit("serve" if mode=="restaurant" else "pickup" if mode=="submarine" and target.kind=="supply" else "hit",target.position)
 	last_completion_point=target.position
 	score+=str(target.word).length()*10+mini(combo,20)*5+(maxi(0,int(target.remaining)) if mode=="restaurant" else 0)
 	kills+=1

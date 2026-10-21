@@ -32,6 +32,9 @@ func _ready() -> void:
 		battle.action.connect(func(kind,point):
 			# Delivery is a quiet launch; the guest chime belongs to plate arrival.
 			if kind=="deliver": return
+			if battle.mode=="submarine":
+				on_effect({"launch":"laser","enemy_launch":"laser","armor_hit":"block","hit":"pop","pickup":"combo","depth_hit":"damage","miss":"damage","skill":"skill","interrupt":"block","neutralize":"pop","recover":"build"}.get(kind,"pop"),point,point,1)
+				return
 			on_effect({"hit":"punch","core":"damage","serve":"combo","cook":"fire","chop":"mallet","launch":"laser","deploy":"build","miss":"damage","skill":"skill"}.get(kind,"build"),point,point,1))
 	elif battle is ArcadeRun:
 		battle.impact.connect(func(kind,point,power):
