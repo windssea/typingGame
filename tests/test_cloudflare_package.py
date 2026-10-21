@@ -61,13 +61,25 @@ class CloudflareCorsTests(unittest.TestCase):
             self.assertEqual(len(manifest['objects']),3)
             self.assertFalse((output/'pages/content-dojo.pck').exists())
             self.assertFalse((output/'pages/pack-plan.json').exists())
-            runtime=(output/'pages/content-manifest.js').read_text()
+            scripts=list((output/'pages').glob('content-manifest-*.js'))
+            loaders=list((output/'pages').glob('content-packs-*.js'))
+            self.assertEqual(len(scripts),1)
+            self.assertEqual(len(loaders),1)
+            runtime=scripts[0].read_text()
             self.assertIn(hashlib.sha256(pack).hexdigest(),runtime)
+            self.assertIn(hashlib.sha256(b'bootstrap').hexdigest(),runtime)
+            self.assertIn(hashlib.sha256(scripts[0].read_bytes()).hexdigest()[:16],scripts[0].name)
             html=(output/'pages/index.html').read_text()
-            self.assertLess(html.index('content-manifest.js'),html.index('content-packs.js'))
-            self.assertLess(html.index('content-packs.js'),html.index('src="index.js"'))
+            self.assertLess(html.index(scripts[0].name),html.index(loaders[0].name))
+            self.assertLess(html.index(loaders[0].name),html.index('src="index.js"'))
+            self.assertNotIn('src="content-manifest.js"',html)
+            self.assertIn('window.keyboundBootstrapSHA',html)
             obj=next(item for item in manifest['objects'] if 'content-dojo-' in item['key'])
             self.assertEqual(gzip.decompress(Path(obj['file']).read_bytes()),pack)
+            (source/'content-dojo.pck').write_bytes(pack+b'new native animation')
+            revised=Path(directory)/'revised'
+            subprocess.run([sys.executable,str(ROOT/'tools/prepare-cloudflare.py'),'--source',str(source),'--out',str(revised),'--asset-base-url','https://assets.example'],check=True,stdout=subprocess.DEVNULL)
+            self.assertNotEqual(scripts[0].name,next((revised/'pages').glob('content-manifest-*.js')).name)
 
 
 if __name__ == '__main__':

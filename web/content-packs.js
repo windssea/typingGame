@@ -3,6 +3,9 @@
  'use strict';
  const manifest=window.keyboundContentManifest;
  if(!manifest)return;
+ if(typeof document!=='undefined'&&new URL(location.href).searchParams.has('qa')){
+  document.documentElement.setAttribute('data-keybound-content',JSON.stringify({bootstrap:manifest.bootstrap_sha256,packs:Object.fromEntries(Object.entries(manifest.packs).map(([id,item])=>[id,item.sha256]))}));
+ }
  const session=new Map();
  let listener=null,controller=null,serial=0;
  const emit=(mode,value,status,payload='')=>listener?.(mode,value,status,payload);
@@ -54,6 +57,7 @@
   cancel(){serial++;controller?.abort();controller=null;},
   async request(mode){
    this.cancel();const ticket=serial;controller=new AbortController();const signal=controller.signal;
+   if(manifest.bootstrap_sha256&&manifest.bootstrap_sha256!==window.keyboundBootstrapSHA){emit(mode,0,'error','游戏版本已更新，请刷新页面');return;}
    const ids=manifest.modes[mode];
    if(!ids){emit(mode,0,'error','Unknown mode');return;}
    const total=ids.reduce((sum,id)=>sum+manifest.packs[id].bytes,0),received=new Map();let lastEmit=0;

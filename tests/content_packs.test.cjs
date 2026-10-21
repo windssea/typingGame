@@ -15,6 +15,7 @@ async function fixture(options={}){
   caches:{open:async()=>{if(options.noCache)throw Error('quota');return cache;}},
   fetch:async(url,{signal})=>{requests.push(url);if(options.fetch)return options.fetch(url,signal,payloads);if(options.fail)throw Error('offline');return new Response(payloads[url.split('/').pop()]);},
   engine:{copyToFS:(path,bytes)=>copies.push({path,bytes:Array.from(bytes)})}};
+ if(options.versionMismatch){context.window.keyboundContentManifest.bootstrap_sha256='new-build';context.window.keyboundBootstrapSHA='old-build';}
  vm.runInNewContext(code,context);
  const api=context.window.keyboundPacks;api.listen((...args)=>events.push(args));
  return {api,packs,payloads,stored,requests,copies,events,deleted,options};
@@ -25,6 +26,11 @@ test('loads only selected game and shared pack, reuses session bytes',async()=>{
  assert.equal(f.copies.length,2);assert.equal(f.events.at(-1)[2],'ready');
  await f.api.request('dojo');assert.equal(f.requests.length,2);assert.equal(f.copies.length,2);
  await f.api.request('castle');assert.equal(f.requests.length,3);assert.equal(f.copies.length,3);
+});
+
+test('mixed bootstrap and manifest versions cannot mount incompatible assets',async()=>{
+ const f=await fixture({versionMismatch:true});await f.api.request('castle');
+ assert.equal(f.requests.length,0);assert.equal(f.copies.length,0);assert.equal(f.events.at(-1)[2],'error');
 });
 test('uses verified cache without downloading or retaining gzip headers',async()=>{
  const f=await fixture();for(const id of ['learning','dojo'])f.stored.set(f.packs[id].url,new Response(f.payloads[id]));

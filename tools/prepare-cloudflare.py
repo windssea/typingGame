@@ -50,10 +50,12 @@ for item in source.iterdir():
             raise SystemExit('Unexpected large shell asset: '+item.name)
         shutil.copy2(item,pages/item.name)
 html=(pages/'index.html').read_text(encoding='utf-8')
+bootstrap_sha=next(obj['sha256'] for obj in objects if obj['key'].startswith('keybound/game-'))
 loader='''<script>
 // Versioned public game payloads live on R2; Godot keeps its local virtual file names.
 (() => {
  const assets = ASSET_MAPPING;
+ window.keyboundBootstrapSHA = BOOTSTRAP_SHA;
  const nativeFetch = window.fetch.bind(window);
  const local = Object.fromEntries(Object.entries(assets).map(([name,url]) => [new URL(name,location.href).href,url]));
  window.fetch = (input, options) => {
@@ -62,7 +64,7 @@ loader='''<script>
  };
 })();
 </script>
-'''.replace('ASSET_MAPPING',json.dumps(mapping,separators=(',',':')))
+'''.replace('ASSET_MAPPING',json.dumps(mapping,separators=(',',':'))).replace('BOOTSTRAP_SHA',json.dumps(bootstrap_sha))
 marker='<script src="index.js"></script>'
 if marker not in html:
     raise SystemExit('Unrecognized Godot shell; no changes written to the source export')
@@ -71,12 +73,16 @@ if content:
     for group,item in content['packs'].items():
         obj=next(obj for obj in objects if mapping[item['file']].endswith(obj['key']))
         packs[group]={'url':mapping[item['file']],'bytes':obj['raw_bytes'],'sha256':obj['sha256']}
-    browser_manifest={'modes':content['modes'],'packs':packs}
-    (pages/'content-manifest.js').write_text('window.keyboundContentManifest='+json.dumps(browser_manifest,separators=(',',':'))+';\n',encoding='utf-8')
-    shutil.copy2(Path(__file__).resolve().parents[1]/'web/content-packs.js',pages/'content-packs.js')
-    loader+='<script src="content-manifest.js"></script>\n<script src="content-packs.js"></script>\n'
+    browser_manifest={'bootstrap_sha256':bootstrap_sha,'modes':content['modes'],'packs':packs}
+    manifest_script='window.keyboundContentManifest='+json.dumps(browser_manifest,separators=(',',':'))+';\n'
+    manifest_name='content-manifest-'+hashlib.sha256(manifest_script.encode()).hexdigest()[:16]+'.js'
+    runtime=(Path(__file__).resolve().parents[1]/'web/content-packs.js').read_bytes()
+    runtime_name='content-packs-'+hashlib.sha256(runtime).hexdigest()[:16]+'.js'
+    (pages/manifest_name).write_bytes(manifest_script.encode('utf-8'))
+    (pages/runtime_name).write_bytes(runtime)
+    loader+=f'<script src="{manifest_name}"></script>\n<script src="{runtime_name}"></script>\n'
 (pages/'index.html').write_text(html.replace(marker,loader+marker),encoding='utf-8')
-(pages/'_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n/index.html\n  Cache-Control: no-cache\n',encoding='utf-8')
+(pages/'_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n/\n  Cache-Control: no-cache\n/index.html\n  Cache-Control: no-cache\n/index.js\n  Cache-Control: no-cache\n/content-*\n  Cache-Control: public, max-age=31536000, immutable\n',encoding='utf-8')
 page_origin=args.page_origin or f'https://{args.project}.pages.dev'
 policy_path=Path(__file__).resolve().parents[1]/'config/cloudflare-cors.json'
 cors=json.loads(policy_path.read_text(encoding='utf-8'))
