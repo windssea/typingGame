@@ -1,0 +1,80 @@
+[
+  {
+    "mode": "dojo",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "bubbles",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "rain",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "sprint",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "castle",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "balloons",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "aliens",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "moles",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "racing",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "fighter",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "royal",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "submarine",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  },
+  {
+    "mode": "restaurant",
+    "exit": 0,
+    "errors": [],
+    "passed": true
+  }
+]

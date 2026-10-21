@@ -242,49 +242,42 @@ func show_home() -> void:
 	page = "home"
 	run = null
 	clear_ui()
-	var safe := UiLayout.margin(layer,40)
+	var safe := UiLayout.margin(layer,36)
 	safe.name = "HomeLayout"
 	safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var stack := UiLayout.column(safe,24)
+	var stack := UiLayout.column(safe,8)
 	var header := UiLayout.row(stack,12)
-	var brand := UiLayout.text(header,"指尖挑战",32)
-	brand.add_theme_color_override("font_outline_color",Color("eff9f2"))
-	brand.add_theme_constant_override("outline_size",6)
 	UiLayout.space(header,0,true)
-	button("存档与设置",Vector2.ZERO,Vector2(172,48),show_profile,false,header).name = "ProfileUtility"
-	button("全屏  F11",Vector2.ZERO,Vector2(128,48),toggle_fullscreen,false,header).name="FullscreenUtility"
-	sound_button = button("F2 声音开" if store.data.settings.get("sound",true) else "F2 声音关",Vector2.ZERO,Vector2(140,48),toggle_sound,false,header)
-	var welcome := UiLayout.column(stack,4)
-	var title := UiLayout.text(welcome,"小手就位，冒险开打！",42)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var cards := UiLayout.row(stack,24)
+	var settings:=button("设置",Vector2.ZERO,Vector2(96,56),show_profile,false,header)
+	settings.name="ProfileUtility";settings.tooltip_text="存档与设置"
+	var fullscreen:=button("全屏",Vector2.ZERO,Vector2(96,56),toggle_fullscreen,false,header)
+	fullscreen.name="FullscreenUtility";fullscreen.tooltip_text="F11 全屏"
+	sound_button = button("声音开" if store.data.settings.get("sound",true) else "声音关",Vector2.ZERO,Vector2(108,56),toggle_sound,false,header)
+	sound_button.tooltip_text="F2 声音开关"
+	var logo:=HomeHeading.new();logo.brand=true;logo.custom_minimum_size.y=100;stack.add_child(logo)
+	var cards := UiLayout.row(stack,64)
 	cards.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	for i in range(2):
-		var card := UiLayout.card(cards,Color("d7eee0") if i==0 else Color("d7eafa"))
-		card.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
-		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var content := UiLayout.column(UiLayout.margin(card,24),12)
-		var center := CenterContainer.new()
-		center.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		content.add_child(center)
-		var badge := add_badge(recommended_mode() if i==0 else "aliens",Vector2.ZERO,Vector2(360,220),center)
-		badge.custom_minimum_size = Vector2(360,220)
-		var caption := UiLayout.row(content,12)
-		UiLayout.text(caption,"打字训练" if i==0 else "打字挑战",34)
-		UiLayout.space(caption,0,true)
-		if i==0:
-			button("选课程",Vector2.ZERO,Vector2(128,44),show_lessons,false,caption).name = "ChooseCourse"
-		var launch := button("继续训练  →" if i==0 else "选择挑战  →",Vector2.ZERO,Vector2(0,60),begin_recommended_training if i==0 else show_challenges,i==0,content)
+		var content := UiLayout.column(cards,8)
+		content.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+		var gate:=HomeGate.new();gate.training=i==0;gate.reduced_motion=store.data.settings.reduced_motion
+		gate.name="TrainingGate" if i==0 else "ChallengeGate"
+		gate.custom_minimum_size=Vector2(360,340);gate.size_flags_vertical=Control.SIZE_EXPAND_FILL;content.add_child(gate)
+		var heading:=HomeHeading.new();heading.title="打字训练" if i==0 else "打字挑战";heading.training=i==0
+		heading.custom_minimum_size.y=64;content.add_child(heading)
+		var action_center:=CenterContainer.new();content.add_child(action_center)
+		var launch := button("继续训练  →" if i==0 else "开始挑战  →",Vector2.ZERO,Vector2(320,76),begin_recommended_training if i==0 else show_challenges,i==0,action_center)
 		launch.name = "StartTraining" if i==0 else "StartChallenge"
+		launch.add_theme_font_size_override("font_size",30)
+		launch.focus_entered.connect(func():gate.set_selected(true))
+		launch.focus_exited.connect(func():gate.set_selected(false))
+		launch.mouse_entered.connect(func():gate.set_selected(true))
+		launch.mouse_exited.connect(func():gate.set_selected(launch.has_focus()))
+		var detail:=CenterContainer.new();detail.custom_minimum_size.y=52;content.add_child(detail)
 		if i==0:
+			var course:=button("选课 · "+str(lessons[lesson_index].name),Vector2.ZERO,Vector2(320,52),show_lessons,false,detail)
+			course.name="ChooseCourse";course.add_theme_font_size_override("font_size",21)
 			launch.grab_focus()
-	var footer_frame:=UiLayout.card(stack,Color(.10,.26,.32,.78))
-	footer_frame.add_theme_stylebox_override("panel",PlayTheme.game_panel(Color(.10,.26,.32,.78),Color(.85,.76,.50,.55),10,2))
-	var footer := UiLayout.row(UiLayout.margin(footer_frame,18),20)
-	var next_course := UiLayout.column(footer,4)
-	UiLayout.text(next_course,str(lessons[lesson_index].name),22,Color("fff1cd"))
-	UiLayout.space(footer,0,true)
-	UiLayout.text(footer,"Lv. %02d  ·  %d XP" % [1+int(store.data.xp/100),store.data.xp],22,Color("fff1cd"))
 
 
 func recommended_mode() -> String:
@@ -323,7 +316,7 @@ func mission_goal(mode: String, purpose: String) -> String:
 	if mode in ["dojo","bubbles"]:
 		return "完成 18 次输入 · 不限时、没有失败"
 	if mode=="racing":
-		return "先于对手冲线 · 空格 干扰对手" if purpose=="challenge" else "输入推进赛程 · 自由完赛"
+		return "先于对手冲线 · 空格 氮气冲刺" if purpose=="challenge" else "输入推进赛程 · 自由完赛"
 	return "完成 %d 次命中 · 体力归零则失败" % (30+challenge_index*6) if purpose=="challenge" else "三个小阶段 · 完成 18 次命中"
 
 func game_grid(modes: Array, at: Vector2, dimensions: Vector2, purpose: String, parent: Control = layer) -> void:
@@ -1060,7 +1053,7 @@ func toggle_sound() -> void:
 	soundscape.apply_settings()
 	store.save_profile()
 	if is_instance_valid(sound_button):
-		sound_button.text = "F2 声音开" if enabled else "F2 声音关"
+		sound_button.text = ("声音开" if enabled else "声音关") if page=="home" else ("F2 声音开" if enabled else "F2 声音关")
 
 func keyboard_controls() -> Array[Control]:
 	var root: Control = overlay if is_instance_valid(overlay) else layer

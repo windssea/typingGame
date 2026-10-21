@@ -1,0 +1,42 @@
+{
+  "generator": "built-in ImageGen; transparent_background=true",
+  "asset": "assets/menu-v25/entrances.png",
+  "size": [
+    1774,
+    887
+  ],
+  "sha256": "e3e77fcc8947ccf236e8a7e371fecab13789956d2e1e13316ce24b6bf720d62d",
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "native_animation_reuse": [
+    {
+      "source": "assets/animations/coach-idle-hd-v11/idle.tres",
+      "runtime": "assets/menu-v25/coach.tres",
+      "frames": 48,
+      "fps": 24,
+      "frame_interpolation": false,
+      "new_generation": false,
+      "source_magenta_key_residue_pixels_removed": 31308
+    },
+    {
+      "source": "assets/animations/coach-cheer-hd-v11/idle.tres",
+      "runtime": "assets/menu-v25/coach-cheer.tres",
+      "frames": 42,
+      "fps": 24,
+      "frame_interpolation": false,
+      "new_generation": false,
+      "source_magenta_key_residue_pixels_removed": 23788
+    },
+    {
+      "source": "assets/animations/knight-v18/idle.tres",
+      "runtime": "assets/menu-v25/knight.tres",
+      "frames": 48,
+      "fps": 24,
+      "frame_interpolation": false,
+      "new_generation": false,
+      "source_magenta_key_residue_pixels_removed": 109081
+    }
+  ]
+}
