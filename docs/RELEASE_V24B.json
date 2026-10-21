@@ -21,5 +21,8 @@
     "ui_layout_failures": 0,
     "ui_states": 116
   },
-  "native_loading_preview": "docs/ui-review-v24/button-loading-v24b.png"
+  "native_loading_preview": "docs/ui-review-v24/button-loading-v24b.png",
+  "deployment": "https://8be5dd88.typinggame-cl5.pages.dev",
+  "production_screenshot": "docs/ui-review-v24/production-button-v24b.jpg",
+  "production_errors": 0
 }
